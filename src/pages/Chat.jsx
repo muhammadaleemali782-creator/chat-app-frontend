@@ -132,7 +132,6 @@ const styles = {
   wrap: {
     display: "grid",
     gridTemplateColumns: "320px 1fr",
-    height: "100vh",
   },
   sidebarPane: { minWidth: 0, height: "100%" },
   chatPane: { minWidth: 0, height: "100%" },
