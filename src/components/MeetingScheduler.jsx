@@ -3,7 +3,7 @@ import api from "../api";
 
 const MAX_YEAR = new Date().getFullYear() + 3; // 3 saal se aage schedule nahi kar sakte (galti se bade number type hone se bachata hai)
 
-export default function MeetingScheduler({ conversationId, onStartCall, onClose }) {
+export default function MeetingScheduler({ conversationId, otherUserId, onStartCall, onClose }) {
   const [meetings, setMeetings] = useState([]);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
@@ -11,6 +11,8 @@ export default function MeetingScheduler({ conversationId, onStartCall, onClose 
   const [callType, setCallType] = useState("video");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [conflict, setConflict] = useState(null);
+  const [checkingConflict, setCheckingConflict] = useState(false);
 
   const loadMeetings = async () => {
     try {
@@ -25,6 +27,36 @@ export default function MeetingScheduler({ conversationId, onStartCall, onClose 
     loadMeetings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationId]);
+
+  // Jab bhi date/time change ho, check karo ki us bande ke saath us waqt koi clash to nahi
+  useEffect(() => {
+    if (!date || !time || !otherUserId) {
+      setConflict(null);
+      return;
+    }
+    const scheduledAt = new Date(`${date}T${time}`);
+    if (isNaN(scheduledAt.getTime())) {
+      setConflict(null);
+      return;
+    }
+
+    const timeout = setTimeout(async () => {
+      setCheckingConflict(true);
+      try {
+        const res = await api.post("/meetings/check-conflict", {
+          otherUserId,
+          scheduledAt: scheduledAt.toISOString(),
+        });
+        setConflict(res.data.conflict ? res.data.meeting : null);
+      } catch (err) {
+        setConflict(null);
+      } finally {
+        setCheckingConflict(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [date, time, otherUserId]);
 
   const handleSchedule = async (e) => {
     e.preventDefault();
@@ -122,6 +154,13 @@ export default function MeetingScheduler({ conversationId, onStartCall, onClose 
                     max={`${MAX_YEAR}-12-31`}
                     onChange={(e) => setDate(e.target.value)}
                   />
+                  {date && !isNaN(new Date(date).getTime()) && (
+                    <div style={styles.dayHint}>
+                      {new Date(`${date}T00:00:00`).toLocaleDateString("en-IN", {
+                        weekday: "long",
+                      })}
+                    </div>
+                  )}
                 </div>
                 <div style={{ flex: 1 }}>
                   <label style={styles.label}>Time</label>
@@ -133,6 +172,26 @@ export default function MeetingScheduler({ conversationId, onStartCall, onClose 
                   />
                 </div>
               </div>
+
+              {checkingConflict && (
+                <div style={styles.checkingText}>Clash check ho raha hai...</div>
+              )}
+
+              {conflict && (
+                <div style={styles.conflictWarning}>
+                  ⚠️ Is bande ke saath is waqt ke aas-paas pehle se ek meeting hai:{" "}
+                  <strong>
+                    {new Date(conflict.scheduledAt).toLocaleString("en-IN", {
+                      weekday: "short",
+                      day: "numeric",
+                      month: "short",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </strong>{" "}
+                  ({conflict.title}). Alag time try karo.
+                </div>
+              )}
 
               <label style={styles.label}>Call ka type</label>
               <div style={styles.row}>
@@ -312,6 +371,26 @@ const styles = {
     borderRadius: 8,
     fontSize: 12.5,
     marginTop: 6,
+  },
+  dayHint: {
+    fontSize: 11.5,
+    color: "var(--text-faint)",
+    marginTop: 4,
+  },
+  checkingText: {
+    fontSize: 11.5,
+    color: "var(--text-faint)",
+    marginTop: 6,
+  },
+  conflictWarning: {
+    background: "rgba(240,98,95,0.12)",
+    border: "1px solid rgba(240,98,95,0.3)",
+    color: "var(--danger)",
+    padding: "10px 12px",
+    borderRadius: 10,
+    fontSize: 12.5,
+    lineHeight: 1.5,
+    marginTop: 8,
   },
   scheduleBtn: {
     background: "var(--accent)",

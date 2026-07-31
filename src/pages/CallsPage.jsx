@@ -118,7 +118,7 @@ export default function CallsPage() {
 
 const styles = {
   wrap: { height: "100%", overflowY: "auto", background: "var(--bg)" },
-  header: { padding: "28px 32px 10px" },
+  header: { padding: "28px 32px 10px", maxWidth: 640, margin: "0 auto" },
   title: {
     fontFamily: "var(--font-display)",
     fontSize: 24,
@@ -126,7 +126,7 @@ const styles = {
     margin: 0,
   },
   subtitle: { color: "var(--text-muted)", fontSize: 13.5, marginTop: 6 },
-  content: { padding: "10px 32px 40px", maxWidth: 640 },
+  content: { padding: "10px 32px 40px", maxWidth: 640, margin: "0 auto" },
   emptyText: { color: "var(--text-muted)", fontSize: 14, padding: "20px 0" },
   emptyState: {
     color: "var(--text-muted)",

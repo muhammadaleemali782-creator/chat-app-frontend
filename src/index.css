@@ -25,6 +25,28 @@
   --rail-active-bg: #6c6fc4;
 }
 
+[data-theme="light"] {
+  --bg: #f5f6fa;
+  --surface: #ffffff;
+  --surface-2: #f0f1f6;
+  --surface-hover: #e7e9f2;
+  --border: #dfe2ec;
+  --border-soft: #ebedf5;
+  --accent: #6c6fc4;
+  --accent-hover: #5a5db0;
+  --accent-soft: rgba(108, 111, 196, 0.12);
+  --amber: #4f9e3c;
+  --text: #1c1f2b;
+  --text-muted: #5c6270;
+  --text-faint: #8a90a0;
+  --danger: #d6413e;
+  --shadow-soft: 0 8px 24px rgba(30, 34, 60, 0.1);
+  --shadow-bubble: 0 2px 8px rgba(30, 34, 60, 0.08);
+  --rail-bg: #ffffff;
+  --rail-text: #5c6270;
+  --rail-active-bg: #6c6fc4;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -181,6 +203,32 @@ button:focus-visible,
   .chat-grid { grid-template-columns: 1fr !important; }
   .auth-brand-panel { display: none !important; }
   .meeting-modal-body { grid-template-columns: 1fr !important; }
+
+  .chat-layout { flex-direction: column !important; }
+  .icon-rail {
+    width: 100% !important;
+    height: 52px !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    padding: 0 12px !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+    justify-content: space-between !important;
+  }
+  .icon-rail-avatar { margin-bottom: 0 !important; }
+  .icon-rail-items {
+    flex-direction: row !important;
+    flex: none !important;
+    gap: 4px !important;
+  }
+  .icon-rail-item {
+    width: auto !important;
+    flex-direction: row !important;
+    padding: 6px 10px !important;
+    gap: 6px !important;
+  }
+  .icon-rail-item-label { display: none !important; }
+  .icon-rail-bottom { flex-direction: row !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -101,6 +101,16 @@ export function CallProvider({ children }) {
       setRemoteStream(event.streams[0]);
     };
 
+    // Debug ke liye: browser console (F12) mein ye connection ka status dikhayega.
+    // "connected" ya "completed" aana chahiye agar call sahi se ban rahi hai.
+    // "failed" ya "disconnected" aaye to TURN/network issue hai.
+    pc.oniceconnectionstatechange = () => {
+      console.log("[Call] ICE connection state:", pc.iceConnectionState);
+    };
+    pc.onconnectionstatechange = () => {
+      console.log("[Call] Peer connection state:", pc.connectionState);
+    };
+
     pcRef.current = pc;
     return pc;
   }, []);

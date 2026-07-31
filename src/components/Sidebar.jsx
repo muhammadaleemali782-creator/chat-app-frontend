@@ -14,7 +14,7 @@ export default function Sidebar({
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const debounceRef = useRef(null);
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { isOnline } = usePresence();
 
   useEffect(() => {
@@ -52,9 +52,6 @@ export default function Sidebar({
         <div className="wordmark" style={{ fontSize: 22 }}>
           Chat<span className="dot">.</span>
         </div>
-        <button style={styles.logoutBtn} onClick={logout} title="Logout">
-          ⏻
-        </button>
       </div>
 
       <div style={styles.searchBox}>

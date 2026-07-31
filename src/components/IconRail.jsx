@@ -1,9 +1,11 @@
 import { useAuth } from "../context/AuthContext.jsx";
+import { useTheme } from "../context/ThemeContext.jsx";
 import { avatarColor } from "../utils/avatarColor";
 
-// Teams-jaisa narrow icon sidebar - Chat / Calendar / Calls ke beech switch karne ke liye
+// Teams-jaisa narrow icon sidebar (desktop) - mobile pe top bar ban jaata hai (CSS se)
 export default function IconRail({ page, onPageChange }) {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const color = avatarColor(user?.displayName || "");
   const initial = (user?.displayName || "?").charAt(0).toUpperCase();
 
@@ -14,15 +16,16 @@ export default function IconRail({ page, onPageChange }) {
   ];
 
   return (
-    <div style={styles.rail}>
+    <div style={styles.rail} className="icon-rail">
       <div
         style={{ ...styles.avatar, background: color.bg, color: color.fg }}
         title={user?.displayName}
+        className="icon-rail-avatar"
       >
         {initial}
       </div>
 
-      <div style={styles.items}>
+      <div style={styles.items} className="icon-rail-items">
         {items.map((item) => (
           <button
             key={item.key}
@@ -30,18 +33,34 @@ export default function IconRail({ page, onPageChange }) {
               ...styles.item,
               ...(page === item.key ? styles.itemActive : {}),
             }}
+            className="icon-rail-item"
             onClick={() => onPageChange(item.key)}
             title={item.label}
           >
             <span style={styles.icon}>{item.icon}</span>
-            <span style={styles.label}>{item.label}</span>
+            <span style={styles.label} className="icon-rail-item-label">
+              {item.label}
+            </span>
           </button>
         ))}
       </div>
 
-      <button style={styles.logoutBtn} onClick={logout} title="Logout">
-        ⏻
-      </button>
+      <div style={styles.bottomActions} className="icon-rail-bottom">
+        <button style={styles.iconBtn} onClick={toggleTheme} title="Theme badlo">
+          {theme === "dark" ? "☀️" : "🌙"}
+        </button>
+        <button
+          style={styles.iconBtn}
+          onClick={() => {
+            if (window.confirm("Kya aap logout karna chahte hain?")) {
+              logout();
+            }
+          }}
+          title="Logout"
+        >
+          ⏻
+        </button>
+      </div>
     </div>
   );
 }
@@ -69,6 +88,7 @@ const styles = {
     fontFamily: "var(--font-display)",
     fontSize: 14,
     marginBottom: 22,
+    flexShrink: 0,
   },
   items: { display: "flex", flexDirection: "column", gap: 6, flex: 1 },
   item: {
@@ -89,7 +109,8 @@ const styles = {
   },
   icon: { fontSize: 18 },
   label: { fontSize: 10, fontWeight: 600 },
-  logoutBtn: {
+  bottomActions: { display: "flex", flexDirection: "column", gap: 8, flexShrink: 0 },
+  iconBtn: {
     background: "transparent",
     border: "1px solid var(--border)",
     color: "var(--rail-text)",

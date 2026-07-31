@@ -165,6 +165,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack }) {
         {showMeetings && (
           <MeetingScheduler
             conversationId={conversation._id}
+            otherUserId={other?._id}
             onStartCall={(type) => {
               setShowMeetings(false);
               if (other) startCall(other, conversation._id, type);

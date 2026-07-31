@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext.jsx";
 import { CallProvider } from "./context/CallContext.jsx";
 import { PresenceProvider } from "./context/PresenceContext.jsx";
+import { ThemeProvider } from "./context/ThemeContext.jsx";
 import CallOverlay from "./components/CallOverlay.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
@@ -19,32 +20,34 @@ export default function App() {
   if (loading) return null;
 
   return (
-    <PresenceProvider>
-      <CallProvider>
-        <Routes>
-          <Route
-            path="/login"
-            element={user ? <Navigate to="/" replace /> : <Login />}
-          />
-          <Route
-            path="/register"
-            element={user ? <Navigate to="/" replace /> : <Register />}
-          />
-          <Route
-            path="/forgot-password"
-            element={user ? <Navigate to="/" replace /> : <ForgotPassword />}
-          />
-          <Route
-            path="/"
-            element={
-              <PrivateRoute>
-                <Chat />
-              </PrivateRoute>
-            }
-          />
-        </Routes>
-        <CallOverlay />
-      </CallProvider>
-    </PresenceProvider>
+    <ThemeProvider>
+      <PresenceProvider>
+        <CallProvider>
+          <Routes>
+            <Route
+              path="/login"
+              element={user ? <Navigate to="/" replace /> : <Login />}
+            />
+            <Route
+              path="/register"
+              element={user ? <Navigate to="/" replace /> : <Register />}
+            />
+            <Route
+              path="/forgot-password"
+              element={user ? <Navigate to="/" replace /> : <ForgotPassword />}
+            />
+            <Route
+              path="/"
+              element={
+                <PrivateRoute>
+                  <Chat />
+                </PrivateRoute>
+              }
+            />
+          </Routes>
+          <CallOverlay />
+        </CallProvider>
+      </PresenceProvider>
+    </ThemeProvider>
   );
 }
