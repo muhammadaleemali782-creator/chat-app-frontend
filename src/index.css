@@ -47,6 +47,52 @@
   --rail-active-bg: #6c6fc4;
 }
 
+[data-theme="blue"] {
+  --bg: #eef4fc;
+  --surface: #ffffff;
+  --surface-2: #e3edfa;
+  --surface-hover: #d7e6f8;
+  --border: #cddef2;
+  --border-soft: #dee9f7;
+  --accent: #1d6fe0;
+  --accent-hover: #1558b8;
+  --accent-soft: rgba(29, 111, 224, 0.12);
+  --accent-glow: rgba(29, 111, 224, 0.3);
+  --amber: #2f9e5b;
+  --text: #0f2544;
+  --text-muted: #4b6f97;
+  --text-faint: #7c93b3;
+  --danger: #e0453f;
+  --shadow-soft: 0 8px 24px rgba(15, 60, 120, 0.1);
+  --shadow-bubble: 0 2px 8px rgba(15, 60, 120, 0.08);
+  --rail-bg: #0f3d80;
+  --rail-text: #bcd6f9;
+  --rail-active-bg: #1d6fe0;
+}
+
+[data-theme="white"] {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f7f8fa;
+  --surface-hover: #eef0f3;
+  --border: #e5e7eb;
+  --border-soft: #eef0f3;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-soft: rgba(37, 99, 235, 0.1);
+  --accent-glow: rgba(37, 99, 235, 0.25);
+  --amber: #16a34a;
+  --text: #111827;
+  --text-muted: #6b7280;
+  --text-faint: #9ca3af;
+  --danger: #dc2626;
+  --shadow-soft: 0 8px 24px rgba(17, 24, 39, 0.06);
+  --shadow-bubble: 0 2px 8px rgba(17, 24, 39, 0.05);
+  --rail-bg: #ffffff;
+  --rail-text: #6b7280;
+  --rail-active-bg: #2563eb;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -212,9 +258,15 @@ button:focus-visible,
     align-items: center !important;
     padding: 0 12px !important;
     border-right: none !important;
-    border-bottom: 1px solid var(--border) !important;
+    border-bottom: none !important;
+    border-top: 1px solid var(--border) !important;
     justify-content: space-between !important;
+    order: 2 !important;
+    flex-shrink: 0 !important;
   }
+  /* Chat khuli hone par yeh bottom bar chhup jaati hai, taaki chat pura screen use kare */
+  .icon-rail.icon-rail-hide-mobile { display: none !important; }
+  .page-content { order: 1 !important; flex: 1 !important; min-height: 0 !important; }
   .icon-rail-avatar { margin-bottom: 0 !important; }
   .icon-rail-items {
     flex-direction: row !important;

@@ -104,10 +104,17 @@ export default function Chat() {
 
   return (
     <div style={styles.outerWrap} className="chat-layout">
-      <IconRail page={page} onPageChange={setPage} />
+      <IconRail
+        page={page}
+        onPageChange={(p) => {
+          setPage(p);
+          setMobileView("list");
+        }}
+        hideOnMobileChat={page === "chat" && mobileView === "chat"}
+      />
 
       {page === "chat" && (
-        <div style={styles.wrap} className="chat-grid">
+        <div style={styles.wrap} className="chat-grid page-content">
           <div
             style={{
               ...styles.sidebarPane,
@@ -144,13 +151,13 @@ export default function Chat() {
       )}
 
       {page === "calendar" && (
-        <div style={styles.fullPane}>
+        <div style={styles.fullPane} className="page-content">
           <CalendarPage />
         </div>
       )}
 
       {page === "calls" && (
-        <div style={styles.fullPane}>
+        <div style={styles.fullPane} className="page-content">
           <CallsPage />
         </div>
       )}

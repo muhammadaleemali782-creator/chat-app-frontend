@@ -1,13 +1,38 @@
+import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
 import { avatarColor } from "../utils/avatarColor";
 
-// Teams-jaisa narrow icon sidebar (desktop) - mobile pe top bar ban jaata hai (CSS se)
-export default function IconRail({ page, onPageChange }) {
+const THEME_META = {
+  dark: { icon: "🌙", label: "Dark" },
+  light: { icon: "☀️", label: "Light" },
+  blue: { icon: "🔵", label: "Blue" },
+  white: { icon: "⚪", label: "White" },
+};
+
+// Teams-jaisa narrow icon sidebar (desktop) - mobile pe top/bottom bar ban jaata hai (CSS se)
+// hideOnMobileChat: jab true ho, mobile screen pe (jab koi chat khuli ho) yeh rail chhup jaati hai
+export default function IconRail({ page, onPageChange, hideOnMobileChat }) {
   const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const [showThemePicker, setShowThemePicker] = useState(false);
+  const pickerRef = useRef(null);
   const color = avatarColor(user?.displayName || "");
   const initial = (user?.displayName || "?").charAt(0).toUpperCase();
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target)) {
+        setShowThemePicker(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    document.addEventListener("touchstart", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("touchstart", handler);
+    };
+  }, []);
 
   const items = [
     { key: "chat", icon: "💬", label: "Chat" },
@@ -16,7 +41,10 @@ export default function IconRail({ page, onPageChange }) {
   ];
 
   return (
-    <div style={styles.rail} className="icon-rail">
+    <div
+      style={styles.rail}
+      className={`icon-rail${hideOnMobileChat ? " icon-rail-hide-mobile" : ""}`}
+    >
       <div
         style={{ ...styles.avatar, background: color.bg, color: color.fg }}
         title={user?.displayName}
@@ -45,10 +73,36 @@ export default function IconRail({ page, onPageChange }) {
         ))}
       </div>
 
-      <div style={styles.bottomActions} className="icon-rail-bottom">
-        <button style={styles.iconBtn} onClick={toggleTheme} title="Theme badlo">
-          {theme === "dark" ? "☀️" : "🌙"}
-        </button>
+      <div style={styles.bottomActions} className="icon-rail-bottom" ref={pickerRef}>
+        <div style={{ position: "relative" }}>
+          {showThemePicker && (
+            <div style={styles.themePopover} className="theme-popover">
+              {Object.entries(THEME_META).map(([key, meta]) => (
+                <button
+                  key={key}
+                  style={{
+                    ...styles.themeOption,
+                    ...(theme === key ? styles.themeOptionActive : {}),
+                  }}
+                  onClick={() => {
+                    setTheme(key);
+                    setShowThemePicker(false);
+                  }}
+                >
+                  <span>{meta.icon}</span>
+                  <span>{meta.label}</span>
+                </button>
+              ))}
+            </div>
+          )}
+          <button
+            style={styles.iconBtn}
+            onClick={() => setShowThemePicker((s) => !s)}
+            title="Theme badlo"
+          >
+            {THEME_META[theme]?.icon || "🎨"}
+          </button>
+        </div>
         <button
           style={styles.iconBtn}
           onClick={() => {
@@ -118,5 +172,38 @@ const styles = {
     width: 32,
     height: 32,
     fontSize: 13,
+  },
+  themePopover: {
+    position: "absolute",
+    bottom: "calc(100% + 8px)",
+    left: 0,
+    background: "var(--surface)",
+    border: "1px solid var(--border)",
+    borderRadius: 10,
+    boxShadow: "var(--shadow-soft)",
+    padding: 6,
+    display: "flex",
+    flexDirection: "column",
+    gap: 2,
+    minWidth: 120,
+    zIndex: 40,
+  },
+  themeOption: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    background: "transparent",
+    border: "none",
+    color: "var(--text)",
+    borderRadius: 6,
+    padding: "7px 8px",
+    fontSize: 12.5,
+    textAlign: "left",
+    width: "100%",
+  },
+  themeOptionActive: {
+    background: "var(--accent-soft)",
+    fontWeight: 700,
+    color: "var(--accent)",
   },
 };
