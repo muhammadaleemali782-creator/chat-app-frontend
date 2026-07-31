@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useCall } from "../context/CallContext.jsx";
 import { getSocket } from "../socket";
 import { Avatar } from "./Sidebar.jsx";
 import { avatarColor } from "../utils/avatarColor";
+import MeetingScheduler from "./MeetingScheduler.jsx";
 
 function formatTime(dateString) {
   if (!dateString) return "";
@@ -44,9 +46,11 @@ function dateKey(dateString) {
 export default function ChatWindow({ conversation, messages, onSend, onBack }) {
   const [text, setText] = useState("");
   const [otherTyping, setOtherTyping] = useState(false);
+  const [showMeetings, setShowMeetings] = useState(false);
   const bottomRef = useRef(null);
   const typingTimeoutRef = useRef(null);
   const { user } = useAuth();
+  const { startCall, callState } = useCall();
 
   const other = conversation.participants.find((p) => p._id !== user.id);
   const otherColor = avatarColor(other?.displayName || "");
@@ -72,7 +76,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack }) {
   }, [conversation._id]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [messages, otherTyping]);
 
   const handleChange = (e) => {
@@ -100,7 +104,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack }) {
 
   return (
     <div style={styles.wrap} className="pane-fade">
-      <div style={styles.header}>
+      <div style={{ ...styles.header, position: "relative" }}>
         <button
           style={styles.backBtn}
           onClick={onBack}
@@ -110,7 +114,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack }) {
           ←
         </button>
         <Avatar name={other?.displayName} online={other?.isOnline} color={otherColor} />
-        <div style={{ minWidth: 0 }}>
+        <div style={{ minWidth: 0, flex: 1 }}>
           <div style={styles.headerName}>{other?.displayName || "User"}</div>
           <div style={styles.headerStatus}>
             {otherTyping ? (
@@ -129,6 +133,43 @@ export default function ChatWindow({ conversation, messages, onSend, onBack }) {
             )}
           </div>
         </div>
+
+        <div style={styles.headerActions}>
+          <button
+            style={styles.headerIconBtn}
+            title="Audio call"
+            disabled={callState !== "idle"}
+            onClick={() => other && startCall(other, conversation._id, "audio")}
+          >
+            🎙️
+          </button>
+          <button
+            style={styles.headerIconBtn}
+            title="Video call"
+            disabled={callState !== "idle"}
+            onClick={() => other && startCall(other, conversation._id, "video")}
+          >
+            🎥
+          </button>
+          <button
+            style={styles.headerIconBtn}
+            title="Meetings"
+            onClick={() => setShowMeetings((v) => !v)}
+          >
+            📅
+          </button>
+        </div>
+
+        {showMeetings && (
+          <MeetingScheduler
+            conversationId={conversation._id}
+            onStartCall={(type) => {
+              setShowMeetings(false);
+              if (other) startCall(other, conversation._id, type);
+            }}
+            onClose={() => setShowMeetings(false)}
+          />
+        )}
       </div>
 
       <div style={styles.messages}>
@@ -224,6 +265,16 @@ const styles = {
   },
   headerName: { fontSize: 15, fontWeight: 600 },
   headerStatus: { fontSize: 12.5, color: "var(--text-muted)" },
+  headerActions: { display: "flex", gap: 6, flexShrink: 0 },
+  headerIconBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: "50%",
+    background: "var(--surface-2)",
+    border: "1px solid var(--border)",
+    fontSize: 15,
+    color: "var(--text)",
+  },
   messages: {
     flex: 1,
     overflowY: "auto",
