@@ -166,6 +166,8 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     height: "100%",
+    minHeight: 0,
+    overflow: "hidden",
     borderRight: "1px solid var(--border)",
     background: "var(--surface)",
   },
@@ -232,7 +234,7 @@ const styles = {
   },
   resultName: { fontSize: 14, fontWeight: 600 },
   resultUsername: { fontSize: 12, color: "var(--text-muted)" },
-  list: { flex: 1, overflowY: "auto", padding: "4px 8px 8px" },
+  list: { flex: 1, minHeight: 0, overflowY: "auto", padding: "4px 8px 8px" },
   brandFooter: {
     textAlign: "center",
     fontSize: 11,

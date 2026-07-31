@@ -133,8 +133,8 @@ const styles = {
     display: "grid",
     gridTemplateColumns: "320px 1fr",
   },
-  sidebarPane: { minWidth: 0, height: "100%" },
-  chatPane: { minWidth: 0, height: "100%" },
+  sidebarPane: { minWidth: 0, minHeight: 0, height: "100%", overflow: "hidden" },
+  chatPane: { minWidth: 0, minHeight: 0, height: "100%", overflow: "hidden" },
   placeholder: {
     height: "100%",
     display: "flex",

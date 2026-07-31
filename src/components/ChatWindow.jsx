@@ -245,7 +245,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack }) {
 }
 
 const styles = {
-  wrap: { display: "flex", flexDirection: "column", height: "100%" },
+  wrap: { display: "flex", flexDirection: "column", height: "100%", minHeight: 0, overflow: "hidden" },
   header: {
     display: "flex",
     alignItems: "center",
@@ -277,6 +277,7 @@ const styles = {
   },
   messages: {
     flex: 1,
+    minHeight: 0,
     overflowY: "auto",
     padding: "22px 24px",
     display: "flex",
