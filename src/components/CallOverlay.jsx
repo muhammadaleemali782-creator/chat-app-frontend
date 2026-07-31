@@ -223,7 +223,7 @@ const styles = {
     fontSize: 22,
     color: "#fff",
   },
-  acceptBtn: { background: "#3fbf76" },
+  acceptBtn: { background: "var(--amber)" },
   rejectBtn: { background: "var(--danger)" },
   inCallWrap: {
     position: "relative",

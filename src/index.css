@@ -5,11 +5,11 @@
   --surface-hover: #212a37;
   --border: #242e3b;
   --border-soft: #1c2430;
-  --accent: #7c6ff0;
-  --accent-hover: #8f83ff;
-  --accent-soft: rgba(124, 111, 240, 0.14);
-  --accent-glow: rgba(124, 111, 240, 0.35);
-  --amber: #ffb86b;
+  --accent: #6c6fc4;
+  --accent-hover: #7b7ed6;
+  --accent-soft: rgba(108, 111, 196, 0.16);
+  --accent-glow: rgba(108, 111, 196, 0.35);
+  --amber: #92c353;
   --text: #eef1f6;
   --text-muted: #8b96a5;
   --text-faint: #5b6675;
@@ -20,6 +20,9 @@
   --font-body: "Inter", sans-serif;
   --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.35);
   --shadow-bubble: 0 2px 8px rgba(0, 0, 0, 0.18);
+  --rail-bg: #201f3b;
+  --rail-text: #b7b4e0;
+  --rail-active-bg: #6c6fc4;
 }
 
 * {
@@ -175,7 +178,7 @@ button:focus-visible,
 @media (max-width: 768px) {
   .mobile-only-back { display: inline-block !important; }
   .hide-on-mobile { display: none !important; }
-  .chat-layout { grid-template-columns: 1fr !important; }
+  .chat-grid { grid-template-columns: 1fr !important; }
   .auth-brand-panel { display: none !important; }
   .meeting-modal-body { grid-template-columns: 1fr !important; }
 }

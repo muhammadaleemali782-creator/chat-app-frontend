@@ -1,13 +1,27 @@
 import { createContext, useContext, useRef, useState, useEffect, useCallback } from "react";
 import { getSocket } from "../socket";
 import { useAuth } from "./AuthContext.jsx";
+import api from "../api";
 
 const CallContext = createContext(null);
 
-// Free public STUN server - peer-to-peer connection banane ke liye zaroori
-// Note: kuch strict/mobile networks pe TURN server ke bina call connect nahi ho payegi
+// STUN + free public TURN server - peer-to-peer connection banane ke liye zaroori.
+// TURN zaroori hai jab dono log alag-alag networks (WiFi/mobile data) pe hon -
+// bina TURN ke sirf same/simple network pe hi call connect hoti hai.
 const ICE_SERVERS = {
-  iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+  iceServers: [
+    { urls: "stun:stun.l.google.com:19302" },
+    {
+      urls: "turn:openrelay.metered.ca:80",
+      username: "openrelayproject",
+      credential: "openrelayproject",
+    },
+    {
+      urls: "turn:openrelay.metered.ca:443",
+      username: "openrelayproject",
+      credential: "openrelayproject",
+    },
+  ],
 };
 
 export function CallProvider({ children }) {
@@ -24,24 +38,52 @@ export function CallProvider({ children }) {
   const pcRef = useRef(null);
   const pendingOfferRef = useRef(null);
   const otherUserIdRef = useRef(null);
+  const conversationIdRef = useRef(null);
+  const amICallerRef = useRef(false);
+  const callStartRef = useRef(null);
+  const callTypeRef = useRef("video");
 
-  const cleanup = useCallback(() => {
-    if (pcRef.current) {
-      pcRef.current.close();
-      pcRef.current = null;
-    }
-    if (localStream) {
-      localStream.getTracks().forEach((t) => t.stop());
-    }
-    setLocalStream(null);
-    setRemoteStream(null);
-    setCallState("idle");
-    setOtherUser(null);
-    setIsMuted(false);
-    setIsCameraOff(false);
-    pendingOfferRef.current = null;
-    otherUserIdRef.current = null;
-  }, [localStream]);
+  const cleanup = useCallback(
+    (explicitStatus) => {
+      // Sirf jisne call shuru ki thi wo hi log save karta hai - taaki 2 baar record na ho
+      // (dono side eventually cleanup() call karte hain: khud se ya doosre ke "call:ended" se)
+      if (amICallerRef.current && conversationIdRef.current && otherUserIdRef.current) {
+        const status = explicitStatus || (callStartRef.current ? "completed" : "missed");
+        const durationSeconds = callStartRef.current
+          ? Math.round((Date.now() - callStartRef.current) / 1000)
+          : 0;
+        api
+          .post("/calls", {
+            conversationId: conversationIdRef.current,
+            calleeId: otherUserIdRef.current,
+            callType: callTypeRef.current,
+            status,
+            durationSeconds,
+          })
+          .catch(() => {});
+      }
+
+      if (pcRef.current) {
+        pcRef.current.close();
+        pcRef.current = null;
+      }
+      if (localStream) {
+        localStream.getTracks().forEach((t) => t.stop());
+      }
+      setLocalStream(null);
+      setRemoteStream(null);
+      setCallState("idle");
+      setOtherUser(null);
+      setIsMuted(false);
+      setIsCameraOff(false);
+      pendingOfferRef.current = null;
+      otherUserIdRef.current = null;
+      conversationIdRef.current = null;
+      amICallerRef.current = false;
+      callStartRef.current = null;
+    },
+    [localStream]
+  );
 
   const createPeerConnection = useCallback((targetUserId) => {
     const pc = new RTCPeerConnection(ICE_SERVERS);
@@ -74,8 +116,11 @@ export function CallProvider({ children }) {
         });
         setLocalStream(stream);
         setCallType(type);
+        callTypeRef.current = type;
         setOtherUser(targetUser);
         otherUserIdRef.current = targetUser._id;
+        conversationIdRef.current = conversationId;
+        amICallerRef.current = true;
         setCallState("outgoing");
 
         const pc = createPeerConnection(targetUser._id);
@@ -159,13 +204,16 @@ export function CallProvider({ children }) {
     const socket = getSocket();
     if (!socket) return;
 
-    const onIncoming = ({ fromUserId, callType: type, offer, callerName }) => {
+    const onIncoming = ({ fromUserId, conversationId, callType: type, offer, callerName }) => {
       // Agar pehle se kisi call mein hain, to naya incoming call ignore karo
       setCallState((prev) => {
         if (prev !== "idle") return prev;
         pendingOfferRef.current = offer;
         otherUserIdRef.current = fromUserId;
+        conversationIdRef.current = conversationId;
+        amICallerRef.current = false;
         setCallType(type);
+        callTypeRef.current = type;
         setOtherUser({ _id: fromUserId, displayName: callerName || "Unknown" });
         return "incoming";
       });
@@ -174,6 +222,7 @@ export function CallProvider({ children }) {
     const onAnswer = async ({ answer }) => {
       if (pcRef.current) {
         await pcRef.current.setRemoteDescription(new RTCSessionDescription(answer));
+        callStartRef.current = Date.now();
         setCallState("in-call");
       }
     };
@@ -190,7 +239,7 @@ export function CallProvider({ children }) {
 
     const onRejected = () => {
       setCallError("Doosre user ne call reject kar di");
-      cleanup();
+      cleanup("rejected");
     };
 
     const onEnded = () => {

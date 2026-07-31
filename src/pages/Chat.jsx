@@ -2,20 +2,32 @@ import { useState, useEffect, useCallback } from "react";
 import api from "../api";
 import { getSocket } from "../socket";
 import { useAuth } from "../context/AuthContext.jsx";
+import { usePresence } from "../context/PresenceContext.jsx";
 import Sidebar from "../components/Sidebar.jsx";
 import ChatWindow from "../components/ChatWindow.jsx";
+import IconRail from "../components/IconRail.jsx";
+import CalendarPage from "./CalendarPage.jsx";
+import CallsPage from "./CallsPage.jsx";
 
 export default function Chat() {
+  const [page, setPage] = useState("chat"); // chat | calendar | calls
   const [conversations, setConversations] = useState([]);
   const [activeConv, setActiveConv] = useState(null);
   const [messages, setMessages] = useState([]);
   const [mobileView, setMobileView] = useState("list"); // "list" | "chat"
   const { user } = useAuth();
+  const { seedOnline } = usePresence();
 
   const loadConversations = useCallback(async () => {
     const res = await api.get("/conversations");
     setConversations(res.data);
-  }, []);
+    // Jo participants abhi online the (last known), unse presence seed kar dete hain
+    const onlineIds = res.data
+      .flatMap((c) => c.participants)
+      .filter((p) => p.isOnline)
+      .map((p) => p._id);
+    if (onlineIds.length) seedOnline(onlineIds);
+  }, [seedOnline]);
 
   useEffect(() => {
     loadConversations();
@@ -91,50 +103,74 @@ export default function Chat() {
   };
 
   return (
-    <div style={styles.wrap} className="chat-layout">
-      <div
-        style={{
-          ...styles.sidebarPane,
-          display: mobileView === "list" ? "block" : undefined,
-        }}
-        className={mobileView === "chat" ? "hide-on-mobile" : ""}
-      >
-        <Sidebar
-          conversations={conversations}
-          activeId={activeConv?._id}
-          onSelect={handleSelectConversation}
-          onNewConversation={handleNewConversation}
-        />
-      </div>
+    <div style={styles.outerWrap} className="chat-layout">
+      <IconRail page={page} onPageChange={setPage} />
 
-      <div
-        style={styles.chatPane}
-        className={mobileView === "list" ? "hide-on-mobile" : ""}
-      >
-        {activeConv ? (
-          <ChatWindow
-            conversation={activeConv}
-            messages={messages}
-            onSend={handleSend}
-            onBack={() => setMobileView("list")}
-          />
-        ) : (
-          <div style={styles.placeholder}>
-            Chat shuru karne ke liye left se kisi ko select karo, ya naya user dhundo.
+      {page === "chat" && (
+        <div style={styles.wrap} className="chat-grid">
+          <div
+            style={{
+              ...styles.sidebarPane,
+              display: mobileView === "list" ? "block" : undefined,
+            }}
+            className={mobileView === "chat" ? "hide-on-mobile" : ""}
+          >
+            <Sidebar
+              conversations={conversations}
+              activeId={activeConv?._id}
+              onSelect={handleSelectConversation}
+              onNewConversation={handleNewConversation}
+            />
           </div>
-        )}
-      </div>
+
+          <div
+            style={styles.chatPane}
+            className={mobileView === "list" ? "hide-on-mobile" : ""}
+          >
+            {activeConv ? (
+              <ChatWindow
+                conversation={activeConv}
+                messages={messages}
+                onSend={handleSend}
+                onBack={() => setMobileView("list")}
+              />
+            ) : (
+              <div style={styles.placeholder}>
+                Chat shuru karne ke liye left se kisi ko select karo, ya naya user dhundo.
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {page === "calendar" && (
+        <div style={styles.fullPane}>
+          <CalendarPage />
+        </div>
+      )}
+
+      {page === "calls" && (
+        <div style={styles.fullPane}>
+          <CallsPage />
+        </div>
+      )}
     </div>
   );
 }
 
 const styles = {
+  outerWrap: {
+    display: "flex",
+  },
   wrap: {
     display: "grid",
     gridTemplateColumns: "320px 1fr",
+    flex: 1,
+    minHeight: 0,
   },
   sidebarPane: { minWidth: 0, minHeight: 0, height: "100%", overflow: "hidden" },
   chatPane: { minWidth: 0, minHeight: 0, height: "100%", overflow: "hidden" },
+  fullPane: { flex: 1, minWidth: 0, minHeight: 0, overflow: "hidden" },
   placeholder: {
     height: "100%",
     display: "flex",

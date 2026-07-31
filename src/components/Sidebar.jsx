@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import api from "../api";
 import { useAuth } from "../context/AuthContext.jsx";
+import { usePresence } from "../context/PresenceContext.jsx";
 import { avatarColor } from "../utils/avatarColor";
 
 export default function Sidebar({
@@ -14,6 +15,7 @@ export default function Sidebar({
   const [searching, setSearching] = useState(false);
   const debounceRef = useRef(null);
   const { user, logout } = useAuth();
+  const { isOnline } = usePresence();
 
   useEffect(() => {
     clearTimeout(debounceRef.current);
@@ -80,7 +82,7 @@ export default function Sidebar({
                   style={styles.resultItem}
                   onClick={() => handlePickUser(r)}
                 >
-                  <Avatar name={r.displayName} online={r.isOnline} color={c} />
+                  <Avatar name={r.displayName} online={isOnline(r._id)} color={c} />
                   <div style={{ minWidth: 0 }}>
                     <div style={styles.resultName}>{r.displayName}</div>
                     <div style={styles.resultUsername}>@{r.username}</div>
@@ -117,7 +119,7 @@ export default function Sidebar({
               }}
               onClick={() => onSelect(conv)}
             >
-              <Avatar name={other.displayName} online={other.isOnline} color={c} />
+              <Avatar name={other.displayName} online={isOnline(other._id)} color={c} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={styles.convName}>{other.displayName}</div>
                 <div style={styles.convLastMsg}>

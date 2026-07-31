@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useCall } from "../context/CallContext.jsx";
+import { usePresence } from "../context/PresenceContext.jsx";
 import { getSocket } from "../socket";
 import { Avatar } from "./Sidebar.jsx";
 import { avatarColor } from "../utils/avatarColor";
@@ -51,6 +52,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack }) {
   const typingTimeoutRef = useRef(null);
   const { user } = useAuth();
   const { startCall, callState } = useCall();
+  const { isOnline } = usePresence();
 
   const other = conversation.participants.find((p) => p._id !== user.id);
   const otherColor = avatarColor(other?.displayName || "");
@@ -113,7 +115,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack }) {
         >
           ←
         </button>
-        <Avatar name={other?.displayName} online={other?.isOnline} color={otherColor} />
+        <Avatar name={other?.displayName} online={other && isOnline(other._id)} color={otherColor} />
         <div style={{ minWidth: 0, flex: 1 }}>
           <div style={styles.headerName}>{other?.displayName || "User"}</div>
           <div style={styles.headerStatus}>
@@ -126,7 +128,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack }) {
                   <span></span>
                 </span>
               </span>
-            ) : other?.isOnline ? (
+            ) : other && isOnline(other._id) ? (
               "Online"
             ) : (
               "Offline"
