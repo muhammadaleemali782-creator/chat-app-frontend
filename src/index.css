@@ -177,6 +177,7 @@ button:focus-visible,
   .hide-on-mobile { display: none !important; }
   .chat-layout { grid-template-columns: 1fr !important; }
   .auth-brand-panel { display: none !important; }
+  .meeting-modal-body { grid-template-columns: 1fr !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
