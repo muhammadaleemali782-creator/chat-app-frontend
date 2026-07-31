@@ -18,6 +18,7 @@ export default function BrandPanel({ heading, sub }) {
         </div>
         <h1 style={styles.heading}>{heading}</h1>
         <p style={styles.sub}>{sub}</p>
+        <p style={styles.credit}>Powered by Educa Veda Digitals</p>
       </div>
     </div>
   );
@@ -86,5 +87,11 @@ const styles = {
     fontSize: 15,
     lineHeight: 1.5,
     margin: 0,
+  },
+  credit: {
+    color: "var(--text-faint)",
+    fontSize: 11.5,
+    marginTop: 28,
+    letterSpacing: "0.02em",
   },
 };

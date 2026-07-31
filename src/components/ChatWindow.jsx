@@ -10,6 +10,37 @@ function formatTime(dateString) {
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
+function formatDateLabel(dateString) {
+  const d = new Date(dateString);
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+
+  const sameDay = (a, b) =>
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+
+  if (sameDay(d, today)) return "Aaj";
+  if (sameDay(d, yesterday)) return "Kal";
+
+  const daysDiff = Math.floor((today - d) / (1000 * 60 * 60 * 24));
+  if (daysDiff < 7) {
+    return d.toLocaleDateString("en-IN", { weekday: "long" });
+  }
+
+  return d.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "long",
+    year: d.getFullYear() !== today.getFullYear() ? "numeric" : undefined,
+  });
+}
+
+function dateKey(dateString) {
+  const d = new Date(dateString);
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+}
+
 export default function ChatWindow({ conversation, messages, onSend, onBack }) {
   const [text, setText] = useState("");
   const [otherTyping, setOtherTyping] = useState(false);
@@ -109,35 +140,47 @@ export default function ChatWindow({ conversation, messages, onSend, onBack }) {
             "Hi" bhej ke shuru karo!
           </div>
         )}
-        {messages.map((m) => {
+        {messages.map((m, idx) => {
           const isMine = m.sender === user.id || m.sender?._id === user.id;
+          const prevMsg = messages[idx - 1];
+          const showDateDivider =
+            !prevMsg || dateKey(prevMsg.createdAt) !== dateKey(m.createdAt);
+
           return (
-            <div
-              key={m._id}
-              className="msg-bubble-enter"
-              style={{
-                ...styles.bubbleRow,
-                justifyContent: isMine ? "flex-end" : "flex-start",
-              }}
-            >
+            <div key={m._id}>
+              {showDateDivider && (
+                <div style={styles.dateDividerRow}>
+                  <span style={styles.dateDividerPill}>
+                    {formatDateLabel(m.createdAt)}
+                  </span>
+                </div>
+              )}
               <div
+                className="msg-bubble-enter"
                 style={{
-                  ...styles.bubble,
-                  background: isMine ? "var(--accent)" : "var(--surface-2)",
-                  color: isMine ? "#fff" : "var(--text)",
-                  borderBottomRightRadius: isMine ? 4 : 18,
-                  borderBottomLeftRadius: isMine ? 18 : 4,
+                  ...styles.bubbleRow,
+                  justifyContent: isMine ? "flex-end" : "flex-start",
                 }}
               >
-                <span>{m.text}</span>
-                <span
+                <div
                   style={{
-                    ...styles.bubbleTime,
-                    color: isMine ? "rgba(255,255,255,0.7)" : "var(--text-faint)",
+                    ...styles.bubble,
+                    background: isMine ? "var(--accent)" : "var(--surface-2)",
+                    color: isMine ? "#fff" : "var(--text)",
+                    borderBottomRightRadius: isMine ? 4 : 18,
+                    borderBottomLeftRadius: isMine ? 18 : 4,
                   }}
                 >
-                  {formatTime(m.createdAt)}
-                </span>
+                  <span>{m.text}</span>
+                  <span
+                    style={{
+                      ...styles.bubbleTime,
+                      color: isMine ? "rgba(255,255,255,0.7)" : "var(--text-faint)",
+                    }}
+                  >
+                    {formatTime(m.createdAt)}
+                  </span>
+                </div>
               </div>
             </div>
           );
@@ -200,6 +243,20 @@ const styles = {
     lineHeight: 1.6,
   },
   emptyChatIcon: { fontSize: 30, marginBottom: 10 },
+  dateDividerRow: {
+    display: "flex",
+    justifyContent: "center",
+    margin: "6px 0 10px",
+  },
+  dateDividerPill: {
+    background: "var(--surface-2)",
+    border: "1px solid var(--border)",
+    color: "var(--text-muted)",
+    fontSize: 12,
+    fontWeight: 600,
+    padding: "5px 14px",
+    borderRadius: 20,
+  },
   bubbleRow: { display: "flex" },
   bubble: {
     maxWidth: "70%",

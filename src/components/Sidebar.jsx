@@ -128,6 +128,8 @@ export default function Sidebar({
           );
         })}
       </div>
+
+      <div style={styles.brandFooter}>Powered by Educa Veda Digitals</div>
     </div>
   );
 }
@@ -231,6 +233,14 @@ const styles = {
   resultName: { fontSize: 14, fontWeight: 600 },
   resultUsername: { fontSize: 12, color: "var(--text-muted)" },
   list: { flex: 1, overflowY: "auto", padding: "4px 8px 8px" },
+  brandFooter: {
+    textAlign: "center",
+    fontSize: 11,
+    color: "var(--text-faint)",
+    padding: "10px 12px 14px",
+    borderTop: "1px solid var(--border-soft)",
+    letterSpacing: "0.02em",
+  },
   emptyState: {
     color: "var(--text-muted)",
     fontSize: 13,
