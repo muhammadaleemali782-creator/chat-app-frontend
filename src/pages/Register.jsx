@@ -35,7 +35,7 @@ export default function Register() {
   };
 
   return (
-    <div style={styles.wrap}>
+    <div style={styles.wrap} className="auth-page-wrap">
       <BrandPanel
         heading="Sirf username se account banao."
         sub="Phone number kisi ko nahi dikhta — bas login ke liye."

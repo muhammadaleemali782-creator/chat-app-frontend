@@ -46,7 +46,7 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div style={styles.wrap}>
+    <div style={styles.wrap} className="auth-page-wrap">
       <BrandPanel
         heading="Password bhool gaye? Koi baat nahi."
         sub="Apne email pe OTP milega, usse naya password set kar lo."

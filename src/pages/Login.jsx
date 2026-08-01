@@ -28,7 +28,7 @@ export default function Login() {
   };
 
   return (
-    <div style={styles.wrap}>
+    <div style={styles.wrap} className="auth-page-wrap">
       <BrandPanel
         heading="Baat karo, bina number share kiye."
         sub="Username se dhundo, turant chat karo."
