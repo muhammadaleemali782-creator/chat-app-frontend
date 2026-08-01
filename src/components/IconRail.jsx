@@ -12,7 +12,7 @@ const THEME_META = {
 
 // Teams-jaisa narrow icon sidebar (desktop) - mobile pe top/bottom bar ban jaata hai (CSS se)
 // hideOnMobileChat: jab true ho, mobile screen pe (jab koi chat khuli ho) yeh rail chhup jaati hai
-export default function IconRail({ page, onPageChange, hideOnMobileChat }) {
+export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenProfile }) {
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const [showThemePicker, setShowThemePicker] = useState(false);
@@ -46,9 +46,10 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat }) {
       className={`icon-rail${hideOnMobileChat ? " icon-rail-hide-mobile" : ""}`}
     >
       <div
-        style={{ ...styles.avatar, background: color.bg, color: color.fg }}
-        title={user?.displayName}
+        style={{ ...styles.avatar, background: color.bg, color: color.fg, cursor: "pointer" }}
+        title="Profile dekho"
         className="icon-rail-avatar"
+        onClick={onOpenProfile}
       >
         {initial}
       </div>

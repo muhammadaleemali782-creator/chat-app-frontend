@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../api";
 import { useAuth } from "../context/AuthContext.jsx";
 import BrandPanel from "../components/BrandPanel.jsx";
+import LoadingScreen from "../components/LoadingScreen.jsx";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -96,6 +97,11 @@ export default function Register() {
             <button className="primary-btn" style={styles.button} disabled={loading}>
               {loading ? "Account ban raha hai..." : "Account banao"}
             </button>
+            {loading && (
+              <div style={{ marginTop: 4 }}>
+                <LoadingScreen message="Connect ho rahe hain..." />
+              </div>
+            )}
           </form>
 
           <p style={styles.footerText}>

@@ -2,6 +2,7 @@ import { createContext, useContext, useRef, useState, useEffect, useCallback } f
 import { getSocket } from "../socket";
 import { useAuth } from "./AuthContext.jsx";
 import api from "../api";
+import { startRingtone, stopRingtone, startOutgoingTone, stopOutgoingTone } from "../utils/sounds";
 
 const CallContext = createContext(null);
 
@@ -37,11 +38,30 @@ export function CallProvider({ children }) {
 
   const pcRef = useRef(null);
   const pendingOfferRef = useRef(null);
+  const pendingCandidatesRef = useRef([]);
   const otherUserIdRef = useRef(null);
   const conversationIdRef = useRef(null);
   const amICallerRef = useRef(false);
   const callStartRef = useRef(null);
   const callTypeRef = useRef("video");
+
+  // Call state ke hisaab se ringtone/outgoing tone bajao ya band karo
+  useEffect(() => {
+    if (callState === "incoming") {
+      startRingtone();
+    } else {
+      stopRingtone();
+    }
+    if (callState === "outgoing") {
+      startOutgoingTone();
+    } else {
+      stopOutgoingTone();
+    }
+    return () => {
+      stopRingtone();
+      stopOutgoingTone();
+    };
+  }, [callState]);
 
   const cleanup = useCallback(
     (explicitStatus) => {
@@ -77,6 +97,7 @@ export function CallProvider({ children }) {
       setIsMuted(false);
       setIsCameraOff(false);
       pendingOfferRef.current = null;
+      pendingCandidatesRef.current = [];
       otherUserIdRef.current = null;
       conversationIdRef.current = null;
       amICallerRef.current = false;
@@ -84,6 +105,24 @@ export function CallProvider({ children }) {
     },
     [localStream]
   );
+
+  // Kabhi kabhi doosri taraf ke ICE candidates (network path info) itni jaldi aa jaate
+  // hain ki humari peer connection abhi tak bani hi nahi hoti - is wajah se wo candidates
+  // pehle silently kho jaate the, aur call kabhi-kabhi sirf ek taraf se video/audio deti
+  // thi (kabhi meri video usko nahi dikhti, kabhi uski mujhe nahi). Fix: jab tak connection
+  // ready nahi hoti, candidates ko yahin queue me rakho, phir ready hote hi sab add kar do.
+  const flushPendingCandidates = useCallback(async () => {
+    if (!pcRef.current) return;
+    const queued = pendingCandidatesRef.current;
+    pendingCandidatesRef.current = [];
+    for (const candidate of queued) {
+      try {
+        await pcRef.current.addIceCandidate(new RTCIceCandidate(candidate));
+      } catch (err) {
+        console.error("ICE candidate error:", err);
+      }
+    }
+  }, []);
 
   const createPeerConnection = useCallback((targetUserId) => {
     const pc = new RTCPeerConnection(ICE_SERVERS);
@@ -169,6 +208,7 @@ export function CallProvider({ children }) {
       stream.getTracks().forEach((track) => pc.addTrack(track, stream));
 
       await pc.setRemoteDescription(new RTCSessionDescription(pendingOfferRef.current));
+      await flushPendingCandidates();
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
 
@@ -183,7 +223,7 @@ export function CallProvider({ children }) {
       setCallError("Camera/mic access nahi mila. Browser permissions check karo.");
       cleanup();
     }
-  }, [callType, createPeerConnection, cleanup]);
+  }, [callType, createPeerConnection, cleanup, flushPendingCandidates]);
 
   const rejectCall = useCallback(() => {
     getSocket()?.emit("call:reject", { toUserId: otherUserIdRef.current });
@@ -232,18 +272,23 @@ export function CallProvider({ children }) {
     const onAnswer = async ({ answer }) => {
       if (pcRef.current) {
         await pcRef.current.setRemoteDescription(new RTCSessionDescription(answer));
+        await flushPendingCandidates();
         callStartRef.current = Date.now();
         setCallState("in-call");
       }
     };
 
     const onIceCandidate = async ({ candidate }) => {
-      if (pcRef.current) {
+      // Agar connection abhi tak taiyaar nahi hai (ya remote description set nahi hui),
+      // to candidate ko queue me daal do - baad me flushPendingCandidates() use bhej dega
+      if (pcRef.current && pcRef.current.remoteDescription) {
         try {
           await pcRef.current.addIceCandidate(new RTCIceCandidate(candidate));
         } catch (err) {
           console.error("ICE candidate error:", err);
         }
+      } else {
+        pendingCandidatesRef.current.push(candidate);
       }
     };
 
@@ -269,7 +314,7 @@ export function CallProvider({ children }) {
       socket.off("call:rejected", onRejected);
       socket.off("call:ended", onEnded);
     };
-  }, [cleanup, user?.id]);
+  }, [cleanup, user?.id, flushPendingCandidates]);
 
   return (
     <CallContext.Provider

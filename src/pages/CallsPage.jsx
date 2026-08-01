@@ -3,6 +3,7 @@ import api from "../api";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useCall } from "../context/CallContext.jsx";
 import { avatarColor } from "../utils/avatarColor";
+import LoadingScreen from "../components/LoadingScreen.jsx";
 
 export default function CallsPage() {
   const [logs, setLogs] = useState([]);
@@ -58,7 +59,7 @@ export default function CallsPage() {
       </div>
 
       <div style={styles.content}>
-        {loading && <div style={styles.emptyText}>Load ho raha hai...</div>}
+        {loading && <LoadingScreen message="Call history load ho rahi hai..." />}
 
         {!loading && logs.length === 0 && (
           <div style={styles.emptyState}>

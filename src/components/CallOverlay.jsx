@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useCall } from "../context/CallContext.jsx";
 import { avatarColor } from "../utils/avatarColor";
+import { useBackHandler } from "../utils/backHandlerStack";
 
 export default function CallOverlay() {
   const {
@@ -24,20 +25,42 @@ export default function CallOverlay() {
   const remoteVideoRef = useRef(null);
   const remoteAudioRef = useRef(null);
 
+  // BUG FIX: localStream state set ho jaata hai call shuru karte hi (jab callState
+  // "outgoing"/"incoming" hota hai) - lekin <video> element sirf "in-call" state mein
+  // mount hota hai. Isliye effect [localStream] pe hi depend karne se jab video
+  // element baad mein mount hota hai, srcObject kabhi set hi nahi hota tha (apni
+  // camera ki preview kaali dikhti thi). callState ko dependency mein daalne se jab
+  // bhi state badle (aur element mount ho), yeh dobara chalta hai.
   useEffect(() => {
     if (localVideoRef.current && localStream) {
       localVideoRef.current.srcObject = localStream;
+      // Android WebView kabhi kabhi autoPlay attribute follow nahi karta jab source
+      // asynchronously (baad mein) set hoti hai - explicit play() call zaroori hai
+      localVideoRef.current.play().catch(() => {});
     }
-  }, [localStream]);
+  }, [localStream, callState]);
 
   useEffect(() => {
     if (callType === "video" && remoteVideoRef.current && remoteStream) {
       remoteVideoRef.current.srcObject = remoteStream;
+      remoteVideoRef.current.play().catch(() => {});
     }
     if (callType === "audio" && remoteAudioRef.current && remoteStream) {
       remoteAudioRef.current.srcObject = remoteStream;
+      remoteAudioRef.current.play().catch(() => {});
     }
-  }, [remoteStream, callType]);
+  }, [remoteStream, callType, callState]);
+
+  // Back button: call chal rahi ho to usse end/reject karo, app cut na ho
+  useBackHandler(
+    "call-overlay",
+    callState !== "idle",
+    () => {
+      if (callState === "incoming") rejectCall();
+      else endCall();
+      return true;
+    }
+  );
 
   // Error toast - thodi der dikha ke gayab ho jaata hai
   useEffect(() => {

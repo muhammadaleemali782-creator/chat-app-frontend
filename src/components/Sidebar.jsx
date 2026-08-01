@@ -3,12 +3,15 @@ import api from "../api";
 import { useAuth } from "../context/AuthContext.jsx";
 import { usePresence } from "../context/PresenceContext.jsx";
 import { avatarColor } from "../utils/avatarColor";
+import LoadingScreen from "./LoadingScreen.jsx";
 
 export default function Sidebar({
   conversations,
   activeId,
   onSelect,
   onNewConversation,
+  onDeleteConversation,
+  loading,
 }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -92,7 +95,8 @@ export default function Sidebar({
       </div>
 
       <div style={styles.list}>
-        {conversations.length === 0 && (
+        {loading && <LoadingScreen message="Chats load ho rahi hain..." />}
+        {!loading && conversations.length === 0 && (
           <div style={styles.emptyState}>
             <div style={styles.emptyIcon}>💬</div>
             Koi chat nahi hai abhi.
@@ -123,6 +127,17 @@ export default function Sidebar({
                   {conv.lastMessage || "Chat shuru karo..."}
                 </div>
               </div>
+              <button
+                style={styles.deleteBtn}
+                className="conv-delete-btn"
+                title="Chat delete karo"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteConversation?.(conv);
+                }}
+              >
+                🗑
+              </button>
             </div>
           );
         })}
@@ -260,6 +275,15 @@ const styles = {
     marginBottom: 2,
   },
   convName: { fontSize: 15, fontWeight: 600 },
+  deleteBtn: {
+    background: "transparent",
+    border: "none",
+    color: "var(--text-faint)",
+    fontSize: 14,
+    padding: "6px 4px",
+    flexShrink: 0,
+    opacity: 0.6,
+  },
   convLastMsg: {
     fontSize: 13,
     color: "var(--text-muted)",

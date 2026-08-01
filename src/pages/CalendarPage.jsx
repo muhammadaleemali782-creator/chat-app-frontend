@@ -3,6 +3,7 @@ import api from "../api";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useCall } from "../context/CallContext.jsx";
 import { avatarColor } from "../utils/avatarColor";
+import LoadingScreen from "../components/LoadingScreen.jsx";
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -55,11 +56,12 @@ export default function CalendarPage() {
   }, []);
 
   const handleCancel = async (id) => {
+    if (!window.confirm("Yeh meeting cancel karni hai?")) return;
     try {
       await api.delete(`/meetings/${id}`);
       load();
     } catch (err) {
-      // ignore
+      alert(err.response?.data?.message || "Meeting cancel nahi ho payi, dobara try karo");
     }
   };
 
@@ -172,7 +174,7 @@ export default function CalendarPage() {
         </span>
       </div>
 
-      {loading && <div style={styles.emptyText}>Load ho raha hai...</div>}
+      {loading && <LoadingScreen message="Calendar load ho raha hai..." />}
 
       {/* 24-hour timeline - poora din hour-by-hour dikhta hai, khali ghante bhi */}
       {!loading && (

@@ -24,6 +24,15 @@ export function AuthProvider({ children }) {
     connectSocket(token);
   };
 
+  // Profile edit (bio, displayName, etc.) ke baad local state + localStorage update karo
+  const updateUser = (partial) => {
+    setUser((prev) => {
+      const merged = { ...prev, ...partial };
+      localStorage.setItem("user", JSON.stringify(merged));
+      return merged;
+    });
+  };
+
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -32,7 +41,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, updateUser, loading }}>
       {children}
     </AuthContext.Provider>
   );
