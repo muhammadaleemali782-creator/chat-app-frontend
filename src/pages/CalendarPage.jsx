@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { useCall } from "../context/CallContext.jsx";
 import { avatarColor } from "../utils/avatarColor";
 import LoadingScreen from "../components/LoadingScreen.jsx";
+import ScheduleMeetingModal from "../components/ScheduleMeetingModal.jsx";
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -28,6 +29,7 @@ export default function CalendarPage() {
   const [loading, setLoading] = useState(true);
   const [now, setNow] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(startOfDay(new Date()));
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
   const { user } = useAuth();
   const { startCall } = useCall();
   const timelineRef = useRef(null);
@@ -57,8 +59,10 @@ export default function CalendarPage() {
 
   const handleCancel = async (id) => {
     if (!window.confirm("Yeh meeting cancel karni hai?")) return;
+    const reason = window.prompt("Cancel karne ki wajah kya hai? (khali bhi chhod sakte ho)", "");
+    if (reason === null) return;
     try {
-      await api.delete(`/meetings/${id}`);
+      await api.delete(`/meetings/${id}`, { data: { reason } });
       load();
     } catch (err) {
       alert(err.response?.data?.message || "Meeting cancel nahi ho payi, dobara try karo");
@@ -138,8 +142,18 @@ export default function CalendarPage() {
           <div style={styles.pill}>
             <strong>{tomorrowCount}</strong> kal
           </div>
+          <button style={styles.newMeetingBtn} onClick={() => setShowScheduleModal(true)}>
+            + Nayi Meeting
+          </button>
         </div>
       </div>
+
+      {showScheduleModal && (
+        <ScheduleMeetingModal
+          onClose={() => setShowScheduleModal(false)}
+          onScheduled={load}
+        />
+      )}
 
       {/* 7 din ki week strip */}
       <div style={styles.weekStrip}>
@@ -216,7 +230,7 @@ export default function CalendarPage() {
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={styles.meetingTitle}>{m.title}</div>
                           <div style={styles.meetingMeta}>
-                            {formatTime(m.scheduledAt)} · {other?.displayName} ·{" "}
+                            {formatTime(m.scheduledAt)} ({m.duration || 30}m) · {other?.displayName} ·{" "}
                             {m.callType === "video" ? "🎥 Video" : "🎙️ Audio"}
                           </div>
                         </div>
@@ -276,6 +290,15 @@ const styles = {
     padding: "6px 14px",
     fontSize: 12.5,
     color: "var(--text-muted)",
+  },
+  newMeetingBtn: {
+    background: "var(--accent)",
+    color: "#fff",
+    border: "none",
+    borderRadius: 20,
+    padding: "8px 16px",
+    fontSize: 12.5,
+    fontWeight: 600,
   },
   weekStrip: {
     display: "flex",

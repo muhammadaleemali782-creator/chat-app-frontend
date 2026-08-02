@@ -84,6 +84,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
   const [isRecording, setIsRecording] = useState(false);
   const [recordSeconds, setRecordSeconds] = useState(0);
   const [sendingMedia, setSendingMedia] = useState(false);
+  const [showAttachMenu, setShowAttachMenu] = useState(false);
 
   useBackHandler(
     "meeting-scheduler",
@@ -101,6 +102,14 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
       return true;
     }
   );
+  useBackHandler(
+    "attach-menu",
+    showAttachMenu,
+    () => {
+      setShowAttachMenu(false);
+      return true;
+    }
+  );
 
   const bottomRef = useRef(null);
   const typingTimeoutRef = useRef(null);
@@ -108,6 +117,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const recordTimerRef = useRef(null);
+  const attachMenuRef = useRef(null);
   const { user } = useAuth();
   const { startCall, callState } = useCall();
   const { isOnline } = usePresence();
@@ -142,6 +152,21 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
   useEffect(() => {
     setReplyingTo(null);
   }, [conversation._id]);
+
+  useEffect(() => {
+    if (!showAttachMenu) return;
+    const handler = (e) => {
+      if (attachMenuRef.current && !attachMenuRef.current.contains(e.target)) {
+        setShowAttachMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    document.addEventListener("touchstart", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("touchstart", handler);
+    };
+  }, [showAttachMenu]);
 
   const handleChange = (e) => {
     setText(e.target.value);
@@ -293,7 +318,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
             disabled={callState !== "idle"}
             onClick={() => other && startCall(other, conversation._id, "audio")}
           >
-            🎙️
+            📞
           </button>
           <button
             style={styles.headerIconBtn}
@@ -469,30 +494,57 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
             style={{ display: "none" }}
             onChange={handlePhotoSelected}
           />
-          <button
-            type="button"
-            style={styles.mediaBtn}
-            title="Photo bhejo"
-            onClick={handlePhotoPick}
-          >
-            📷
-          </button>
-          <button
-            type="button"
-            style={styles.mediaBtn}
-            title="Voice message record karo"
-            onClick={startRecording}
-          >
-            🎤
-          </button>
+
+          <div style={{ position: "relative" }} ref={attachMenuRef}>
+            {showAttachMenu && (
+              <div style={styles.attachMenu} className="attach-menu">
+                <button
+                  type="button"
+                  style={styles.attachMenuItem}
+                  onClick={() => {
+                    setShowAttachMenu(false);
+                    handlePhotoPick();
+                  }}
+                >
+                  📷 Photo
+                </button>
+                <button
+                  type="button"
+                  style={styles.attachMenuItem}
+                  onClick={() => {
+                    setShowAttachMenu(false);
+                    startRecording();
+                  }}
+                >
+                  🎤 Voice message
+                </button>
+              </div>
+            )}
+            <button
+              type="button"
+              style={styles.mediaBtn}
+              title="Photo ya voice message"
+              onClick={() => setShowAttachMenu((v) => !v)}
+            >
+              ⋮
+            </button>
+          </div>
+
           <input
             style={styles.input}
             value={text}
             onChange={handleChange}
             placeholder="Message likho..."
           />
-          <button className="send-btn" style={styles.sendBtn} type="submit" disabled={!text.trim()}>
-            Bhejo
+          <button
+            className="send-btn"
+            style={styles.sendBtn}
+            type="submit"
+            disabled={!text.trim()}
+            aria-label="Bhejo"
+            title="Bhejo"
+          >
+            ➤
           </button>
         </form>
       )}
@@ -681,27 +733,56 @@ const styles = {
   inputBar: {
     display: "flex",
     gap: 8,
-    padding: "16px 20px",
+    padding: "12px 14px",
     borderTop: "1px solid var(--border)",
     background: "var(--surface)",
     alignItems: "center",
+  },
+  attachMenu: {
+    position: "absolute",
+    bottom: "calc(100% + 8px)",
+    left: 0,
+    background: "var(--surface)",
+    border: "1px solid var(--border)",
+    borderRadius: 12,
+    boxShadow: "var(--shadow-soft)",
+    padding: 6,
+    display: "flex",
+    flexDirection: "column",
+    gap: 2,
+    minWidth: 170,
+    zIndex: 30,
+  },
+  attachMenuItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    background: "transparent",
+    border: "none",
+    color: "var(--text)",
+    borderRadius: 8,
+    padding: "10px 10px",
+    fontSize: 13.5,
+    textAlign: "left",
+    width: "100%",
   },
   mediaBtn: {
     background: "var(--surface-2)",
     border: "1px solid var(--border)",
     borderRadius: "50%",
-    width: 40,
-    height: 40,
-    fontSize: 16,
+    width: 38,
+    height: 38,
+    fontSize: 17,
     color: "var(--text)",
     flexShrink: 0,
   },
   input: {
     flex: 1,
+    minWidth: 0,
     background: "var(--surface-2)",
     border: "1px solid var(--border)",
-    borderRadius: 24,
-    padding: "12px 18px",
+    borderRadius: 22,
+    padding: "11px 16px",
     color: "var(--text)",
     fontSize: 14.5,
   },
@@ -709,9 +790,13 @@ const styles = {
     background: "var(--accent)",
     color: "#fff",
     border: "none",
-    borderRadius: 24,
-    padding: "0 24px",
-    fontWeight: 600,
-    fontSize: 14,
+    borderRadius: "50%",
+    width: 38,
+    height: 38,
+    fontSize: 15,
+    flexShrink: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 };

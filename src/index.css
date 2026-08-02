@@ -324,6 +324,15 @@ button:focus-visible,
   .icon-rail-bottom { flex-direction: row !important; }
 }
 
+/* Bahut chhote phones (jaise purane 320-360px wide devices) ke liye extra tight fit -
+   taaki kisi bhi chhote se chhote screen pe bhi sab kuch sahi fit ho, cut na ho */
+@media (max-width: 360px) {
+  .icon-rail { height: 46px !important; padding: 0 8px !important; }
+  .icon-rail-avatar { width: 28px !important; height: 28px !important; font-size: 12px !important; }
+  .icon-rail-item { padding: 5px 7px !important; }
+  .icon-rail-item span:first-child { font-size: 15px !important; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;

@@ -175,7 +175,7 @@ export default function Chat() {
         setMobileView("list");
       }
     } catch (err) {
-      // ignore
+      alert(err.response?.data?.message || "Chat delete nahi ho payi, dobara try karo");
     }
   };
 

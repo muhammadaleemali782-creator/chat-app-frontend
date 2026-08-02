@@ -9,6 +9,7 @@ export default function MeetingScheduler({ conversationId, otherUserId, onStartC
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [callType, setCallType] = useState("video");
+  const [duration, setDuration] = useState(30);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [conflict, setConflict] = useState(null);
@@ -46,6 +47,7 @@ export default function MeetingScheduler({ conversationId, otherUserId, onStartC
         const res = await api.post("/meetings/check-conflict", {
           otherUserId,
           scheduledAt: scheduledAt.toISOString(),
+          duration,
         });
         setConflict(res.data.conflict ? res.data.meeting : null);
       } catch (err) {
@@ -56,7 +58,7 @@ export default function MeetingScheduler({ conversationId, otherUserId, onStartC
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [date, time, otherUserId]);
+  }, [date, time, otherUserId, duration]);
 
   const handleSchedule = async (e) => {
     e.preventDefault();
@@ -90,6 +92,7 @@ export default function MeetingScheduler({ conversationId, otherUserId, onStartC
         title: title.trim(),
         scheduledAt: scheduledAt.toISOString(),
         callType,
+        duration,
       });
       setTitle("");
       setDate("");
@@ -103,11 +106,13 @@ export default function MeetingScheduler({ conversationId, otherUserId, onStartC
   };
 
   const handleCancel = async (id) => {
+    const reason = window.prompt("Cancel karne ki wajah kya hai? (khali bhi chhod sakte ho)", "");
+    if (reason === null) return; // user ne "Cancel" dabaya prompt box ka
     try {
-      await api.delete(`/meetings/${id}`);
+      await api.delete(`/meetings/${id}`, { data: { reason } });
       await loadMeetings();
     } catch (err) {
-      // ignore
+      alert(err.response?.data?.message || "Meeting cancel nahi ho payi, dobara try karo");
     }
   };
 
@@ -193,6 +198,23 @@ export default function MeetingScheduler({ conversationId, otherUserId, onStartC
                 </div>
               )}
 
+              <label style={styles.label}>Kitni der ki meeting hai</label>
+              <div style={styles.row}>
+                {[15, 30, 45, 60, 90].map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    style={{
+                      ...styles.durationBtn,
+                      ...(duration === d ? styles.typeBtnActive : {}),
+                    }}
+                    onClick={() => setDuration(d)}
+                  >
+                    {d < 60 ? `${d}m` : `${d / 60}h`}
+                  </button>
+                ))}
+              </div>
+
               <label style={styles.label}>Call ka type</label>
               <div style={styles.row}>
                 <button
@@ -241,7 +263,9 @@ export default function MeetingScheduler({ conversationId, otherUserId, onStartC
                   </div>
                   <div style={{ minWidth: 0, flex: 1 }}>
                     <div style={styles.meetingTitle}>{m.title}</div>
-                    <div style={styles.meetingTime}>{formatMeetingTime(m.scheduledAt)}</div>
+                    <div style={styles.meetingTime}>
+                      {formatMeetingTime(m.scheduledAt)} · {m.duration || 30} min
+                    </div>
                   </div>
                   <div style={{ display: "flex", gap: 6 }}>
                     <button
@@ -363,6 +387,16 @@ const styles = {
     background: "var(--accent-soft)",
     borderColor: "var(--accent)",
     color: "var(--accent)",
+  },
+  durationBtn: {
+    flex: 1,
+    background: "var(--surface-2)",
+    border: "1px solid var(--border)",
+    borderRadius: 10,
+    padding: "9px 4px",
+    color: "var(--text-muted)",
+    fontSize: 12.5,
+    fontWeight: 600,
   },
   error: {
     background: "rgba(240,98,95,0.12)",
