@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import api from "../api";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const MAX_YEAR = new Date().getFullYear() + 3; // 3 saal se aage schedule nahi kar sakte (galti se bade number type hone se bachata hai)
 
 export default function MeetingScheduler({ conversationId, otherUserId, onStartCall, onClose }) {
+  const { user } = useAuth();
   const [meetings, setMeetings] = useState([]);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
@@ -14,6 +16,7 @@ export default function MeetingScheduler({ conversationId, otherUserId, onStartC
   const [error, setError] = useState("");
   const [conflict, setConflict] = useState(null);
   const [checkingConflict, setCheckingConflict] = useState(false);
+  const [editingId, setEditingId] = useState(null);
 
   const loadMeetings = async () => {
     try {
@@ -45,9 +48,10 @@ export default function MeetingScheduler({ conversationId, otherUserId, onStartC
       setCheckingConflict(true);
       try {
         const res = await api.post("/meetings/check-conflict", {
-          otherUserId,
+          userIds: [otherUserId],
           scheduledAt: scheduledAt.toISOString(),
           duration,
+          excludeMeetingId: editingId,
         });
         setConflict(res.data.conflict ? res.data.meeting : null);
       } catch (err) {
@@ -58,7 +62,7 @@ export default function MeetingScheduler({ conversationId, otherUserId, onStartC
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [date, time, otherUserId, duration]);
+  }, [date, time, otherUserId, duration, editingId]);
 
   const handleSchedule = async (e) => {
     e.preventDefault();
@@ -87,13 +91,23 @@ export default function MeetingScheduler({ conversationId, otherUserId, onStartC
 
     setLoading(true);
     try {
-      await api.post("/meetings", {
-        conversationId,
-        title: title.trim(),
-        scheduledAt: scheduledAt.toISOString(),
-        callType,
-        duration,
-      });
+      if (editingId) {
+        await api.put(`/meetings/${editingId}`, {
+          title: title.trim(),
+          scheduledAt: scheduledAt.toISOString(),
+          callType,
+          duration,
+        });
+        setEditingId(null);
+      } else {
+        await api.post("/meetings", {
+          conversationId,
+          title: title.trim(),
+          scheduledAt: scheduledAt.toISOString(),
+          callType,
+          duration,
+        });
+      }
       setTitle("");
       setDate("");
       setTime("");
@@ -105,6 +119,25 @@ export default function MeetingScheduler({ conversationId, otherUserId, onStartC
     }
   };
 
+  const startEdit = (m) => {
+    setEditingId(m._id);
+    setTitle(m.title);
+    const d = new Date(m.scheduledAt);
+    setDate(d.toISOString().slice(0, 10));
+    setTime(d.toTimeString().slice(0, 5));
+    setCallType(m.callType);
+    setDuration(m.duration || 30);
+    setError("");
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setTitle("");
+    setDate("");
+    setTime("");
+    setError("");
+  };
+
   const handleCancel = async (id) => {
     const reason = window.prompt("Cancel karne ki wajah kya hai? (khali bhi chhod sakte ho)", "");
     if (reason === null) return; // user ne "Cancel" dabaya prompt box ka
@@ -113,6 +146,17 @@ export default function MeetingScheduler({ conversationId, otherUserId, onStartC
       await loadMeetings();
     } catch (err) {
       alert(err.response?.data?.message || "Meeting cancel nahi ho payi, dobara try karo");
+    }
+  };
+
+  const handleDecline = async (id) => {
+    const reason = window.prompt("Kyun nahi aa sakte? (khali bhi chhod sakte ho)", "");
+    if (reason === null) return;
+    try {
+      await api.put(`/meetings/${id}/decline`, { reason });
+      await loadMeetings();
+    } catch (err) {
+      alert(err.response?.data?.message || "Save nahi hua, dobara try karo");
     }
   };
 
@@ -242,8 +286,19 @@ export default function MeetingScheduler({ conversationId, otherUserId, onStartC
               {error && <div style={styles.error}>{error}</div>}
 
               <button className="primary-btn" style={styles.scheduleBtn} disabled={loading}>
-                {loading ? "Schedule ho raha hai..." : "Meeting schedule karo"}
+                {loading
+                  ? editingId
+                    ? "Update ho raha hai..."
+                    : "Schedule ho raha hai..."
+                  : editingId
+                  ? "Meeting update karo"
+                  : "Meeting schedule karo"}
               </button>
+              {editingId && (
+                <button type="button" style={styles.cancelEditBtn} onClick={cancelEdit}>
+                  Edit cancel karo
+                </button>
+              )}
             </form>
           </div>
 
@@ -256,36 +311,62 @@ export default function MeetingScheduler({ conversationId, otherUserId, onStartC
                   Koi meeting schedule nahi hai
                 </div>
               )}
-              {meetings.map((m) => (
-                <div key={m._id} style={styles.meetingItem}>
-                  <div style={styles.meetingIcon}>
-                    {m.callType === "video" ? "🎥" : "🎙️"}
-                  </div>
-                  <div style={{ minWidth: 0, flex: 1 }}>
-                    <div style={styles.meetingTitle}>{m.title}</div>
-                    <div style={styles.meetingTime}>
-                      {formatMeetingTime(m.scheduledAt)} · {m.duration || 30} min
+              {meetings.map((m) => {
+                const isOrganizer = (m.createdBy?._id || m.createdBy) === user.id;
+                const myInvite = m.invitees?.find((inv) => (inv.user?._id || inv.user) === user.id);
+                const iDeclined = myInvite?.status === "declined";
+                return (
+                  <div
+                    key={m._id}
+                    style={{ ...styles.meetingItem, ...(iDeclined ? styles.meetingItemDeclined : {}) }}
+                  >
+                    <div style={styles.meetingIcon}>{m.callType === "video" ? "🎥" : "🎙️"}</div>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={styles.meetingTitle}>{m.title}</div>
+                      <div style={styles.meetingTime}>
+                        {formatMeetingTime(m.scheduledAt)} · {m.duration || 30} min
+                      </div>
+                      {iDeclined && <div style={styles.declinedTag}>Aapne decline kar diya hai</div>}
+                    </div>
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                      {!iDeclined && (
+                        <button
+                          className="primary-btn"
+                          style={styles.joinBtn}
+                          onClick={() => onStartCall(m.callType)}
+                          title="Abhi call karo"
+                        >
+                          Join
+                        </button>
+                      )}
+                      {isOrganizer ? (
+                        <>
+                          <button style={styles.editBtn} onClick={() => startEdit(m)} title="Edit karo">
+                            ✏️
+                          </button>
+                          <button
+                            style={styles.cancelBtn}
+                            onClick={() => handleCancel(m._id)}
+                            title="Sabke liye cancel karo"
+                          >
+                            ✕
+                          </button>
+                        </>
+                      ) : (
+                        !iDeclined && (
+                          <button
+                            style={styles.cancelBtn}
+                            onClick={() => handleDecline(m._id)}
+                            title="Main nahi aa sakta"
+                          >
+                            ✕
+                          </button>
+                        )
+                      )}
                     </div>
                   </div>
-                  <div style={{ display: "flex", gap: 6 }}>
-                    <button
-                      className="primary-btn"
-                      style={styles.joinBtn}
-                      onClick={() => onStartCall(m.callType)}
-                      title="Abhi call karo"
-                    >
-                      Join
-                    </button>
-                    <button
-                      style={styles.cancelBtn}
-                      onClick={() => handleCancel(m._id)}
-                      title="Cancel karo"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -436,6 +517,14 @@ const styles = {
     fontWeight: 600,
     marginTop: 14,
   },
+  cancelEditBtn: {
+    background: "transparent",
+    border: "none",
+    color: "var(--text-faint)",
+    fontSize: 12,
+    marginTop: 6,
+    textDecoration: "underline",
+  },
   meetingsList: {
     display: "flex",
     flexDirection: "column",
@@ -457,6 +546,8 @@ const styles = {
     border: "1px solid var(--border)",
     borderRadius: 12,
   },
+  meetingItemDeclined: { opacity: 0.55 },
+  declinedTag: { fontSize: 10.5, color: "var(--danger)", fontWeight: 600, marginTop: 2 },
   meetingIcon: { fontSize: 20 },
   meetingTitle: { fontSize: 14, fontWeight: 600 },
   meetingTime: { fontSize: 12, color: "var(--text-muted)", marginTop: 2 },
@@ -468,6 +559,14 @@ const styles = {
     padding: "7px 12px",
     fontSize: 12.5,
     fontWeight: 600,
+  },
+  editBtn: {
+    background: "transparent",
+    border: "1px solid var(--border)",
+    color: "var(--text-muted)",
+    fontSize: 12,
+    width: 30,
+    borderRadius: 8,
   },
   cancelBtn: {
     background: "transparent",

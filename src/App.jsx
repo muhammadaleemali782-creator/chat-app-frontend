@@ -7,6 +7,7 @@ import CallOverlay from "./components/CallOverlay.jsx";
 import LoadingScreen from "./components/LoadingScreen.jsx";
 import AppLockGate from "./components/AppLockGate.jsx";
 import BackButtonHandler from "./components/BackButtonHandler.jsx";
+import NotificationManager from "./components/NotificationManager.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
@@ -28,6 +29,7 @@ export default function App() {
         <CallProvider>
           <AppLockGate>
             <BackButtonHandler />
+            <NotificationManager />
             <Routes>
             <Route
               path="/login"

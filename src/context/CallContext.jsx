@@ -3,6 +3,7 @@ import { getSocket } from "../socket";
 import { useAuth } from "./AuthContext.jsx";
 import api from "../api";
 import { startRingtone, stopRingtone, startOutgoingTone, stopOutgoingTone } from "../utils/sounds";
+import { showLocalNotification } from "../utils/notifications";
 
 const CallContext = createContext(null);
 
@@ -265,6 +266,10 @@ export function CallProvider({ children }) {
         setCallType(type);
         callTypeRef.current = type;
         setOtherUser({ _id: fromUserId, displayName: callerName || "Unknown" });
+        showLocalNotification(
+          `${callerName || "Koi"} call kar raha hai`,
+          type === "video" ? "📹 Video call" : "📞 Audio call"
+        );
         return "incoming";
       });
     };

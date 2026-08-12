@@ -57,22 +57,58 @@ export default function CalendarPage() {
     return () => clearInterval(id);
   }, []);
 
-  const handleCancel = async (id) => {
-    if (!window.confirm("Yeh meeting cancel karni hai?")) return;
-    const reason = window.prompt("Cancel karne ki wajah kya hai? (khali bhi chhod sakte ho)", "");
-    if (reason === null) return;
+  const handleCancel = async (meeting) => {
+    const isOrganizer = (meeting.createdBy?._id || meeting.createdBy) === user.id;
+    if (isOrganizer) {
+      if (!window.confirm("Yeh meeting sabke liye cancel karni hai?")) return;
+      const reason = window.prompt("Cancel karne ki wajah kya hai? (khali bhi chhod sakte ho)", "");
+      if (reason === null) return;
+      try {
+        await api.delete(`/meetings/${meeting._id}`, { data: { reason } });
+        load();
+      } catch (err) {
+        alert(err.response?.data?.message || "Meeting cancel nahi ho payi, dobara try karo");
+      }
+    } else {
+      const reason = window.prompt("Kyun nahi aa sakte? (khali bhi chhod sakte ho)", "");
+      if (reason === null) return;
+      try {
+        await api.put(`/meetings/${meeting._id}/decline`, { reason });
+        load();
+      } catch (err) {
+        alert(err.response?.data?.message || "Save nahi hua, dobara try karo");
+      }
+    }
+  };
+
+  const handleDismiss = async (meetingId) => {
     try {
-      await api.delete(`/meetings/${id}`, { data: { reason } });
+      await api.put(`/meetings/${meetingId}/dismiss`);
       load();
     } catch (err) {
-      alert(err.response?.data?.message || "Meeting cancel nahi ho payi, dobara try karo");
+      // ignore
     }
   };
 
   const handleJoin = (meeting) => {
-    const other = meeting.conversation?.participants?.find((p) => p._id !== user.id);
-    if (!other) return;
-    startCall(other, meeting.conversation._id, meeting.callType);
+    // Abhi sirf 1-on-1 calling banayi hai - button already disable hai group
+    // meetings ke liye, yeh sirf ek safety check hai
+    if (meeting.invitees.length !== 1) return;
+    const isOrganizer = (meeting.createdBy?._id || meeting.createdBy) === user.id;
+    const other = isOrganizer ? meeting.invitees[0].user : meeting.createdBy;
+    if (!other?._id) return;
+    // Call ke liye ek conversation chahiye - agar meeting kisi chat se nahi bani thi,
+    // to us bande ke saath conversation dhoondo/bana lo
+    (async () => {
+      try {
+        const convId =
+          meeting.conversation ||
+          (await api.post("/conversations/start", { otherUserId: other._id })).data._id;
+        startCall(other, convId, meeting.callType);
+      } catch (err) {
+        alert("Call shuru nahi ho payi");
+      }
+    })();
   };
 
   // Agle 7 dino ki list (aaj se shuru)
@@ -214,10 +250,19 @@ export default function CalendarPage() {
                   )}
                   {hourMeetings.length === 0 && <div style={styles.hourEmpty} />}
                   {hourMeetings.map((m) => {
-                    const other = m.conversation?.participants?.find((p) => p._id !== user.id);
-                    const color = avatarColor(other?.displayName || "");
+                    const isOrganizer = (m.createdBy?._id || m.createdBy) === user.id;
+                    const myInvite = m.invitees?.find((inv) => (inv.user?._id || inv.user) === user.id);
+                    const iDeclined = myInvite?.status === "declined";
+                    const otherNames = isOrganizer
+                      ? m.invitees.map((inv) => inv.user?.displayName).filter(Boolean).join(", ")
+                      : m.createdBy?.displayName;
+                    const label = isOrganizer ? m.createdBy?.displayName : otherNames;
+                    const color = avatarColor(label || "");
                     return (
-                      <div key={m._id} style={styles.meetingCard}>
+                      <div
+                        key={m._id}
+                        style={{ ...styles.meetingCard, ...(iDeclined ? styles.meetingCardDeclined : {}) }}
+                      >
                         <div
                           style={{
                             ...styles.avatar,
@@ -225,21 +270,52 @@ export default function CalendarPage() {
                             color: color.fg,
                           }}
                         >
-                          {(other?.displayName || "?").charAt(0).toUpperCase()}
+                          {(label || "?").charAt(0).toUpperCase()}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={styles.meetingTitle}>{m.title}</div>
                           <div style={styles.meetingMeta}>
-                            {formatTime(m.scheduledAt)} ({m.duration || 30}m) · {other?.displayName} ·{" "}
+                            {formatTime(m.scheduledAt)} ({m.duration || 30}m) ·{" "}
+                            {isOrganizer ? `Sabko invite kiya: ${otherNames}` : otherNames} ·{" "}
                             {m.callType === "video" ? "🎥 Video" : "🎙️ Audio"}
                           </div>
+                          {iDeclined && (
+                            <div style={styles.declinedTag}>
+                              Aapne decline kar diya {myInvite.declineReason ? `- "${myInvite.declineReason}"` : ""}
+                            </div>
+                          )}
                         </div>
-                        <button className="primary-btn" style={styles.joinBtn} onClick={() => handleJoin(m)}>
-                          Join
-                        </button>
-                        <button style={styles.cancelBtn} onClick={() => handleCancel(m._id)} title="Cancel">
-                          ✕
-                        </button>
+                        {iDeclined ? (
+                          <button style={styles.cancelBtn} onClick={() => handleDismiss(m._id)} title="Calendar se hataao">
+                            Hide karo
+                          </button>
+                        ) : (
+                          <>
+                            <button
+                              className="primary-btn"
+                              style={{
+                                ...styles.joinBtn,
+                                ...(m.invitees.length !== 1 ? styles.joinBtnDisabled : {}),
+                              }}
+                              onClick={() => handleJoin(m)}
+                              disabled={m.invitees.length !== 1}
+                              title={
+                                m.invitees.length !== 1
+                                  ? "Group calling abhi available nahi hai"
+                                  : "Abhi call karo"
+                              }
+                            >
+                              Join
+                            </button>
+                            <button
+                              style={styles.cancelBtn}
+                              onClick={() => handleCancel(m)}
+                              title={isOrganizer ? "Sabke liye cancel karo" : "Main nahi aa sakta"}
+                            >
+                              ✕
+                            </button>
+                          </>
+                        )}
                       </div>
                     );
                   })}
@@ -404,6 +480,8 @@ const styles = {
     borderRadius: 12,
     padding: "9px 12px",
   },
+  meetingCardDeclined: { opacity: 0.55 },
+  declinedTag: { fontSize: 10.5, color: "var(--danger)", fontWeight: 600, marginTop: 2 },
   avatar: {
     width: 30,
     height: 30,
@@ -427,6 +505,11 @@ const styles = {
     fontSize: 12,
     fontWeight: 600,
     flexShrink: 0,
+  },
+  joinBtnDisabled: {
+    background: "var(--surface-2)",
+    color: "var(--text-faint)",
+    opacity: 0.7,
   },
   cancelBtn: {
     background: "transparent",

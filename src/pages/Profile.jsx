@@ -4,6 +4,10 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { avatarColor } from "../utils/avatarColor";
 import { hasPinSet, setPin, clearPin, verifyPin } from "../utils/appLock";
 
+// Yeh aapki website ka link hai - jab koi app share karega, yehi link jaayega.
+// Agar kabhi Vercel URL badal jaaye to bas yahan update kar dena.
+const APP_SHARE_URL = "https://chat-app-frontend-iota-coral.vercel.app";
+
 export default function Profile({ onClose }) {
   const { user, updateUser } = useAuth();
   const [displayName, setDisplayName] = useState(user?.displayName || "");
@@ -20,6 +24,24 @@ export default function Profile({ onClose }) {
 
   const color = avatarColor(user?.displayName || "");
   const initial = (user?.displayName || "?").charAt(0).toUpperCase();
+
+  const handleShareApp = async () => {
+    const shareText = `${user?.displayName} (@${user?.username}) ne aapko ChatApp use karne ke liye invite kiya hai!\n\n${APP_SHARE_URL}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "ChatApp",
+          text: shareText,
+          url: APP_SHARE_URL,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareText);
+        alert("Link copy ho gaya - kisi ko bhi paste karke bhej do!");
+      }
+    } catch (err) {
+      // User ne share cancel kar diya ho sakta hai - kuch nahi karna
+    }
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -127,6 +149,10 @@ export default function Profile({ onClose }) {
 
         <button className="primary-btn" style={styles.saveBtn} onClick={handleSave} disabled={saving}>
           {saving ? "Save ho raha hai..." : saved ? "✓ Save ho gaya" : "Save karo"}
+        </button>
+
+        <button style={styles.shareBtn} onClick={handleShareApp}>
+          🔗 App Share Karo
         </button>
 
         <div style={styles.divider} />
@@ -295,6 +321,17 @@ const styles = {
     borderRadius: 10,
     padding: "11px 14px",
     fontSize: 14,
+    fontWeight: 600,
+  },
+  shareBtn: {
+    marginTop: 10,
+    width: "100%",
+    background: "var(--surface-2)",
+    border: "1px solid var(--border)",
+    color: "var(--text)",
+    borderRadius: 10,
+    padding: "11px 14px",
+    fontSize: 13.5,
     fontWeight: 600,
   },
   divider: {

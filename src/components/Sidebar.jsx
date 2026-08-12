@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { usePresence } from "../context/PresenceContext.jsx";
 import { avatarColor } from "../utils/avatarColor";
 import LoadingScreen from "./LoadingScreen.jsx";
+import CreateGroupModal from "./CreateGroupModal.jsx";
 
 export default function Sidebar({
   conversations,
@@ -11,11 +12,13 @@ export default function Sidebar({
   onSelect,
   onNewConversation,
   onDeleteConversation,
+  onGroupCreated,
   loading,
 }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
   const debounceRef = useRef(null);
   const { user } = useAuth();
   const { isOnline } = usePresence();
@@ -55,7 +58,24 @@ export default function Sidebar({
         <div className="wordmark" style={{ fontSize: 22 }}>
           Chat<span className="dot">.</span>
         </div>
+        <button
+          style={styles.newGroupBtn}
+          title="Naya group banao"
+          onClick={() => setShowCreateGroup(true)}
+        >
+          👥+
+        </button>
       </div>
+
+      {showCreateGroup && (
+        <CreateGroupModal
+          onClose={() => setShowCreateGroup(false)}
+          onCreated={(group) => {
+            setShowCreateGroup(false);
+            onGroupCreated?.(group);
+          }}
+        />
+      )}
 
       <div style={styles.searchBox}>
         <div style={styles.searchInputWrap}>
@@ -105,10 +125,15 @@ export default function Sidebar({
           </div>
         )}
         {conversations.map((conv) => {
-          const other = otherParticipant(conv);
-          if (!other) return null;
-          const c = avatarColor(other.displayName);
+          const isGroup = conv.type === "group";
+          const other = isGroup ? null : otherParticipant(conv);
+          if (!isGroup && !other) return null;
+          const c = isGroup ? null : avatarColor(other.displayName);
           const isActive = conv._id === activeId;
+          const title = isGroup ? conv.name : other.displayName;
+          const subtitle = isGroup
+            ? `${conv.participants.length} members`
+            : conv.lastMessage || "Chat shuru karo...";
           return (
             <div
               key={conv._id}
@@ -120,11 +145,18 @@ export default function Sidebar({
               }}
               onClick={() => onSelect(conv)}
             >
-              <Avatar name={other.displayName} online={isOnline(other._id)} color={c} />
+              {isGroup ? (
+                <GroupAvatar name={conv.name} />
+              ) : (
+                <Avatar name={other.displayName} online={isOnline(other._id)} color={c} />
+              )}
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={styles.convName}>{other.displayName}</div>
+                <div style={styles.convName}>
+                  {isGroup && "👥 "}
+                  {title}
+                </div>
                 <div style={styles.convLastMsg}>
-                  {conv.lastMessage || "Chat shuru karo..."}
+                  {isGroup ? subtitle : conv.lastMessage || subtitle}
                 </div>
               </div>
               <button
@@ -175,6 +207,28 @@ function Avatar({ name, online, color, size = 42 }) {
   );
 }
 
+function GroupAvatar({ name, size = 42 }) {
+  return (
+    <div
+      style={{
+        width: size,
+        height: size,
+        borderRadius: "50%",
+        background: "var(--accent-soft)",
+        color: "var(--accent)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontWeight: 700,
+        fontSize: size * 0.42,
+        flexShrink: 0,
+      }}
+    >
+      👥
+    </div>
+  );
+}
+
 const styles = {
   wrap: {
     display: "flex",
@@ -199,6 +253,15 @@ const styles = {
     width: 32,
     height: 32,
     fontSize: 14,
+  },
+  newGroupBtn: {
+    background: "var(--surface-2)",
+    border: "1px solid var(--border)",
+    color: "var(--text)",
+    borderRadius: 8,
+    padding: "6px 10px",
+    fontSize: 13,
+    fontWeight: 600,
   },
   searchBox: { position: "relative", padding: "6px 18px 14px" },
   searchInputWrap: { position: "relative" },
@@ -303,4 +366,4 @@ const styles = {
   },
 };
 
-export { Avatar };
+export { Avatar, GroupAvatar };

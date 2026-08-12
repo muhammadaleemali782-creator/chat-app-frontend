@@ -6,7 +6,7 @@ const MAX_YEAR = new Date().getFullYear() + 3;
 export default function ScheduleMeetingModal({ onClose, onScheduled }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUsers, setSelectedUsers] = useState([]);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -25,16 +25,16 @@ export default function ScheduleMeetingModal({ onClose, onScheduled }) {
     const t = setTimeout(async () => {
       try {
         const res = await api.get(`/users/search?username=${encodeURIComponent(query.trim())}`);
-        setResults(res.data);
+        setResults(res.data.filter((u) => !selectedUsers.some((s) => s._id === u._id)));
       } catch (err) {
         setResults([]);
       }
     }, 300);
     return () => clearTimeout(t);
-  }, [query]);
+  }, [query, selectedUsers]);
 
   useEffect(() => {
-    if (!date || !time || !selectedUser) {
+    if (!date || !time || selectedUsers.length === 0) {
       setConflict(null);
       return;
     }
@@ -47,7 +47,7 @@ export default function ScheduleMeetingModal({ onClose, onScheduled }) {
       setCheckingConflict(true);
       try {
         const res = await api.post("/meetings/check-conflict", {
-          otherUserId: selectedUser._id,
+          userIds: selectedUsers.map((u) => u._id),
           scheduledAt: scheduledAt.toISOString(),
           duration,
         });
@@ -59,14 +59,21 @@ export default function ScheduleMeetingModal({ onClose, onScheduled }) {
       }
     }, 400);
     return () => clearTimeout(t);
-  }, [date, time, duration, selectedUser]);
+  }, [date, time, duration, selectedUsers]);
+
+  const addUser = (u) => {
+    setSelectedUsers((prev) => [...prev, u]);
+    setQuery("");
+    setResults([]);
+  };
+  const removeUser = (id) => setSelectedUsers((prev) => prev.filter((u) => u._id !== id));
 
   const handleSchedule = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (!selectedUser) {
-      setError("Pehle kisi ko select karo");
+    if (selectedUsers.length === 0) {
+      setError("Kam se kam ek insaan ko invite karo");
       return;
     }
     if (!title.trim() || !date || !time) {
@@ -90,14 +97,12 @@ export default function ScheduleMeetingModal({ onClose, onScheduled }) {
 
     setLoading(true);
     try {
-      // Pehle conversation dhoondo ya bana lo, phir usi mein meeting schedule karo
-      const convRes = await api.post("/conversations/start", { otherUserId: selectedUser._id });
       await api.post("/meetings", {
-        conversationId: convRes.data._id,
         title: title.trim(),
         scheduledAt: scheduledAt.toISOString(),
         callType,
         duration,
+        inviteeIds: selectedUsers.map((u) => u._id),
       });
       onScheduled?.();
       onClose();
@@ -119,44 +124,37 @@ export default function ScheduleMeetingModal({ onClose, onScheduled }) {
         </div>
 
         <form style={styles.form} onSubmit={handleSchedule}>
-          <label style={styles.label}>Kiske saath?</label>
-          {!selectedUser ? (
-            <>
-              <input
-                style={styles.input}
-                placeholder="Username se dhundo..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-              />
-              {results.length > 0 && (
-                <div style={styles.resultsList}>
-                  {results.map((u) => (
-                    <button
-                      key={u._id}
-                      type="button"
-                      style={styles.resultItem}
-                      onClick={() => {
-                        setSelectedUser(u);
-                        setQuery("");
-                        setResults([]);
-                      }}
-                    >
-                      {u.displayName} <span style={{ color: "var(--text-faint)" }}>@{u.username}</span>
-                    </button>
-                  ))}
+          <label style={styles.label}>Kisko invite karna hai? (jitne chaho utne)</label>
+          {selectedUsers.length > 0 && (
+            <div style={styles.selectedList}>
+              {selectedUsers.map((u) => (
+                <div key={u._id} style={styles.selectedPill}>
+                  {u.displayName}
+                  <button type="button" style={styles.selectedPillClose} onClick={() => removeUser(u._id)}>
+                    ✕
+                  </button>
                 </div>
-              )}
-            </>
-          ) : (
-            <div style={styles.selectedUserPill}>
-              {selectedUser.displayName} (@{selectedUser.username})
-              <button
-                type="button"
-                style={styles.selectedUserClear}
-                onClick={() => setSelectedUser(null)}
-              >
-                ✕
-              </button>
+              ))}
+            </div>
+          )}
+          <input
+            style={styles.input}
+            placeholder="Username se dhundo..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          {results.length > 0 && (
+            <div style={styles.resultsList}>
+              {results.map((u) => (
+                <button
+                  key={u._id}
+                  type="button"
+                  style={styles.resultItem}
+                  onClick={() => addUser(u)}
+                >
+                  {u.displayName} <span style={{ color: "var(--text-faint)" }}>@{u.username}</span>
+                </button>
+              ))}
             </div>
           )}
 
@@ -207,7 +205,7 @@ export default function ScheduleMeetingModal({ onClose, onScheduled }) {
           {checkingConflict && <div style={styles.checkingText}>Clash check ho raha hai...</div>}
           {conflict && (
             <div style={styles.conflictWarning}>
-              🔴 Is waqt {selectedUser?.displayName} ke saath pehle se meeting hai:{" "}
+              🔴 Is waqt kisi invitee ke saath pehle se meeting hai:{" "}
               <strong>
                 {new Date(conflict.scheduledAt).toLocaleString("en-IN", {
                   weekday: "short",
@@ -242,7 +240,7 @@ export default function ScheduleMeetingModal({ onClose, onScheduled }) {
           {error && <div style={styles.error}>{error}</div>}
 
           <button className="primary-btn" style={styles.submitBtn} disabled={loading}>
-            {loading ? "Schedule ho raha hai..." : "Meeting schedule karo"}
+            {loading ? "Schedule ho raha hai..." : `${selectedUsers.length} logo ko invite karo`}
           </button>
         </form>
       </div>
@@ -299,6 +297,19 @@ const styles = {
     color: "var(--text)",
     fontSize: 14,
   },
+  selectedList: { display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 6 },
+  selectedPill: {
+    display: "flex",
+    alignItems: "center",
+    gap: 6,
+    background: "var(--accent-soft)",
+    color: "var(--accent)",
+    borderRadius: 20,
+    padding: "5px 6px 5px 12px",
+    fontSize: 12.5,
+    fontWeight: 600,
+  },
+  selectedPillClose: { background: "transparent", border: "none", color: "var(--accent)", fontSize: 11 },
   resultsList: {
     display: "flex",
     flexDirection: "column",
@@ -316,19 +327,6 @@ const styles = {
     fontSize: 13,
     color: "var(--text)",
   },
-  selectedUserPill: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    background: "var(--accent-soft)",
-    border: "1px solid var(--accent)",
-    borderRadius: 10,
-    padding: "9px 12px",
-    fontSize: 13.5,
-    color: "var(--accent)",
-    fontWeight: 600,
-  },
-  selectedUserClear: { background: "transparent", border: "none", color: "var(--accent)", fontSize: 13 },
   row: { display: "flex", gap: 8 },
   durationBtn: {
     flex: 1,

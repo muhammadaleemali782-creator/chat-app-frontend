@@ -4,7 +4,11 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { useCall } from "../context/CallContext.jsx";
 import { usePresence } from "../context/PresenceContext.jsx";
 import { getSocket } from "../socket";
-import { Avatar } from "./Sidebar.jsx";
+import api from "../api";
+import { Avatar, GroupAvatar } from "./Sidebar.jsx";
+import GroupInfoModal from "./GroupInfoModal.jsx";
+import SheetsListModal from "./SheetsListModal.jsx";
+import TaskPanel from "./TaskPanel.jsx";
 import { avatarColor } from "../utils/avatarColor";
 import MeetingScheduler from "./MeetingScheduler.jsx";
 import LoadingScreen from "./LoadingScreen.jsx";
@@ -14,6 +18,17 @@ function formatTime(dateString) {
   if (!dateString) return "";
   const d = new Date(dateString);
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function formatFullDateTime(dateString) {
+  if (!dateString) return "";
+  const d = new Date(dateString);
+  return d.toLocaleString("en-IN", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function formatDateLabel(dateString) {
@@ -85,6 +100,8 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
   const [recordSeconds, setRecordSeconds] = useState(0);
   const [sendingMedia, setSendingMedia] = useState(false);
   const [showAttachMenu, setShowAttachMenu] = useState(false);
+  const [activeMsgMenu, setActiveMsgMenu] = useState(null);
+  const longPressTimerRef = useRef(null);
 
   useBackHandler(
     "meeting-scheduler",
@@ -110,6 +127,14 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
       return true;
     }
   );
+  useBackHandler(
+    "msg-action-menu",
+    !!activeMsgMenu,
+    () => {
+      setActiveMsgMenu(null);
+      return true;
+    }
+  );
 
   const bottomRef = useRef(null);
   const typingTimeoutRef = useRef(null);
@@ -122,8 +147,48 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
   const { startCall, callState } = useCall();
   const { isOnline } = usePresence();
 
-  const other = conversation.participants.find((p) => p._id !== user.id);
+  const isGroup = conversation.type === "group";
+  const other = isGroup ? null : conversation.participants.find((p) => p._id !== user.id);
   const otherColor = avatarColor(other?.displayName || "");
+  const isAdmin = isGroup && conversation.admins?.some((a) => (a._id || a) === user.id);
+  const [showGroupInfo, setShowGroupInfo] = useState(false);
+  const [showHeaderMenu, setShowHeaderMenu] = useState(false);
+  const [showSheets, setShowSheets] = useState(false);
+  const [showTasks, setShowTasks] = useState(false);
+  const headerMenuRef = useRef(null);
+
+  useBackHandler(
+    "group-info",
+    showGroupInfo,
+    () => {
+      setShowGroupInfo(false);
+      return true;
+    }
+  );
+  useBackHandler(
+    "header-menu",
+    showHeaderMenu,
+    () => {
+      setShowHeaderMenu(false);
+      return true;
+    }
+  );
+  useBackHandler(
+    "sheets-panel",
+    showSheets,
+    () => {
+      setShowSheets(false);
+      return true;
+    }
+  );
+  useBackHandler(
+    "tasks-panel",
+    showTasks,
+    () => {
+      setShowTasks(false);
+      return true;
+    }
+  );
 
   useEffect(() => {
     const socket = getSocket();
@@ -168,6 +233,21 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
     };
   }, [showAttachMenu]);
 
+  useEffect(() => {
+    if (!showHeaderMenu) return;
+    const handler = (e) => {
+      if (headerMenuRef.current && !headerMenuRef.current.contains(e.target)) {
+        setShowHeaderMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    document.addEventListener("touchstart", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("touchstart", handler);
+    };
+  }, [showHeaderMenu]);
+
   const handleChange = (e) => {
     setText(e.target.value);
     const socket = getSocket();
@@ -189,6 +269,26 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
     const socket = getSocket();
     if (socket && other) {
       socket.emit("stop_typing", { conversationId: conversation._id, receiverId: other._id });
+    }
+  };
+
+  const startLongPress = (messageId) => {
+    cancelLongPress();
+    longPressTimerRef.current = setTimeout(() => setActiveMsgMenu(messageId), 450);
+  };
+  const cancelLongPress = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  };
+
+  const handleDeleteMessage = async (messageId) => {
+    if (!window.confirm("Yeh message delete karna hai? Yeh dono taraf se hat jaayega.")) return;
+    try {
+      await api.delete(`/messages/${messageId}`);
+    } catch (err) {
+      alert(err.response?.data?.message || "Delete nahi ho paya, dobara try karo");
     }
   };
 
@@ -290,54 +390,121 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
         >
           ←
         </button>
-        <Avatar name={other?.displayName} online={other && isOnline(other._id)} color={otherColor} />
-        <div style={{ minWidth: 0, flex: 1 }}>
-          <div style={styles.headerName}>{other?.displayName || "User"}</div>
-          <div style={styles.headerStatus}>
-            {otherTyping ? (
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                type kar raha hai
-                <span className="typing-dots">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </span>
-              </span>
-            ) : other && isOnline(other._id) ? (
-              "Online"
-            ) : (
-              "Offline"
+        {isGroup ? (
+          <div
+            style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, cursor: "pointer" }}
+            onClick={() => setShowGroupInfo(true)}
+          >
+            <GroupAvatar name={conversation.name} />
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={styles.headerName}>👥 {conversation.name}</div>
+              <div style={styles.headerStatus}>
+                {otherTyping ? "koi type kar raha hai" : `${conversation.participants.length} members`}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            <Avatar name={other?.displayName} online={other && isOnline(other._id)} color={otherColor} />
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={styles.headerName}>{other?.displayName || "User"}</div>
+              <div style={styles.headerStatus}>
+                {otherTyping ? (
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                    type kar raha hai
+                    <span className="typing-dots">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </span>
+                  </span>
+                ) : other && isOnline(other._id) ? (
+                  "Online"
+                ) : (
+                  "Offline"
+                )}
+              </div>
+            </div>
+          </>
+        )}
+
+        <div style={styles.headerActions} ref={headerMenuRef}>
+          {!isGroup && (
+            <>
+              <button
+                style={styles.headerIconBtn}
+                title="Audio call"
+                disabled={callState !== "idle"}
+                onClick={() => other && startCall(other, conversation._id, "audio")}
+              >
+                📞
+              </button>
+              <button
+                style={styles.headerIconBtn}
+                title="Video call"
+                disabled={callState !== "idle"}
+                onClick={() => other && startCall(other, conversation._id, "video")}
+              >
+                🎥
+              </button>
+            </>
+          )}
+          <div style={{ position: "relative" }}>
+            {showHeaderMenu && (
+              <div style={styles.headerMenu}>
+                {!isGroup && (
+                  <button
+                    style={styles.headerMenuItem}
+                    onClick={() => {
+                      setShowHeaderMenu(false);
+                      setShowMeetings(true);
+                    }}
+                  >
+                    📅 Meetings
+                  </button>
+                )}
+                {isGroup && (
+                  <button
+                    style={styles.headerMenuItem}
+                    onClick={() => {
+                      setShowHeaderMenu(false);
+                      setShowGroupInfo(true);
+                    }}
+                  >
+                    ℹ️ Group Info
+                  </button>
+                )}
+                <button
+                  style={styles.headerMenuItem}
+                  onClick={() => {
+                    setShowHeaderMenu(false);
+                    setShowSheets(true);
+                  }}
+                >
+                  📊 Files
+                </button>
+                <button
+                  style={styles.headerMenuItem}
+                  onClick={() => {
+                    setShowHeaderMenu(false);
+                    setShowTasks(true);
+                  }}
+                >
+                  📋 Tasks
+                </button>
+              </div>
             )}
+            <button
+              style={styles.headerIconBtn}
+              title="Aur options"
+              onClick={() => setShowHeaderMenu((v) => !v)}
+            >
+              ⋮
+            </button>
           </div>
         </div>
 
-        <div style={styles.headerActions}>
-          <button
-            style={styles.headerIconBtn}
-            title="Audio call"
-            disabled={callState !== "idle"}
-            onClick={() => other && startCall(other, conversation._id, "audio")}
-          >
-            📞
-          </button>
-          <button
-            style={styles.headerIconBtn}
-            title="Video call"
-            disabled={callState !== "idle"}
-            onClick={() => other && startCall(other, conversation._id, "video")}
-          >
-            🎥
-          </button>
-          <button
-            style={styles.headerIconBtn}
-            title="Meetings"
-            onClick={() => setShowMeetings((v) => !v)}
-          >
-            📅
-          </button>
-        </div>
-
-        {showMeetings && (
+        {showMeetings && !isGroup && (
           <MeetingScheduler
             conversationId={conversation._id}
             otherUserId={other?._id}
@@ -348,6 +515,30 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
             onClose={() => setShowMeetings(false)}
           />
         )}
+
+        {showGroupInfo && (
+          <GroupInfoModal
+            conversation={conversation}
+            onClose={() => setShowGroupInfo(false)}
+            onUpdated={(updated) => {
+              // Parent Chat.jsx conversation state ko sync karne ke liye event bhejte hain
+              window.dispatchEvent(new CustomEvent("group-updated", { detail: updated }));
+            }}
+            onLeft={() => {
+              setShowGroupInfo(false);
+              window.dispatchEvent(new CustomEvent("group-left", { detail: conversation._id }));
+              onBack?.();
+            }}
+          />
+        )}
+
+        {showSheets && (
+          <SheetsListModal conversationId={conversation._id} onClose={() => setShowSheets(false)} />
+        )}
+
+        {showTasks && (
+          <TaskPanel conversationId={conversation._id} onClose={() => setShowTasks(false)} />
+        )}
       </div>
 
       <div style={styles.messages}>
@@ -355,7 +546,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
         {!loading && messages.length === 0 && (
           <div style={styles.emptyChat}>
             <div style={styles.emptyChatIcon}>👋</div>
-            {other?.displayName} ke saath abhi tak koi message nahi hai.
+            {isGroup ? conversation.name : other?.displayName} ke saath abhi tak koi message nahi hai.
             <br />
             "Hi" bhej ke shuru karo!
           </div>
@@ -366,6 +557,10 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
             const prevMsg = messages[idx - 1];
             const showDateDivider =
               !prevMsg || dateKey(prevMsg.createdAt) !== dateKey(m.createdAt);
+            const senderName = isGroup
+              ? conversation.participants.find((p) => p._id === (m.sender?._id || m.sender))
+                  ?.displayName
+              : null;
 
             return (
               <div key={m._id}>
@@ -377,18 +572,14 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
                 <div
                   className="msg-bubble-enter"
                   style={{
-                    ...styles.bubbleRow,
-                    justifyContent: isMine ? "flex-end" : "flex-start",
+                    ...styles.bubbleCol,
+                    alignItems: isMine ? "flex-end" : "flex-start",
+                    marginLeft: isMine ? "auto" : 0,
+                    marginRight: isMine ? 0 : "auto",
                   }}
                 >
-                  {!isMine && (
-                    <button
-                      style={styles.replyIconBtn}
-                      title="Reply karo"
-                      onClick={() => setReplyingTo(m)}
-                    >
-                      ↩
-                    </button>
+                  {isGroup && !isMine && senderName && (
+                    <span style={styles.groupSenderName}>{senderName}</span>
                   )}
                   <div
                     style={{
@@ -398,6 +589,16 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
                       borderBottomRightRadius: isMine ? 4 : 18,
                       borderBottomLeftRadius: isMine ? 18 : 4,
                     }}
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      setActiveMsgMenu(m._id);
+                    }}
+                    onTouchStart={() => startLongPress(m._id)}
+                    onTouchEnd={cancelLongPress}
+                    onTouchMove={cancelLongPress}
+                    onMouseDown={() => startLongPress(m._id)}
+                    onMouseUp={cancelLongPress}
+                    onMouseLeave={cancelLongPress}
                   >
                     {m.replyTo && (
                       <div
@@ -421,25 +622,54 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
                     {(m.type === "image" || m.type === "audio") && m.text && (
                       <span>{m.text}</span>
                     )}
-
-                    <span
-                      style={{
-                        ...styles.bubbleTime,
-                        color: isMine ? "rgba(255,255,255,0.7)" : "var(--text-faint)",
-                      }}
-                    >
-                      {formatTime(m.createdAt)}
-                      <StatusTicks status={m.status} isMine={isMine} readAt={m.readAt} />
-                    </span>
                   </div>
-                  {isMine && (
-                    <button
-                      style={styles.replyIconBtn}
-                      title="Reply karo"
-                      onClick={() => setReplyingTo(m)}
-                    >
-                      ↩
-                    </button>
+
+                  {/* Time hamesha bubble ke NEECHE dikhta hai, jis side bubble hai usi side aligned */}
+                  <div style={styles.timeRow}>
+                    <span style={styles.timeBelow}>{formatTime(m.createdAt)}</span>
+                    <StatusTicks status={m.status} isMine={isMine} readAt={m.readAt} />
+                  </div>
+
+                  {activeMsgMenu === m._id && (
+                    <div style={styles.msgMenuBackdrop} onClick={() => setActiveMsgMenu(null)}>
+                      <div
+                        style={{
+                          ...styles.msgMenu,
+                          alignItems: isMine ? "flex-end" : "flex-start",
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div style={styles.msgMenuInfo}>
+                          Bheja gaya: {formatFullDateTime(m.createdAt)}
+                          {m.readAt && (
+                            <>
+                              <br />
+                              Padha gaya: {formatFullDateTime(m.readAt)}
+                            </>
+                          )}
+                        </div>
+                        <button
+                          style={styles.msgMenuBtn}
+                          onClick={() => {
+                            setReplyingTo(m);
+                            setActiveMsgMenu(null);
+                          }}
+                        >
+                          ↩ Reply karo
+                        </button>
+                        {isMine && (m.type === "image" || m.type === "audio" || m.type === "text") && (
+                          <button
+                            style={{ ...styles.msgMenuBtn, color: "var(--danger)" }}
+                            onClick={() => {
+                              setActiveMsgMenu(null);
+                              handleDeleteMessage(m._id);
+                            }}
+                          >
+                            🗑 Delete karo
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
@@ -455,7 +685,11 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
             <div style={styles.replyBarLabel}>
               {replyingTo.sender === user.id || replyingTo.sender?._id === user.id
                 ? "Apne message ka reply"
-                : `${other?.displayName} ke message ka reply`}
+                : `${
+                    conversation.participants.find(
+                      (p) => p._id === (replyingTo.sender?._id || replyingTo.sender)
+                    )?.displayName || other?.displayName || "Unke"
+                  } message ka reply`}
             </div>
             <div style={styles.replyBarText}>{replyPreviewText(replyingTo)}</div>
           </div>
@@ -583,6 +817,34 @@ const styles = {
     fontSize: 15,
     color: "var(--text)",
   },
+  headerMenu: {
+    position: "absolute",
+    top: "calc(100% + 8px)",
+    right: 0,
+    background: "var(--surface)",
+    border: "1px solid var(--border)",
+    borderRadius: 12,
+    boxShadow: "var(--shadow-soft)",
+    padding: 6,
+    display: "flex",
+    flexDirection: "column",
+    gap: 2,
+    minWidth: 170,
+    zIndex: 35,
+  },
+  headerMenuItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    background: "transparent",
+    border: "none",
+    color: "var(--text)",
+    borderRadius: 8,
+    padding: "10px 10px",
+    fontSize: 13.5,
+    textAlign: "left",
+    width: "100%",
+  },
   messages: {
     flex: 1,
     minHeight: 0,
@@ -618,6 +880,62 @@ const styles = {
     borderRadius: 20,
   },
   bubbleRow: { display: "flex", alignItems: "flex-end", gap: 4 },
+  bubbleCol: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 3,
+    maxWidth: "78%",
+    width: "fit-content",
+  },
+  groupSenderName: {
+    fontSize: 11.5,
+    fontWeight: 700,
+    color: "var(--accent)",
+    padding: "0 4px",
+  },
+  timeRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: 2,
+    padding: "0 4px",
+  },
+  timeBelow: { fontSize: 11, color: "var(--text-faint)" },
+  msgMenuBackdrop: {
+    position: "fixed",
+    inset: 0,
+    zIndex: 45,
+  },
+  msgMenu: {
+    position: "relative",
+    marginTop: 6,
+    display: "flex",
+    flexDirection: "column",
+    gap: 4,
+    background: "var(--surface)",
+    border: "1px solid var(--border)",
+    borderRadius: 12,
+    boxShadow: "var(--shadow-soft)",
+    padding: 8,
+    minWidth: 200,
+    zIndex: 46,
+  },
+  msgMenuInfo: {
+    fontSize: 11.5,
+    color: "var(--text-muted)",
+    padding: "4px 8px 8px",
+    borderBottom: "1px solid var(--border-soft)",
+    lineHeight: 1.6,
+  },
+  msgMenuBtn: {
+    background: "transparent",
+    border: "none",
+    color: "var(--text)",
+    fontSize: 13,
+    padding: "8px 8px",
+    textAlign: "left",
+    borderRadius: 8,
+    width: "100%",
+  },
   replyIconBtn: {
     background: "transparent",
     border: "none",

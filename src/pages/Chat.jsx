@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import api from "../api";
 import { getSocket } from "../socket";
 import { useAuth } from "../context/AuthContext.jsx";
 import { usePresence } from "../context/PresenceContext.jsx";
 import { playNotificationSound } from "../utils/sounds";
+import { showLocalNotification } from "../utils/notifications";
 import { useBackHandler } from "../utils/backHandlerStack";
 import Sidebar from "../components/Sidebar.jsx";
 import ChatWindow from "../components/ChatWindow.jsx";
@@ -20,6 +21,10 @@ export default function Chat() {
   const [mobileView, setMobileView] = useState("list"); // "list" | "chat"
   const [loadingConversations, setLoadingConversations] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
+  const conversationsRef = useRef(conversations);
+  useEffect(() => {
+    conversationsRef.current = conversations;
+  }, [conversations]);
   const { user } = useAuth();
   const { seedOnline } = usePresence();
   const [showProfile, setShowProfile] = useState(false);
@@ -73,6 +78,28 @@ export default function Chat() {
     loadConversations();
   }, [loadConversations]);
 
+  // GroupInfoModal se aane wale events - group settings/members badle ya user ne
+  // group chhod diya, to yahan state sync karo
+  useEffect(() => {
+    const handleGroupUpdated = (e) => {
+      const updated = e.detail;
+      setConversations((prev) => prev.map((c) => (c._id === updated._id ? updated : c)));
+      setActiveConv((prev) => (prev?._id === updated._id ? updated : prev));
+    };
+    const handleGroupLeft = (e) => {
+      const groupId = e.detail;
+      setConversations((prev) => prev.filter((c) => c._id !== groupId));
+      setActiveConv((prev) => (prev?._id === groupId ? null : prev));
+      setMobileView("list");
+    };
+    window.addEventListener("group-updated", handleGroupUpdated);
+    window.addEventListener("group-left", handleGroupLeft);
+    return () => {
+      window.removeEventListener("group-updated", handleGroupUpdated);
+      window.removeEventListener("group-left", handleGroupLeft);
+    };
+  }, []);
+
   // Real-time: naya message aaye to state update karo
   useEffect(() => {
     const socket = getSocket();
@@ -86,6 +113,12 @@ export default function Chat() {
       // uspe beep nahi bajani, sirf doosre ke message pe bajani hai
       if (message.sender !== user.id) {
         playNotificationSound();
+        const senderConv = conversationsRef.current.find((c) => c._id === message.conversation);
+        const senderName =
+          senderConv?.participants?.find((p) => p._id === message.sender)?.displayName ||
+          "Naya message";
+        const preview = previewFor(message);
+        showLocalNotification(senderName, preview);
       }
 
       setMessages((prev) => {
@@ -133,13 +166,20 @@ export default function Chat() {
       );
     };
 
+    // Kisi ne apna message delete kar diya - list se hata do
+    const handleMessageDeleted = ({ messageId }) => {
+      setMessages((prev) => prev.filter((m) => m._id !== messageId));
+    };
+
     socket.on("receive_message", handleReceive);
     socket.on("message_status", handleStatus);
     socket.on("messages_read", handleMessagesRead);
+    socket.on("message_deleted", handleMessageDeleted);
     return () => {
       socket.off("receive_message", handleReceive);
       socket.off("message_status", handleStatus);
       socket.off("messages_read", handleMessagesRead);
+      socket.off("message_deleted", handleMessageDeleted);
     };
   }, [activeConv, loadConversations, user]);
 
@@ -177,6 +217,11 @@ export default function Chat() {
     } catch (err) {
       alert(err.response?.data?.message || "Chat delete nahi ho payi, dobara try karo");
     }
+  };
+
+  const handleGroupCreated = (group) => {
+    setConversations((prev) => [group, ...prev]);
+    handleSelectConversation(group);
   };
 
   const handleNewConversation = async (otherUser) => {
@@ -240,6 +285,7 @@ export default function Chat() {
               activeId={activeConv?._id}
               onSelect={handleSelectConversation}
               onNewConversation={handleNewConversation}
+              onGroupCreated={handleGroupCreated}
               onDeleteConversation={handleDeleteConversation}
               loading={loadingConversations}
             />
