@@ -4,6 +4,7 @@ import { useTheme } from "../context/ThemeContext.jsx";
 import { avatarColor } from "../utils/avatarColor";
 
 const THEME_META = {
+  talkiepro: { icon: "🟣", label: "TalkiePro" },
   dark: { icon: "🌙", label: "Dark" },
   light: { icon: "☀️", label: "Light" },
   blue: { icon: "🔵", label: "Blue" },
