@@ -4,10 +4,12 @@ import api from "../api";
 import { useAuth } from "../context/AuthContext.jsx";
 import BrandPanel from "../components/BrandPanel.jsx";
 import LoadingScreen from "../components/LoadingScreen.jsx";
+import ThreeDTiltCard from "../components/ThreeDTiltCard.jsx";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
@@ -18,146 +20,124 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      const res = await api.post("/auth/login", { username, password });
+      const res = await api.post("/auth/login", { username: username.trim(), password });
       login(res.data.token, res.data.user);
       navigate("/app");
     } catch (err) {
-      setError(err.response?.data?.message || "Kuch galat ho gaya, dobara try karo");
+      setError(err.response?.data?.message || "Invalid username or password. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={styles.wrap} className="auth-page-wrap">
+    <div className="auth-page-container">
+      {/* Left Brand Panel (Desktop) */}
       <BrandPanel
-        heading="Baat karo, bina number share kiye."
-        sub="Username se dhundo, turant chat karo."
+        heading="Baat karo, bina phone number share kiye."
+        sub="Connect purely via unique @username. Fast, private, and secure."
       />
-      <div style={styles.formSide}>
-        <div className="auth-card" style={styles.card}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <div className="wordmark" style={{ fontSize: 26 }}>
-              Chatox<span className="dot">.</span>
+
+      {/* Right Form Container */}
+      <div className="auth-form-side">
+        <ThreeDTiltCard maxTilt={8} scale={1.01} className="auth-card-wrapper">
+          <div className="auth-card-inner">
+            {/* Top Bar with Brand & Back Link */}
+            <div className="auth-header-bar">
+              <Link to="/" className="auth-brand-logo-wrap">
+                <div className="landing-brand-logo" style={{ width: 34, height: 34, borderRadius: 10 }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                </div>
+                <span className="wordmark" style={{ fontSize: 24 }}>
+                  Chatox<span className="dot" style={{ color: "var(--amber)" }}>.</span>
+                </span>
+              </Link>
+
+              <Link to="/" className="auth-back-link">
+                <span>←</span>
+                <span>Home</span>
+              </Link>
             </div>
-            <Link to="/" style={{ fontSize: 12.5, color: "var(--text-muted)", textDecoration: "none", display: "flex", alignItems: "center", gap: 4 }}>
-              ← Home
-            </Link>
-          </div>
-          <p style={styles.subtitle}>Apne username se login karo</p>
 
-          <form onSubmit={handleSubmit} style={styles.form}>
-            <label style={styles.label}>Username</label>
-            <input
-              style={styles.input}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="jaise: rahul_23"
-              autoCapitalize="none"
-              required
-            />
+            <h2 className="auth-title">Welcome Back</h2>
+            <p className="auth-subtitle">Login with your unique @username</p>
 
-            <label style={styles.label}>Password</label>
-            <input
-              style={styles.input}
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
-
-            {error && <div style={styles.error}>{error}</div>}
-
-            <button className="primary-btn" style={styles.button} disabled={loading}>
-              {loading ? "Login ho raha hai..." : "Login"}
-            </button>
-            {loading && (
-              <div style={{ marginTop: 4 }}>
-                <LoadingScreen message="Connect ho rahe hain..." />
+            {error && (
+              <div className="auth-error-banner">
+                <span>⚠️</span>
+                <span>{error}</span>
               </div>
             )}
-          </form>
 
-          <p style={{ ...styles.footerText, marginTop: 14, marginBottom: 0 }}>
-            <Link to="/forgot-password" style={styles.link}>
-              Password bhool gaye?
-            </Link>
-          </p>
+            <form onSubmit={handleSubmit} className="auth-form-element">
+              {/* Username Input Group */}
+              <div className="auth-field-group">
+                <label className="auth-field-label">Username</label>
+                <div className="auth-input-wrapper">
+                  <span className="auth-input-icon">@</span>
+                  <input
+                    className="auth-text-input"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="e.g. rahul_23"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    required
+                  />
+                </div>
+              </div>
 
-          <p style={styles.footerText}>
-            Account nahi hai?{" "}
-            <Link to="/register" style={styles.link}>
-              Naya account banao
-            </Link>
-          </p>
-        </div>
+              {/* Password Input Group */}
+              <div className="auth-field-group">
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <label className="auth-field-label">Password</label>
+                  <Link to="/forgot-password" className="auth-forgot-link">
+                    Forgot?
+                  </Link>
+                </div>
+                <div className="auth-input-wrapper">
+                  <span className="auth-input-icon">🔒</span>
+                  <input
+                    className="auth-text-input"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="auth-toggle-pwd"
+                    onClick={() => setShowPassword(!showPassword)}
+                    title={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? "👁️" : "👁️‍🗨️"}
+                  </button>
+                </div>
+              </div>
+
+              <button type="submit" className="auth-submit-btn btn-primary-glow" disabled={loading}>
+                {loading ? "Logging in..." : "Login to Chatox 🚀"}
+              </button>
+
+              {loading && (
+                <div style={{ marginTop: 10 }}>
+                  <LoadingScreen message="Connecting securely..." />
+                </div>
+              )}
+            </form>
+
+            <div className="auth-footer-prompt">
+              <span>Don't have an account?</span>{" "}
+              <Link to="/register" className="auth-action-link">
+                Create Free Account →
+              </Link>
+            </div>
+          </div>
+        </ThreeDTiltCard>
       </div>
     </div>
   );
 }
-
-const styles = {
-  wrap: {
-    height: "100%",
-    display: "grid",
-    gridTemplateColumns: "1.1fr 1fr",
-  },
-  formSide: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  card: {
-    width: "100%",
-    maxWidth: 380,
-    background: "var(--surface)",
-    border: "1px solid var(--border)",
-    borderRadius: "var(--radius)",
-    padding: "32px 28px",
-    boxShadow: "var(--shadow-soft)",
-  },
-  subtitle: {
-    color: "var(--text-muted)",
-    marginTop: 0,
-    marginBottom: 28,
-    fontSize: 14,
-  },
-  form: { display: "flex", flexDirection: "column", gap: 6 },
-  label: { fontSize: 13, color: "var(--text-muted)", marginTop: 10 },
-  input: {
-    background: "var(--surface-2)",
-    border: "1px solid var(--border)",
-    borderRadius: 10,
-    padding: "12px 14px",
-    color: "var(--text)",
-    fontSize: 15,
-  },
-  button: {
-    marginTop: 20,
-    background: "var(--accent)",
-    color: "#fff",
-    border: "none",
-    borderRadius: 10,
-    padding: "12px 14px",
-    fontSize: 15,
-    fontWeight: 600,
-  },
-  error: {
-    background: "rgba(240,98,95,0.12)",
-    color: "var(--danger)",
-    padding: "8px 12px",
-    borderRadius: 8,
-    fontSize: 13,
-    marginTop: 8,
-  },
-  footerText: {
-    textAlign: "center",
-    color: "var(--text-muted)",
-    fontSize: 14,
-    marginTop: 24,
-    marginBottom: 0,
-  },
-  link: { color: "var(--accent)", fontWeight: 600, textDecoration: "none" },
-};

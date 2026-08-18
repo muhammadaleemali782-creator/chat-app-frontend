@@ -3,12 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
 import InteractiveMockup from "../components/InteractiveMockup.jsx";
+import ThreeDTiltCard from "../components/ThreeDTiltCard.jsx";
+import ThreeDFeatureShowcase from "../components/ThreeDFeatureShowcase.jsx";
 
 export default function LandingPage() {
   const { user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [openFaq, setOpenFaq] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const faqs = [
     {
@@ -56,8 +59,9 @@ export default function LandingPage() {
             <nav className="landing-nav-links">
               <a href="#features" className="landing-nav-link">Features</a>
               <a href="#why-chatox" className="landing-nav-link">Why Chatox?</a>
+              <a href="#3d-showcase" className="landing-nav-link">3D Matrix</a>
               <a href="#demo" className="landing-nav-link">Live Demo</a>
-              <a href="#security" className="landing-nav-link">Security & Privacy</a>
+              <a href="#security" className="landing-nav-link">Security</a>
               <a href="#faq" className="landing-nav-link">FAQ</a>
             </nav>
 
@@ -75,7 +79,7 @@ export default function LandingPage() {
               {user ? (
                 <button
                   type="button"
-                  className="btn-primary-glow"
+                  className="btn-primary-glow hide-on-mobile"
                   onClick={() => navigate("/app")}
                 >
                   <span>Launch Web App</span>
@@ -86,15 +90,68 @@ export default function LandingPage() {
                   <Link to="/login" className="btn-secondary-outline hide-on-mobile">
                     Log In
                   </Link>
-                  <Link to="/register" className="btn-primary-glow">
+                  <Link to="/register" className="btn-primary-glow hide-on-mobile">
                     <span>Get Started</span>
                     <span>→</span>
                   </Link>
                 </>
               )}
+
+              {/* Mobile Menu Hamburger */}
+              <button
+                type="button"
+                className="mobile-menu-btn"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Toggle navigation menu"
+              >
+                {mobileMenuOpen ? "✕" : "☰"}
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Navigation Drawer */}
+        {mobileMenuOpen && (
+          <div className="mobile-menu-drawer">
+            <a href="#features" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Features</a>
+            <a href="#why-chatox" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Why Chatox?</a>
+            <a href="#3d-showcase" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>3D Spatial Matrix</a>
+            <a href="#demo" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Live Interactive Demo</a>
+            <a href="#security" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Security & App Lock</a>
+            <a href="#faq" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
+            <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
+              {user ? (
+                <button
+                  type="button"
+                  className="btn-primary-glow"
+                  style={{ width: "100%", justifyContent: "center" }}
+                  onClick={() => { setMobileMenuOpen(false); navigate("/app"); }}
+                >
+                  Open Chatox App 🚀
+                </button>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="btn-secondary-outline"
+                    style={{ flex: 1, justifyContent: "center" }}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="btn-primary-glow"
+                    style={{ flex: 1, justifyContent: "center" }}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Sign Up →
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </header>
 
       {/* 2. Hero Section */}
@@ -166,12 +223,27 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 3. Interactive Live Demo Section */}
+      {/* 3. 3D Spatial Feature Showcase Section */}
+      <section id="3d-showcase" className="landing-container" style={{ padding: "40px 0 60px", scrollMarginTop: 80 }}>
+        <div className="section-header" style={{ marginBottom: 30 }}>
+          <span className="section-badge">3D SPATIAL ARCHITECTURE</span>
+          <h2 className="section-title">Interactive 3D Workspace Engine</h2>
+          <p className="section-subtitle">Move your cursor or touch to rotate the 3D depth matrix.</p>
+        </div>
+        <ThreeDFeatureShowcase />
+      </section>
+
+      {/* 4. Interactive Live Demo Section */}
       <section id="demo" className="landing-container" style={{ scrollMarginTop: 90 }}>
+        <div className="section-header">
+          <span className="section-badge">Live Interactive Simulator</span>
+          <h2 className="section-title">Try Chatox Right In Your Browser</h2>
+          <p className="section-subtitle">Click across tabs to experience live chat, HD video rooms, collaborative smart sheets, and calendar scheduling.</p>
+        </div>
         <InteractiveMockup />
       </section>
 
-      {/* 4. Stats Ribbon */}
+      {/* 5. Stats Ribbon */}
       <section className="stats-ribbon">
         <div className="landing-container">
           <div className="stats-grid">
@@ -195,7 +267,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 5. "Why Chatox?" Bento Grid */}
+      {/* 6. "Why Chatox?" Bento Grid */}
       <section id="why-chatox" className="bento-section landing-container" style={{ scrollMarginTop: 80 }}>
         <div className="section-header">
           <span className="section-badge">Why Choose Chatox</span>
@@ -207,7 +279,7 @@ export default function LandingPage() {
 
         <div className="bento-grid">
           {/* Card 1: Zero Phone Numbers */}
-          <div className="bento-card bento-card-span-8">
+          <ThreeDTiltCard className="bento-card bento-card-span-8" maxTilt={8}>
             <div>
               <div className="bento-icon-box">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -219,16 +291,16 @@ export default function LandingPage() {
                 Your private phone number is never asked, never stored, and never exposed to other users or group members. Share your unique username freely on social media or with coworkers without giving away personal contact details.
               </p>
             </div>
-            <div style={{ background: "var(--surface-2)", borderRadius: 14, padding: "14px 18px", border: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ background: "var(--surface-2)", borderRadius: 14, padding: "14px 18px", border: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
               <span style={{ fontSize: 13, color: "var(--text-muted)" }}>Search anyone instantly:</span>
               <span style={{ fontFamily: "monospace", fontSize: 13, background: "var(--accent-soft)", color: "var(--accent)", padding: "4px 10px", borderRadius: 8, fontWeight: 700 }}>
                 @alex_design • @sarah_dev
               </span>
             </div>
-          </div>
+          </ThreeDTiltCard>
 
           {/* Card 2: Sub-millisecond WebSockets */}
-          <div className="bento-card bento-card-span-4">
+          <ThreeDTiltCard className="bento-card bento-card-span-4" maxTilt={8}>
             <div>
               <div className="bento-icon-box">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -244,10 +316,10 @@ export default function LandingPage() {
               <span className="online-dot" style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--amber)" }} />
               Sub-30ms socket handshake
             </div>
-          </div>
+          </ThreeDTiltCard>
 
           {/* Card 3: HD Audio & Video Calls */}
-          <div className="bento-card bento-card-span-4">
+          <ThreeDTiltCard className="bento-card bento-card-span-4" maxTilt={8}>
             <div>
               <div className="bento-icon-box">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -261,10 +333,10 @@ export default function LandingPage() {
               </p>
             </div>
             <span style={{ fontSize: 12, color: "var(--text-muted)" }}>WebRTC P2P Low-Latency Protocol</span>
-          </div>
+          </ThreeDTiltCard>
 
           {/* Card 4: Collaborative Smart Sheets */}
-          <div className="bento-card bento-card-span-4">
+          <ThreeDTiltCard className="bento-card bento-card-span-4" maxTilt={8}>
             <div>
               <div className="bento-icon-box">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -281,10 +353,10 @@ export default function LandingPage() {
               </p>
             </div>
             <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Auto-saving version history</span>
-          </div>
+          </ThreeDTiltCard>
 
           {/* Card 5: Integrated Calendar & Meetings */}
-          <div className="bento-card bento-card-span-4">
+          <ThreeDTiltCard className="bento-card bento-card-span-4" maxTilt={8}>
             <div>
               <div className="bento-icon-box">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -300,11 +372,11 @@ export default function LandingPage() {
               </p>
             </div>
             <span style={{ fontSize: 12, color: "var(--text-muted)" }}>One-click room joining</span>
-          </div>
+          </ThreeDTiltCard>
         </div>
       </section>
 
-      {/* 6. Deep Feature Breakdown */}
+      {/* 7. Deep Feature Breakdown */}
       <section id="features" className="landing-container" style={{ padding: "80px 0", scrollMarginTop: 80 }}>
         <div className="section-header">
           <span className="section-badge">Feature Deep Dive</span>
@@ -314,7 +386,7 @@ export default function LandingPage() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: 60 }}>
           {/* Row 1 */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 40, alignItems: "center" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 40, alignItems: "center" }}>
             <div>
               <span style={{ background: "var(--accent-soft)", color: "var(--accent)", padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 700 }}>
                 VOICE & MEDIA
@@ -331,43 +403,47 @@ export default function LandingPage() {
                 <li>Instant emoji reaction drawers</li>
               </ul>
             </div>
-            <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 20, padding: 30, boxShadow: "var(--shadow-soft)" }}>
-              <div style={{ background: "var(--surface-2)", borderRadius: 16, padding: 18, marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--accent)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>
-                  🎙️
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700 }}>Voice Note (0:24)</div>
-                  <div style={{ height: 6, background: "var(--border)", borderRadius: 4, marginTop: 6, position: "relative" }}>
-                    <div style={{ width: "65%", height: "100%", background: "var(--accent)", borderRadius: 4 }} />
+            <ThreeDTiltCard maxTilt={6}>
+              <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 20, padding: 30, boxShadow: "var(--shadow-soft)" }}>
+                <div style={{ background: "var(--surface-2)", borderRadius: 16, padding: 18, marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--accent)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>
+                    🎙️
                   </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700 }}>Voice Note (0:24)</div>
+                    <div style={{ height: 6, background: "var(--border)", borderRadius: 4, marginTop: 6, position: "relative" }}>
+                      <div style={{ width: "65%", height: "100%", background: "var(--accent)", borderRadius: 4 }} />
+                    </div>
+                  </div>
+                  <span style={{ fontSize: 12, color: "var(--text-muted)" }}>10:14 AM</span>
                 </div>
-                <span style={{ fontSize: 12, color: "var(--text-muted)" }}>10:14 AM</span>
+                <div style={{ background: "var(--accent-soft)", border: "1px solid rgba(37,99,235,0.2)", borderRadius: 14, padding: "14px 16px", fontSize: 13.5, color: "var(--text)" }}>
+                  💬 <strong>Reaction:</strong> &quot;Love this update, deploying now! 🔥&quot;
+                </div>
               </div>
-              <div style={{ background: "var(--accent-soft)", border: "1px solid rgba(79,70,229,0.2)", borderRadius: 14, padding: "14px 16px", fontSize: 13.5, color: "var(--text)" }}>
-                💬 <strong>Reaction:</strong> &quot;Love this update, deploying now! 🔥&quot;
-              </div>
-            </div>
+            </ThreeDTiltCard>
           </div>
 
           {/* Row 2 */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 40, alignItems: "center" }}>
-            <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 20, padding: 30, boxShadow: "var(--shadow-soft)", order: 2 }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <div style={{ padding: "12px 16px", borderRadius: 12, background: "var(--surface-2)", border: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontWeight: 600, fontSize: 13.5 }}>🔒 Biometric & PIN Security Gate</span>
-                  <span style={{ color: "var(--amber)", fontSize: 12, fontWeight: 700 }}>Active</span>
-                </div>
-                <div style={{ padding: "12px 16px", borderRadius: 12, background: "var(--surface-2)", border: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontWeight: 600, fontSize: 13.5 }}>🔔 Capacitor Local Push Notifications</span>
-                  <span style={{ color: "var(--amber)", fontSize: 12, fontWeight: 700 }}>Enabled</span>
-                </div>
-                <div style={{ padding: "12px 16px", borderRadius: 12, background: "var(--surface-2)", border: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontWeight: 600, fontSize: 13.5 }}>🎨 5 Tailored Color Themes</span>
-                  <span style={{ color: "var(--accent)", fontSize: 12, fontWeight: 700 }}>TalkiePro / Dark / Light</span>
+          <div id="security" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 40, alignItems: "center", scrollMarginTop: 80 }}>
+            <ThreeDTiltCard maxTilt={6} style={{ order: 2 }}>
+              <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 20, padding: 30, boxShadow: "var(--shadow-soft)" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  <div style={{ padding: "12px 16px", borderRadius: 12, background: "var(--surface-2)", border: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontWeight: 600, fontSize: 13.5 }}>🔒 Biometric & PIN Security Gate</span>
+                    <span style={{ color: "var(--amber)", fontSize: 12, fontWeight: 700 }}>Active</span>
+                  </div>
+                  <div style={{ padding: "12px 16px", borderRadius: 12, background: "var(--surface-2)", border: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontWeight: 600, fontSize: 13.5 }}>🔔 Capacitor Local Push Notifications</span>
+                    <span style={{ color: "var(--amber)", fontSize: 12, fontWeight: 700 }}>Enabled</span>
+                  </div>
+                  <div style={{ padding: "12px 16px", borderRadius: 12, background: "var(--surface-2)", border: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontWeight: 600, fontSize: 13.5 }}>🎨 5 Tailored Color Themes</span>
+                    <span style={{ color: "var(--accent)", fontSize: 12, fontWeight: 700 }}>Electric Blue / Dark / Light</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            </ThreeDTiltCard>
 
             <div style={{ order: 1 }}>
               <span style={{ background: "var(--accent-soft)", color: "var(--accent)", padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 700 }}>
@@ -382,14 +458,14 @@ export default function LandingPage() {
               <ul style={{ paddingLeft: 20, color: "var(--text)", display: "flex", flexDirection: "column", gap: 10, fontSize: 14.5 }}>
                 <li>Client-side PIN Gate for immediate screen locking</li>
                 <li>Capacitor native bindings for mobile platforms</li>
-                <li>5 sleek visual themes (TalkiePro, Dark, Light, Blue, White)</li>
+                <li>5 sleek visual themes (Blue, Dark, Light, White, Cyber)</li>
               </ul>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 7. FAQ Section */}
+      {/* 8. FAQ Section */}
       <section id="faq" className="faq-section landing-container" style={{ scrollMarginTop: 80 }}>
         <div className="section-header">
           <span className="section-badge">Got Questions?</span>
@@ -418,7 +494,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 8. Conversion CTA Banner */}
+      {/* 9. Conversion CTA Banner */}
       <section className="landing-container">
         <div className="cta-banner-card">
           <h2 className="cta-banner-title">
@@ -459,7 +535,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 9. Footer */}
+      {/* 10. Footer */}
       <footer className="landing-footer">
         <div className="landing-container">
           <div className="footer-top">
@@ -483,6 +559,7 @@ export default function LandingPage() {
                 <ul className="footer-link-list">
                   <li><a href="#features" className="footer-link">Features</a></li>
                   <li><a href="#why-chatox" className="footer-link">Why Chatox?</a></li>
+                  <li><a href="#3d-showcase" className="footer-link">3D Matrix</a></li>
                   <li><a href="#demo" className="footer-link">Live Mockup</a></li>
                   <li><a href="#faq" className="footer-link">FAQ</a></li>
                 </ul>
