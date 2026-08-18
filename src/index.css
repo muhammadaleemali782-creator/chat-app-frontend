@@ -1818,10 +1818,148 @@ button:focus-visible,
   align-items: center;
   gap: 6px;
 }
-.auth-brand-credit {
-  color: #64748b;
-  font-size: 11.5px;
-  margin: 0;
+.auth-brand-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+}
+.auth-brand-logo-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+}
+.auth-brand-title {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #ffffff !important;
+}
+
+/* 3D Hero Graphic Frame */
+.hero-3d-frame-container {
+  margin: 40px auto 0;
+  max-width: 1040px;
+  position: relative;
+  perspective: 1200px;
+}
+.hero-3d-tilt-frame {
+  width: 100%;
+}
+.hero-3d-image-shell {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #091326;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 40px rgba(37, 99, 235, 0.2);
+}
+.hero-3d-visual-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.hero-3d-tilt-frame:hover .hero-3d-visual-img {
+  transform: scale(1.02);
+}
+.hero-3d-glass-glare {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 35%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+.hero-3d-floating-pill {
+  position: absolute;
+  bottom: 20px;
+  left: 24px;
+  background: rgba(9, 19, 38, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 2;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+}
+@media (max-width: 600px) {
+  .hero-3d-floating-pill {
+    bottom: 12px;
+    left: 12px;
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+}
+
+/* Bento & Feature 3D Media Visuals */
+.bento-img-preview-wrap {
+  margin-top: 18px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+  position: relative;
+  background: #091326;
+}
+.bento-media-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.bento-card:hover .bento-media-img {
+  transform: scale(1.03);
+}
+
+.feature-highlight-media-wrap {
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  background: #091326;
+}
+.feature-highlight-media-img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.feature-highlight-card:hover .feature-highlight-media-img {
+  transform: scale(1.02);
+}
+
+.security-3d-img-banner {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #091326;
+}
+.security-3d-banner-img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
 }
 
 

@@ -227,6 +227,25 @@ export default function LandingPage() {
               <span className="hero-trust-icon">✓</span> PIN & Biometric App Lock
             </div>
           </div>
+
+          {/* 3D Hero Graphic Frame */}
+          <div className="hero-3d-frame-container">
+            <ThreeDTiltCard maxTilt={5} scale={1.01} className="hero-3d-tilt-frame">
+              <div className="hero-3d-image-shell">
+                <div className="hero-3d-glass-glare" />
+                <img
+                  src="/hero_3d.jpg"
+                  alt="Chatox 3D Futuristic Glassmorphic Interface"
+                  className="hero-3d-visual-img"
+                  loading="eager"
+                />
+                <div className="hero-3d-floating-pill">
+                  <span className="online-dot" style={{ width: 8, height: 8, borderRadius: "50%", background: "#10b981" }} />
+                  <span>Interactive 3D Glassmorphic Interface</span>
+                </div>
+              </div>
+            </ThreeDTiltCard>
+          </div>
         </div>
       </section>
 
@@ -325,8 +344,8 @@ export default function LandingPage() {
             </div>
           </ThreeDTiltCard>
 
-          {/* Card 3: HD Audio & Video Calls */}
-          <ThreeDTiltCard className="bento-card bento-card-span-4" maxTilt={8}>
+          {/* Card 3: HD Audio & Video Calls with 3D Image */}
+          <ThreeDTiltCard className="bento-card bento-card-span-6" maxTilt={8}>
             <div>
               <div className="bento-icon-box">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -339,11 +358,13 @@ export default function LandingPage() {
                 Initiate one-on-one or group audio/video calls with clear audio, camera toggle, screen sharing, and mute controls.
               </p>
             </div>
-            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>WebRTC P2P Low-Latency Protocol</span>
+            <div className="bento-img-preview-wrap">
+              <img src="/video_call_3d.jpg" alt="3D Video Calling" className="bento-media-img" loading="lazy" />
+            </div>
           </ThreeDTiltCard>
 
-          {/* Card 4: Collaborative Smart Sheets */}
-          <ThreeDTiltCard className="bento-card bento-card-span-4" maxTilt={8}>
+          {/* Card 4: Collaborative Smart Sheets with 3D Image */}
+          <ThreeDTiltCard className="bento-card bento-card-span-6" maxTilt={8}>
             <div>
               <div className="bento-icon-box">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -359,26 +380,9 @@ export default function LandingPage() {
                 Embed live spreadsheets into your chats. Track sprint progress, budgets, and tasks together in real time.
               </p>
             </div>
-            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Auto-saving version history</span>
-          </ThreeDTiltCard>
-
-          {/* Card 5: Integrated Calendar & Meetings */}
-          <ThreeDTiltCard className="bento-card bento-card-span-4" maxTilt={8}>
-            <div>
-              <div className="bento-icon-box">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                  <line x1="16" y1="2" x2="16" y2="6"/>
-                  <line x1="8" y1="2" x2="8" y2="6"/>
-                  <line x1="3" y1="10" x2="21" y2="10"/>
-                </svg>
-              </div>
-              <h3 className="bento-title">Calendar & Meeting Sync</h3>
-              <p className="bento-desc">
-                Schedule calls and team syncs directly within your calendar. Get automatic reminders before any session starts.
-              </p>
+            <div className="bento-img-preview-wrap">
+              <img src="/smart_sheets_3d.jpg" alt="3D Collaborative Sheets" className="bento-media-img" loading="lazy" />
             </div>
-            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>One-click room joining</span>
           </ThreeDTiltCard>
         </div>
       </section>
@@ -391,7 +395,7 @@ export default function LandingPage() {
           <p className="section-subtitle">A full-fledged communication suite designed to simplify daily collaboration.</p>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 36 }}>
           {/* Card 1: Voice & Media */}
           <div className="feature-highlight-card">
             <div>
@@ -420,30 +424,21 @@ export default function LandingPage() {
               </div>
             </div>
             <ThreeDTiltCard maxTilt={6}>
-              <div style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 20, padding: 24, boxShadow: "var(--shadow-soft)" }}>
-                <div style={{ background: "var(--surface)", borderRadius: 16, padding: 16, marginBottom: 12, display: "flex", alignItems: "center", gap: 12, border: "1px solid var(--border-soft)" }}>
-                  <div style={{ width: 38, height: 38, borderRadius: "50%", background: "var(--accent)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
-                    🎙️
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700 }}>Voice Note (0:24)</div>
-                    <div style={{ height: 6, background: "var(--border)", borderRadius: 4, marginTop: 6, position: "relative" }}>
-                      <div style={{ width: "65%", height: "100%", background: "var(--accent)", borderRadius: 4 }} />
-                    </div>
-                  </div>
-                  <span style={{ fontSize: 11.5, color: "var(--text-muted)", flexShrink: 0 }}>10:14 AM</span>
-                </div>
-                <div style={{ background: "var(--accent-soft)", border: "1px solid rgba(37,99,235,0.2)", borderRadius: 14, padding: "12px 14px", fontSize: 13, color: "var(--text)" }}>
-                  💬 <strong>Reaction:</strong> &quot;Love this update, deploying now! 🔥&quot;
-                </div>
+              <div className="feature-highlight-media-wrap">
+                <img src="/smart_sheets_3d.jpg" alt="Smart Workspace & Media" className="feature-highlight-media-img" loading="lazy" />
               </div>
             </ThreeDTiltCard>
           </div>
 
-          {/* Card 2: Security & Interactive PIN Lock Simulator */}
+          {/* Card 2: Security & Interactive PIN Lock Simulator with 3D Security Image */}
           <div id="security" className="feature-highlight-card feature-highlight-reverse" style={{ scrollMarginTop: 80 }}>
             <ThreeDTiltCard maxTilt={6}>
-              <InteractivePinDemo />
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <InteractivePinDemo />
+                <div className="security-3d-img-banner">
+                  <img src="/security_lock_3d.jpg" alt="3D Security Shield & Vault" className="security-3d-banner-img" loading="lazy" />
+                </div>
+              </div>
             </ThreeDTiltCard>
 
             <div>
