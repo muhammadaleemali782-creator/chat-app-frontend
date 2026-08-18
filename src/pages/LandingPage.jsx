@@ -377,89 +377,107 @@ export default function LandingPage() {
       </section>
 
       {/* 7. Deep Feature Breakdown */}
-      <section id="features" className="landing-container" style={{ padding: "80px 0", scrollMarginTop: 80 }}>
+      <section id="features" className="landing-container" style={{ padding: "60px 0 80px", scrollMarginTop: 80 }}>
         <div className="section-header">
           <span className="section-badge">Feature Deep Dive</span>
           <h2 className="section-title">Everything You Need for Effortless Communication</h2>
           <p className="section-subtitle">A full-fledged communication suite designed to simplify daily collaboration.</p>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 60 }}>
-          {/* Row 1 */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 40, alignItems: "center" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+          {/* Card 1: Voice & Media */}
+          <div className="feature-highlight-card">
             <div>
-              <span style={{ background: "var(--accent-soft)", color: "var(--accent)", padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 700 }}>
+              <span style={{ background: "var(--accent-soft)", color: "var(--accent)", padding: "5px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700 }}>
                 VOICE & MEDIA
               </span>
-              <h3 style={{ fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 800, margin: "14px 0 16px" }}>
+              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(22px, 3.2vw, 28px)", fontWeight: 800, margin: "14px 0 12px", lineHeight: 1.25 }}>
                 Voice Notes, Files & Instant Media Sharing
               </h3>
-              <p style={{ color: "var(--text-muted)", fontSize: 15.5, lineHeight: 1.6, marginBottom: 20 }}>
+              <p style={{ color: "var(--text-muted)", fontSize: 14.5, lineHeight: 1.6, margin: "0 0 16px" }}>
                 Record crystal clear voice audio messages on the fly, send documents, photos, code snippets, and react with custom emoji feedback on any message bubble.
               </p>
-              <ul style={{ paddingLeft: 20, color: "var(--text)", display: "flex", flexDirection: "column", gap: 10, fontSize: 14.5 }}>
-                <li>Waveform audio recording & preview player</li>
-                <li>Fast image and document uploads</li>
-                <li>Instant emoji reaction drawers</li>
-              </ul>
+              <div className="feature-pill-list">
+                <div className="feature-pill-item">
+                  <span className="feature-pill-icon">🎙️</span>
+                  <span>Waveform audio recording & preview player</span>
+                </div>
+                <div className="feature-pill-item">
+                  <span className="feature-pill-icon">📁</span>
+                  <span>Fast image, document & code uploads</span>
+                </div>
+                <div className="feature-pill-item">
+                  <span className="feature-pill-icon">⚡</span>
+                  <span>Instant emoji reaction drawer</span>
+                </div>
+              </div>
             </div>
             <ThreeDTiltCard maxTilt={6}>
-              <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 20, padding: 30, boxShadow: "var(--shadow-soft)" }}>
-                <div style={{ background: "var(--surface-2)", borderRadius: 16, padding: 18, marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--accent)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>
+              <div style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 20, padding: 24, boxShadow: "var(--shadow-soft)" }}>
+                <div style={{ background: "var(--surface)", borderRadius: 16, padding: 16, marginBottom: 12, display: "flex", alignItems: "center", gap: 12, border: "1px solid var(--border-soft)" }}>
+                  <div style={{ width: 38, height: 38, borderRadius: "50%", background: "var(--accent)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
                     🎙️
                   </div>
-                  <div style={{ flex: 1 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 700 }}>Voice Note (0:24)</div>
                     <div style={{ height: 6, background: "var(--border)", borderRadius: 4, marginTop: 6, position: "relative" }}>
                       <div style={{ width: "65%", height: "100%", background: "var(--accent)", borderRadius: 4 }} />
                     </div>
                   </div>
-                  <span style={{ fontSize: 12, color: "var(--text-muted)" }}>10:14 AM</span>
+                  <span style={{ fontSize: 11.5, color: "var(--text-muted)", flexShrink: 0 }}>10:14 AM</span>
                 </div>
-                <div style={{ background: "var(--accent-soft)", border: "1px solid rgba(37,99,235,0.2)", borderRadius: 14, padding: "14px 16px", fontSize: 13.5, color: "var(--text)" }}>
+                <div style={{ background: "var(--accent-soft)", border: "1px solid rgba(37,99,235,0.2)", borderRadius: 14, padding: "12px 14px", fontSize: 13, color: "var(--text)" }}>
                   💬 <strong>Reaction:</strong> &quot;Love this update, deploying now! 🔥&quot;
                 </div>
               </div>
             </ThreeDTiltCard>
           </div>
 
-          {/* Row 2 */}
-          <div id="security" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 40, alignItems: "center", scrollMarginTop: 80 }}>
-            <ThreeDTiltCard maxTilt={6} style={{ order: 2 }}>
-              <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 20, padding: 30, boxShadow: "var(--shadow-soft)" }}>
-                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                  <div style={{ padding: "12px 16px", borderRadius: 12, background: "var(--surface-2)", border: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: 600, fontSize: 13.5 }}>🔒 Biometric & PIN Security Gate</span>
-                    <span style={{ color: "var(--amber)", fontSize: 12, fontWeight: 700 }}>Active</span>
+          {/* Card 2: Security & Cross-Platform */}
+          <div id="security" className="feature-highlight-card feature-highlight-reverse" style={{ scrollMarginTop: 80 }}>
+            <ThreeDTiltCard maxTilt={6}>
+              <div style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 20, padding: 24, boxShadow: "var(--shadow-soft)" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <div style={{ padding: "12px 14px", borderRadius: 12, background: "var(--surface)", border: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontWeight: 600, fontSize: 13 }}>🔒 Biometric & PIN Security Gate</span>
+                    <span style={{ color: "var(--amber)", fontSize: 11.5, fontWeight: 700 }}>Active</span>
                   </div>
-                  <div style={{ padding: "12px 16px", borderRadius: 12, background: "var(--surface-2)", border: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: 600, fontSize: 13.5 }}>🔔 Capacitor Local Push Notifications</span>
-                    <span style={{ color: "var(--amber)", fontSize: 12, fontWeight: 700 }}>Enabled</span>
+                  <div style={{ padding: "12px 14px", borderRadius: 12, background: "var(--surface)", border: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontWeight: 600, fontSize: 13 }}>🔔 Capacitor Push Notifications</span>
+                    <span style={{ color: "var(--amber)", fontSize: 11.5, fontWeight: 700 }}>Enabled</span>
                   </div>
-                  <div style={{ padding: "12px 16px", borderRadius: 12, background: "var(--surface-2)", border: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: 600, fontSize: 13.5 }}>🎨 5 Tailored Color Themes</span>
-                    <span style={{ color: "var(--accent)", fontSize: 12, fontWeight: 700 }}>Electric Blue / Dark / Light</span>
+                  <div style={{ padding: "12px 14px", borderRadius: 12, background: "var(--surface)", border: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontWeight: 600, fontSize: 13 }}>🎨 5 Tailored Color Palettes</span>
+                    <span style={{ color: "var(--accent)", fontSize: 11.5, fontWeight: 700 }}>Active</span>
                   </div>
                 </div>
               </div>
             </ThreeDTiltCard>
 
-            <div style={{ order: 1 }}>
-              <span style={{ background: "var(--accent-soft)", color: "var(--accent)", padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 700 }}>
-                SECURITY & CROSS-PLATFORM
+            <div>
+              <span style={{ background: "var(--accent-soft)", color: "var(--accent)", padding: "5px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700 }}>
+                SECURITY & PRIVACY
               </span>
-              <h3 style={{ fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 800, margin: "14px 0 16px" }}>
+              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(22px, 3.2vw, 28px)", fontWeight: 800, margin: "14px 0 12px", lineHeight: 1.25 }}>
                 PIN App Lock Gate & Native Hybrid Mobile App
               </h3>
-              <p style={{ color: "var(--text-muted)", fontSize: 15.5, lineHeight: 1.6, marginBottom: 20 }}>
+              <p style={{ color: "var(--text-muted)", fontSize: 14.5, lineHeight: 1.6, margin: "0 0 16px" }}>
                 Protect sensitive company or personal chats when leaving your laptop open. Plus, install Chatox as an Android/iOS app with full offline resilience and hardware notification support.
               </p>
-              <ul style={{ paddingLeft: 20, color: "var(--text)", display: "flex", flexDirection: "column", gap: 10, fontSize: 14.5 }}>
-                <li>Client-side PIN Gate for immediate screen locking</li>
-                <li>Capacitor native bindings for mobile platforms</li>
-                <li>5 sleek visual themes (Blue, Dark, Light, White, Cyber)</li>
-              </ul>
+              <div className="feature-pill-list">
+                <div className="feature-pill-item">
+                  <span className="feature-pill-icon">🔒</span>
+                  <span>Client-side PIN Gate for instant screen locking</span>
+                </div>
+                <div className="feature-pill-item">
+                  <span className="feature-pill-icon">📱</span>
+                  <span>Capacitor native bindings for mobile devices</span>
+                </div>
+                <div className="feature-pill-item">
+                  <span className="feature-pill-icon">🎨</span>
+                  <span>5 sleek visual themes (Blue, Dark, Light, White, Cyber)</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

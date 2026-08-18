@@ -78,13 +78,13 @@ export default function InteractiveMockup() {
         {/* Tab 1: Live Chat */}
         {activeTab === "chat" && (
           <div style={{ display: "flex", width: "100%", height: 480 }}>
-            {/* Mock Sidebar */}
-            <div style={{ width: 260, borderRight: "1px solid var(--border)", background: "var(--surface-2)", display: "flex", flexDirection: "column" }} className="hide-on-mobile">
-              <div style={{ padding: "16px 14px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>Direct Messages</span>
+            {/* Mock Sidebar (Desktop) */}
+            <div style={{ width: 250, borderRight: "1px solid var(--border)", background: "var(--surface-2)", display: "flex", flexDirection: "column", flexShrink: 0 }} className="hide-on-mobile">
+              <div style={{ padding: "14px 14px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span style={{ fontWeight: 700, fontSize: 13.5 }}>Direct Messages</span>
                 <span style={{ fontSize: 11, background: "var(--accent-soft)", color: "var(--accent)", padding: "2px 8px", borderRadius: 10, fontWeight: 700 }}>4 Online</span>
               </div>
-              <div style={{ padding: "8px", display: "flex", flexDirection: "column", gap: 4 }}>
+              <div style={{ padding: "8px", display: "flex", flexDirection: "column", gap: 4, overflowY: "auto" }}>
                 {[
                   { name: "Product Design Guild", msg: "Alex: Sheet uploaded", time: "10:44 AM", active: true, unread: 2, icon: "🎨" },
                   { name: "Sarah Jenkins", msg: "Voice note received", time: "10:15 AM", active: false, unread: 0, icon: "👩‍💼" },
@@ -104,13 +104,13 @@ export default function InteractiveMockup() {
                       cursor: "pointer"
                     }}
                   >
-                    <div style={{ width: 34, height: 34, borderRadius: 10, background: "var(--surface-hover)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>
+                    <div style={{ width: 32, height: 32, borderRadius: 10, background: "var(--surface-hover)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15 }}>
                       {item.icon}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: item.active ? 700 : 500 }}>
                         <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.name}</span>
-                        <span style={{ fontSize: 11, color: "var(--text-faint)" }}>{item.time}</span>
+                        <span style={{ fontSize: 10.5, color: "var(--text-faint)" }}>{item.time}</span>
                       </div>
                       <div style={{ fontSize: 11.5, color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         {item.msg}
@@ -122,34 +122,48 @@ export default function InteractiveMockup() {
             </div>
 
             {/* Mock Chat Conversation */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "var(--surface)", minWidth: 0 }}>
-              {/* Chat Header */}
-              <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between", background: "var(--surface)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "var(--surface)", minWidth: 0, width: "100%" }}>
+              {/* Chat Header with spacious layout */}
+              <div style={{ padding: "10px 14px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between", background: "var(--surface)", gap: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0, flex: 1 }}>
                   <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg, #2563eb, #0ea5e9)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, flexShrink: 0 }}>
                     🎨
                   </div>
-                  <div style={{ minWidth: 0 }}>
-                    <div style={{ fontWeight: 700, fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Product Design Guild</div>
-                    <div style={{ fontSize: 11.5, color: "var(--amber)", display: "flex", alignItems: "center", gap: 4 }}>
-                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--amber)", display: "inline-block" }} />
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      Product Design Guild
+                    </div>
+                    <div style={{ fontSize: 11, color: "var(--amber)", display: "flex", alignItems: "center", gap: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--amber)", display: "inline-block", flexShrink: 0 }} />
                       Sarah, Alex & you online
                     </div>
                   </div>
                 </div>
 
                 <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-                  <button type="button" onClick={() => setActiveTab("calls")} style={{ background: "var(--surface-2)", border: "1px solid var(--border)", padding: "6px 10px", borderRadius: 8, fontSize: 12, cursor: "pointer", color: "var(--text)" }}>
-                    📹 Call
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("calls")}
+                    style={{ background: "var(--surface-2)", border: "1px solid var(--border)", padding: "6px 10px", borderRadius: 8, fontSize: 12, cursor: "pointer", color: "var(--text)", display: "inline-flex", alignItems: "center", gap: 4 }}
+                    title="Start HD Video Call"
+                  >
+                    <span>📹</span>
+                    <span className="hide-on-mobile">Call</span>
                   </button>
-                  <button type="button" onClick={() => setActiveTab("sheets")} style={{ background: "var(--surface-2)", border: "1px solid var(--border)", padding: "6px 10px", borderRadius: 8, fontSize: 12, cursor: "pointer", color: "var(--text)" }}>
-                    📊 Sheet
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("sheets")}
+                    style={{ background: "var(--surface-2)", border: "1px solid var(--border)", padding: "6px 10px", borderRadius: 8, fontSize: 12, cursor: "pointer", color: "var(--text)", display: "inline-flex", alignItems: "center", gap: 4 }}
+                    title="Open Live Smart Sheet"
+                  >
+                    <span>📊</span>
+                    <span className="hide-on-mobile">Sheet</span>
                   </button>
                 </div>
               </div>
 
               {/* Chat Messages Stream */}
-              <div style={{ flex: 1, padding: "16px", overflowY: "auto", display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ flex: 1, padding: "14px", overflowY: "auto", display: "flex", flexDirection: "column", gap: 10 }}>
                 {messages.map((m) => (
                   <div
                     key={m.id}
@@ -158,67 +172,70 @@ export default function InteractiveMockup() {
                       flexDirection: m.isMe ? "row-reverse" : "row",
                       gap: 8,
                       alignItems: "flex-end",
-                      maxWidth: "85%",
+                      maxWidth: "88%",
                       alignSelf: m.isMe ? "flex-end" : "flex-start"
                     }}
                   >
-                    <span style={{ fontSize: 20, flexShrink: 0 }}>{m.avatar}</span>
+                    <span style={{ fontSize: 18, flexShrink: 0, lineHeight: 1 }}>{m.avatar}</span>
                     <div
                       style={{
                         background: m.isMe ? "var(--accent)" : "var(--surface-2)",
                         color: m.isMe ? "#ffffff" : "var(--text)",
-                        padding: "10px 14px",
+                        padding: "9px 13px",
                         borderRadius: m.isMe ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
-                        fontSize: 13.5,
+                        fontSize: 13,
                         lineHeight: 1.45,
                         boxShadow: m.isMe ? "0 2px 10px var(--accent-glow)" : "none",
-                        border: m.isMe ? "none" : "1px solid var(--border)"
+                        border: m.isMe ? "none" : "1px solid var(--border)",
+                        wordBreak: "break-word"
                       }}
                     >
-                      <div style={{ fontSize: 11, opacity: 0.8, marginBottom: 3, fontWeight: 600 }}>{m.sender}</div>
+                      <div style={{ fontSize: 10.5, opacity: 0.8, marginBottom: 2, fontWeight: 700 }}>{m.sender}</div>
                       <div>{m.text}</div>
                       {m.attachment && (
                         <div
                           onClick={() => setActiveTab("sheets")}
                           style={{
                             marginTop: 8,
-                            padding: "8px 10px",
-                            background: "rgba(0,0,0,0.15)",
+                            padding: "7px 10px",
+                            background: "rgba(0,0,0,0.08)",
                             borderRadius: 8,
+                            border: "1px solid rgba(255,255,255,0.12)",
                             display: "flex",
                             alignItems: "center",
+                            justifyContent: "space-between",
                             gap: 8,
                             cursor: "pointer",
-                            fontSize: 12,
+                            fontSize: 11.5,
                             fontWeight: 600
                           }}
                         >
-                          <span>📊</span>
-                          <span>{m.attachment.name}</span>
-                          <span style={{ marginLeft: "auto", fontSize: 11, background: "rgba(255,255,255,0.2)", padding: "2px 6px", borderRadius: 4 }}>Open →</span>
+                          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>📊 {m.attachment.name}</span>
+                          <span style={{ flexShrink: 0, fontSize: 10.5, background: "var(--accent)", color: "#fff", padding: "2px 7px", borderRadius: 4 }}>Open →</span>
                         </div>
                       )}
-                      <div style={{ fontSize: 10, opacity: 0.7, textAlign: "right", marginTop: 4 }}>{m.time}</div>
+                      <div style={{ fontSize: 9.5, opacity: 0.7, textAlign: "right", marginTop: 3 }}>{m.time}</div>
                     </div>
                   </div>
                 ))}
               </div>
 
               {/* Chat Input Bar */}
-              <form onSubmit={handleSendMessage} style={{ padding: "10px 14px", borderTop: "1px solid var(--border)", display: "flex", gap: 8, background: "var(--surface-2)" }}>
+              <form onSubmit={handleSendMessage} style={{ padding: "8px 10px", borderTop: "1px solid var(--border)", display: "flex", gap: 6, background: "var(--surface-2)" }}>
                 <input
                   type="text"
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
-                  placeholder="Type an interactive message..."
+                  placeholder="Type a message..."
                   style={{
                     flex: 1,
+                    minWidth: 0,
                     background: "var(--surface)",
                     border: "1px solid var(--border)",
                     borderRadius: 10,
-                    padding: "10px 14px",
+                    padding: "8px 12px",
                     color: "var(--text)",
-                    fontSize: 13.5
+                    fontSize: 13
                   }}
                 />
                 <button
@@ -228,10 +245,11 @@ export default function InteractiveMockup() {
                     color: "#fff",
                     border: "none",
                     borderRadius: 10,
-                    padding: "0 16px",
-                    fontSize: 13.5,
+                    padding: "0 14px",
+                    fontSize: 13,
                     fontWeight: 600,
-                    cursor: "pointer"
+                    cursor: "pointer",
+                    flexShrink: 0
                   }}
                 >
                   Send
@@ -243,59 +261,59 @@ export default function InteractiveMockup() {
 
         {/* Tab 2: HD Video Call */}
         {activeTab === "calls" && (
-          <div style={{ width: "100%", height: 480, background: "#0b0e14", padding: "16px", display: "flex", flexDirection: "column", justifyContent: "space-between", color: "#fff" }}>
+          <div style={{ width: "100%", height: 480, background: "#0b0e14", padding: "14px", display: "flex", flexDirection: "column", justifyContent: "space-between", color: "#fff" }}>
             {/* Call Header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10, flexWrap: "wrap", gap: 8 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#ef4444", display: "inline-block", animation: "pulseDot 1.5s infinite" }} />
                   <span style={{ fontWeight: 700, fontSize: 13.5 }}>Design Review Call</span>
                 </div>
-                <span style={{ background: "rgba(255,255,255,0.12)", padding: "2px 8px", borderRadius: 6, fontSize: 11, color: "#cbd5e1" }}>12:45</span>
+                <span style={{ background: "rgba(255,255,255,0.12)", padding: "2px 7px", borderRadius: 6, fontSize: 11, color: "#cbd5e1" }}>12:45</span>
               </div>
-              <span style={{ fontSize: 11.5, background: "rgba(16,185,129,0.18)", color: "#34d399", padding: "3px 8px", borderRadius: 6, fontWeight: 600 }}>
+              <span style={{ fontSize: 11, background: "rgba(16,185,129,0.18)", color: "#34d399", padding: "3px 8px", borderRadius: 6, fontWeight: 600 }}>
                 🔒 E2E Encrypted
               </span>
             </div>
 
             {/* Video Grid */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, flex: 1 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, flex: 1 }}>
               <div style={{ background: "#1a202c", borderRadius: 14, border: "2px solid var(--accent)", position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                <div style={{ fontSize: 44 }}>👩‍💼</div>
-                <div style={{ position: "absolute", bottom: 8, left: 8, right: 8, background: "rgba(0,0,0,0.7)", padding: "3px 8px", borderRadius: 6, fontSize: 11, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div style={{ fontSize: 40 }}>👩‍💼</div>
+                <div style={{ position: "absolute", bottom: 6, left: 6, right: 6, background: "rgba(0,0,0,0.7)", padding: "3px 6px", borderRadius: 6, fontSize: 10.5, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Sarah J.</span>
-                  <span style={{ color: "#34d399", fontSize: 11 }}>🎤</span>
+                  <span style={{ color: "#34d399", fontSize: 10.5 }}>🎤</span>
                 </div>
               </div>
 
               <div style={{ background: "#1a202c", borderRadius: 14, border: "1px solid rgba(255,255,255,0.1)", position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                <div style={{ fontSize: 44 }}>🧑‍💻</div>
-                <div style={{ position: "absolute", bottom: 8, left: 8, right: 8, background: "rgba(0,0,0,0.7)", padding: "3px 8px", borderRadius: 6, fontSize: 11, textAlign: "center" }}>
+                <div style={{ fontSize: 40 }}>🧑‍💻</div>
+                <div style={{ position: "absolute", bottom: 6, left: 6, right: 6, background: "rgba(0,0,0,0.7)", padding: "3px 6px", borderRadius: 6, fontSize: 10.5, textAlign: "center", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   <span>You (Host)</span>
                 </div>
               </div>
 
               <div style={{ background: "#1a202c", borderRadius: 14, border: "1px solid rgba(255,255,255,0.1)", position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                <div style={{ fontSize: 44 }}>👨‍🎨</div>
-                <div style={{ position: "absolute", bottom: 8, left: 8, right: 8, background: "rgba(0,0,0,0.7)", padding: "3px 8px", borderRadius: 6, fontSize: 11, textAlign: "center" }}>
+                <div style={{ fontSize: 40 }}>👨‍🎨</div>
+                <div style={{ position: "absolute", bottom: 6, left: 6, right: 6, background: "rgba(0,0,0,0.7)", padding: "3px 6px", borderRadius: 6, fontSize: 10.5, textAlign: "center", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   <span>Alex R.</span>
                 </div>
               </div>
 
               <div style={{ background: "#1a202c", borderRadius: 14, border: "1px solid rgba(255,255,255,0.1)", position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                <div style={{ fontSize: 44 }}>👨‍💻</div>
-                <div style={{ position: "absolute", bottom: 8, left: 8, right: 8, background: "rgba(0,0,0,0.7)", padding: "3px 8px", borderRadius: 6, fontSize: 11, textAlign: "center" }}>
+                <div style={{ fontSize: 40 }}>👨‍💻</div>
+                <div style={{ position: "absolute", bottom: 6, left: 6, right: 6, background: "rgba(0,0,0,0.7)", padding: "3px 6px", borderRadius: 6, fontSize: 10.5, textAlign: "center", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   <span>Rohan P.</span>
                 </div>
               </div>
             </div>
 
             {/* In-Call Controls Bar */}
-            <div style={{ display: "flex", justifyContent: "center", gap: 12, marginTop: 12 }}>
-              <button type="button" style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", fontSize: 16 }}>🎤</button>
-              <button type="button" style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", fontSize: 16 }}>📹</button>
-              <button type="button" style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", fontSize: 16 }}>🖥️</button>
-              <button type="button" onClick={() => setActiveTab("chat")} style={{ width: 40, height: 40, borderRadius: "50%", background: "#ef4444", border: "none", color: "#fff", fontSize: 16 }}>📞</button>
+            <div style={{ display: "flex", justifyContent: "center", gap: 10, marginTop: 10 }}>
+              <button type="button" style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", fontSize: 15 }}>🎤</button>
+              <button type="button" style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", fontSize: 15 }}>📹</button>
+              <button type="button" style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", fontSize: 15 }}>🖥️</button>
+              <button type="button" onClick={() => setActiveTab("chat")} style={{ width: 38, height: 38, borderRadius: "50%", background: "#ef4444", border: "none", color: "#fff", fontSize: 15 }}>📞</button>
             </div>
           </div>
         )}
@@ -303,23 +321,23 @@ export default function InteractiveMockup() {
         {/* Tab 3: Smart Sheets */}
         {activeTab === "sheets" && (
           <div style={{ width: "100%", height: 480, display: "flex", flexDirection: "column", background: "var(--surface)" }}>
-            <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--surface-2)", flexWrap: "wrap", gap: 8 }}>
+            <div style={{ padding: "10px 14px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--surface-2)", flexWrap: "wrap", gap: 6 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 18 }}>📊</span>
+                <span style={{ fontSize: 16 }}>📊</span>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: 13.5 }}>Q3 Product Launch Budget.sheet</div>
-                  <div style={{ fontSize: 11, color: "var(--text-muted)" }}>Live collaboration with 3 editors</div>
+                  <div style={{ fontWeight: 700, fontSize: 13 }}>Q3 Product Launch Budget.sheet</div>
+                  <div style={{ fontSize: 10.5, color: "var(--text-muted)" }}>Live collaboration with 3 editors</div>
                 </div>
               </div>
               <div style={{ display: "flex", gap: 4 }}>
-                <span style={{ width: 26, height: 26, borderRadius: "50%", background: "#0284c7", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>SJ</span>
-                <span style={{ width: 26, height: 26, borderRadius: "50%", background: "#10b981", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>AR</span>
-                <span style={{ width: 26, height: 26, borderRadius: "50%", background: "#f59e0b", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>YOU</span>
+                <span style={{ width: 24, height: 24, borderRadius: "50%", background: "#0284c7", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700 }}>SJ</span>
+                <span style={{ width: 24, height: 24, borderRadius: "50%", background: "#10b981", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700 }}>AR</span>
+                <span style={{ width: 24, height: 24, borderRadius: "50%", background: "#f59e0b", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700 }}>YOU</span>
               </div>
             </div>
 
-            <div style={{ flex: 1, padding: 12, overflowX: "auto" }}>
-              <table style={{ width: "100%", minWidth: 500, borderCollapse: "collapse", fontSize: 12.5 }}>
+            <div style={{ flex: 1, padding: 10, overflowX: "auto" }}>
+              <table style={{ width: "100%", minWidth: 480, borderCollapse: "collapse", fontSize: 12 }}>
                 <thead>
                   <tr style={{ background: "var(--surface-hover)", borderBottom: "2px solid var(--border)" }}>
                     <th style={{ padding: "8px 10px", textAlign: "left", color: "var(--text-muted)" }}>#</th>
@@ -339,16 +357,16 @@ export default function InteractiveMockup() {
                     { id: 5, mod: "Capacitor Mobile Push Sync", owner: "Sarah J.", status: "Testing", eta: "Friday", impact: "High", color: "#0284c7" },
                   ].map((row) => (
                     <tr key={row.id} style={{ borderBottom: "1px solid var(--border)" }}>
-                      <td style={{ padding: "10px 10px", color: "var(--text-faint)" }}>{row.id}</td>
-                      <td style={{ padding: "10px 10px", fontWeight: 600 }}>{row.mod}</td>
-                      <td style={{ padding: "10px 10px", color: "var(--text-muted)" }}>{row.owner}</td>
-                      <td style={{ padding: "10px 10px" }}>
-                        <span style={{ background: "var(--surface-2)", color: row.color, padding: "2px 8px", borderRadius: 6, fontSize: 11, fontWeight: 700, border: "1px solid var(--border)" }}>
+                      <td style={{ padding: "8px 10px", color: "var(--text-faint)" }}>{row.id}</td>
+                      <td style={{ padding: "8px 10px", fontWeight: 600 }}>{row.mod}</td>
+                      <td style={{ padding: "8px 10px", color: "var(--text-muted)" }}>{row.owner}</td>
+                      <td style={{ padding: "8px 10px" }}>
+                        <span style={{ background: "var(--surface-2)", color: row.color, padding: "2px 7px", borderRadius: 6, fontSize: 10.5, fontWeight: 700, border: "1px solid var(--border)" }}>
                           {row.status}
                         </span>
                       </td>
-                      <td style={{ padding: "10px 10px", color: "var(--text-muted)" }}>{row.eta}</td>
-                      <td style={{ padding: "10px 10px", textAlign: "right", fontWeight: 700 }}>{row.impact}</td>
+                      <td style={{ padding: "8px 10px", color: "var(--text-muted)" }}>{row.eta}</td>
+                      <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 700 }}>{row.impact}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -360,17 +378,17 @@ export default function InteractiveMockup() {
         {/* Tab 4: Calendar & Meetings */}
         {activeTab === "calendar" && (
           <div style={{ width: "100%", height: 480, display: "flex", background: "var(--surface)" }}>
-            <div style={{ width: 260, borderRight: "1px solid var(--border)", padding: 16, background: "var(--surface-2)" }} className="hide-on-mobile">
-              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>August 2026</div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, textAlign: "center", fontSize: 11, color: "var(--text-muted)", marginBottom: 8 }}>
+            <div style={{ width: 250, borderRight: "1px solid var(--border)", padding: 14, background: "var(--surface-2)", flexShrink: 0 }} className="hide-on-mobile">
+              <div style={{ fontWeight: 700, fontSize: 13.5, marginBottom: 10 }}>August 2026</div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 3, textAlign: "center", fontSize: 10.5, color: "var(--text-muted)", marginBottom: 6 }}>
                 <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, textAlign: "center", fontSize: 11.5 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 3, textAlign: "center", fontSize: 11 }}>
                 {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
                   <span
                     key={day}
                     style={{
-                      padding: "5px 0",
+                      padding: "4px 0",
                       borderRadius: 6,
                       background: day === 18 ? "var(--accent)" : "transparent",
                       color: day === 18 ? "#fff" : "var(--text)",
@@ -383,10 +401,10 @@ export default function InteractiveMockup() {
               </div>
             </div>
 
-            <div style={{ flex: 1, padding: "16px 20px", display: "flex", flexDirection: "column", gap: 12, overflowY: "auto" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
-                <span style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-display)" }}>Scheduled Calls</span>
-                <button type="button" className="btn-primary-glow" style={{ padding: "6px 14px", borderRadius: 8, fontSize: 12 }}>
+            <div style={{ flex: 1, padding: "14px 16px", display: "flex", flexDirection: "column", gap: 10, overflowY: "auto" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 6 }}>
+                <span style={{ fontWeight: 800, fontSize: 15, fontFamily: "var(--font-display)" }}>Scheduled Calls</span>
+                <button type="button" className="btn-primary-glow" style={{ padding: "5px 12px", borderRadius: 8, fontSize: 11.5 }}>
                   + Schedule Call
                 </button>
               </div>
@@ -399,7 +417,7 @@ export default function InteractiveMockup() {
                 <div
                   key={i}
                   style={{
-                    padding: "12px 16px",
+                    padding: "10px 14px",
                     borderRadius: 12,
                     border: "1px solid var(--border)",
                     background: "var(--surface-2)",
@@ -411,8 +429,8 @@ export default function InteractiveMockup() {
                   }}
                 >
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: 13.5, marginBottom: 2 }}>{m.title}</div>
-                    <div style={{ fontSize: 12, color: "var(--text-muted)", display: "flex", gap: 10, flexWrap: "wrap" }}>
+                    <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 2 }}>{m.title}</div>
+                    <div style={{ fontSize: 11.5, color: "var(--text-muted)", display: "flex", gap: 8, flexWrap: "wrap" }}>
                       <span>🕒 {m.time}</span>
                       <span>👤 {m.host}</span>
                     </div>
@@ -424,9 +442,9 @@ export default function InteractiveMockup() {
                       background: "var(--accent)",
                       color: "#fff",
                       border: "none",
-                      padding: "6px 14px",
+                      padding: "5px 12px",
                       borderRadius: 8,
-                      fontSize: 12,
+                      fontSize: 11.5,
                       fontWeight: 600,
                       cursor: "pointer"
                     }}
