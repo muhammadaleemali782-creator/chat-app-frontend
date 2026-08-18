@@ -1,12 +1,12 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
 const ThemeContext = createContext(null);
-const THEME_ORDER = ["talkiepro", "dark", "light", "blue", "white"];
+const THEME_ORDER = ["blue", "dark", "light", "white", "talkiepro"];
 
 export function ThemeProvider({ children }) {
   const [theme, setThemeState] = useState(() => {
     const saved = localStorage.getItem("theme");
-    return THEME_ORDER.includes(saved) ? saved : "talkiepro";
+    return THEME_ORDER.includes(saved) ? saved : "blue";
   });
 
   useEffect(() => {

@@ -29,7 +29,7 @@ const styles = {
     position: "relative",
     overflow: "hidden",
     background:
-      "linear-gradient(160deg, #151228 0%, #0d1017 55%, #0b0e14 100%)",
+      "linear-gradient(160deg, #091326 0%, #0c182e 55%, #080d1a 100%)",
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-end",
@@ -42,7 +42,7 @@ const styles = {
     width: 420,
     height: 420,
     borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(124,111,240,0.28), transparent 70%)",
+    background: "radial-gradient(circle, rgba(37,99,235,0.25), transparent 70%)",
     filter: "blur(10px)",
   },
   bubbles: {
@@ -68,8 +68,8 @@ const styles = {
   bubbleRight1: {
     top: 60,
     right: "10%",
-    background: "rgba(124,111,240,0.25)",
-    borderColor: "rgba(124,111,240,0.35)",
+    background: "rgba(37,99,235,0.22)",
+    borderColor: "rgba(37,99,235,0.35)",
     borderBottomRightRadius: 4,
   },
   bubbleLeft2: { top: 130, left: "14%", borderBottomLeftRadius: 4 },

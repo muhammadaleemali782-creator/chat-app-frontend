@@ -126,7 +126,7 @@ export default function InteractiveMockup() {
               {/* Chat Header */}
               <div style={{ padding: "14px 20px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between", background: "var(--surface)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ width: 36, height: 36, borderRadius: 12, background: "linear-gradient(135deg, var(--accent), #7c3aed)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 12, background: "linear-gradient(135deg, #2563eb, #0ea5e9)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700 }}>
                     🎨
                   </div>
                   <div>
@@ -306,7 +306,7 @@ export default function InteractiveMockup() {
                 </div>
               </div>
               <div style={{ display: "flex", gap: 6 }}>
-                <span style={{ width: 28, height: 28, borderRadius: "50%", background: "#6366f1", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700 }}>SJ</span>
+                <span style={{ width: 28, height: 28, borderRadius: "50%", background: "#0284c7", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700 }}>SJ</span>
                 <span style={{ width: 28, height: 28, borderRadius: "50%", background: "#10b981", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700 }}>AR</span>
                 <span style={{ width: 28, height: 28, borderRadius: "50%", background: "#f59e0b", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700 }}>YOU</span>
               </div>
@@ -330,7 +330,7 @@ export default function InteractiveMockup() {
                     { id: 2, mod: "WebRTC Audio/Video Call Room", owner: "Alex R.", status: "Completed", eta: "Live", impact: "Critical", color: "var(--amber)" },
                     { id: 3, mod: "Live Smart Spreadsheet Engine", owner: "You", status: "In Progress", eta: "Today", impact: "High", color: "var(--accent)" },
                     { id: 4, mod: "Calendar & Meeting Scheduler", owner: "Rohan P.", status: "Review", eta: "Tomorrow", impact: "Medium", color: "#f59e0b" },
-                    { id: 5, mod: "Capacitor Mobile Push Sync", owner: "Sarah J.", status: "Testing", eta: "Friday", impact: "High", color: "#8b5cf6" },
+                    { id: 5, mod: "Capacitor Mobile Push Sync", owner: "Sarah J.", status: "Testing", eta: "Friday", impact: "High", color: "#0284c7" },
                   ].map((row) => (
                     <tr key={row.id} style={{ borderBottom: "1px solid var(--border)" }}>
                       <td style={{ padding: "12px 14px", color: "var(--text-faint)" }}>{row.id}</td>

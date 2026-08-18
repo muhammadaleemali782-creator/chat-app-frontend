@@ -432,8 +432,7 @@ export default function LandingPage() {
             {user ? (
               <button
                 type="button"
-                className="btn-primary-glow"
-                style={{ fontSize: 16, padding: "14px 34px", background: "#ffffff", color: "#312e81 !important" }}
+                className="btn-cta-light"
                 onClick={() => navigate("/app")}
               >
                 <span>Go to Chat Dashboard</span>
@@ -443,16 +442,14 @@ export default function LandingPage() {
               <>
                 <Link
                   to="/register"
-                  className="btn-primary-glow"
-                  style={{ fontSize: 16, padding: "14px 34px", background: "#ffffff", color: "#312e81 !important" }}
+                  className="btn-cta-light"
                 >
                   <span>Sign Up with @Username</span>
                   <span>⚡</span>
                 </Link>
                 <Link
                   to="/login"
-                  className="btn-secondary-outline"
-                  style={{ fontSize: 16, padding: "14px 28px", background: "rgba(255,255,255,0.15)", color: "#ffffff !important", borderColor: "rgba(255,255,255,0.3)" }}
+                  className="btn-cta-outline"
                 >
                   <span>Log In to Existing Account</span>
                 </Link>
