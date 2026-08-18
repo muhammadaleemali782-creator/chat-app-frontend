@@ -2020,6 +2020,44 @@ button:focus-visible,
   padding-top: 8px;
 }
 
+/* Mobile Zero-Scroll Task Cards */
+.mockup-mobile-sheet-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mobile-sheet-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mobile-sheet-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.mobile-sheet-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.35;
+}
+.mobile-sheet-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.mobile-meta-item {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
 /* Tab 4: Calendar Layout */
 .mockup-calendar-layout {
   padding: 18px;
@@ -2056,15 +2094,28 @@ button:focus-visible,
   box-shadow: var(--shadow-soft);
   background: var(--surface);
 }
+.agenda-top-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 .agenda-time-badge {
   font-family: monospace;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--accent);
   background: var(--accent-soft);
-  padding: 6px 10px;
+  padding: 5px 9px;
   border-radius: 8px;
   flex-shrink: 0;
+}
+.agenda-duration-pill {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  padding: 3px 8px;
+  border-radius: 6px;
 }
 .agenda-details {
   flex: 1;
@@ -2074,6 +2125,7 @@ button:focus-visible,
   font-weight: 700;
   font-size: 13.5px;
   color: var(--text);
+  line-height: 1.35;
 }
 .agenda-meta {
   font-size: 11.5px;
@@ -2084,16 +2136,20 @@ button:focus-visible,
   background: var(--accent);
   color: #ffffff;
   border: none;
-  padding: 7px 14px;
-  border-radius: 8px;
-  font-size: 12px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
   flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+.agenda-join-btn:hover {
+  transform: translateY(-1px);
 }
 
 /* ==========================================================================
-   MOBILE MOCKUP OVERRIDES (100% FIT, ZERO SLIDING)
+   MOBILE MOCKUP OVERRIDES (100% FIT, ZERO HORIZONTAL SLIDING)
    ========================================================================== */
 @media (max-width: 600px) {
   .mockup-header-bar {
@@ -2122,6 +2178,32 @@ button:focus-visible,
     display: inline !important;
     font-weight: 700 !important;
   }
+
+  /* Chat Mobile Stream Overrides */
+  .mockup-conversation-area {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  .mockup-messages-stream {
+    padding: 12px 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+  .mockup-bubble-row {
+    max-width: 92% !important;
+  }
+  .mockup-bubble {
+    padding: 9px 12px !important;
+    font-size: 13px !important;
+  }
+  .mockup-attachment-pill {
+    padding: 6px 10px !important;
+    gap: 6px !important;
+  }
+
+  /* Video Mobile Overrides */
   .mockup-video-grid {
     grid-template-columns: 1fr 1fr !important;
     gap: 8px !important;
@@ -2131,6 +2213,19 @@ button:focus-visible,
   }
   .video-tile-avatar {
     font-size: 28px !important;
+  }
+
+  /* Calendar Mobile Stacking (No Squishing) */
+  .mockup-agenda-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    padding: 12px 14px !important;
+  }
+  .mockup-agenda-card .agenda-join-btn {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 9px !important;
   }
 }
 

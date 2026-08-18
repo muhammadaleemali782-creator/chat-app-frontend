@@ -59,6 +59,13 @@ export default function InteractiveMockup() {
     setChatInput("");
   };
 
+  const sheetItems = [
+    { module: "End-to-End WebSocket Relay", owner: "@alex_dev", status: "Completed", statusType: "done", est: "14 hrs", date: "Aug 18" },
+    { module: "WebRTC Group Video Rooms", owner: "@sarah_lead", status: "In Progress", statusType: "progress", est: "22 hrs", date: "Aug 22" },
+    { module: "Biometric PIN Gate Shield", owner: "@you", status: "Verified", statusType: "done", est: "8 hrs", date: "Aug 19" },
+    { module: "Capacitor Push Notifications", owner: "@rohan_qa", status: "Testing", statusType: "review", est: "10 hrs", date: "Aug 25" }
+  ];
+
   return (
     <div className="mockup-shell">
       {/* 1. Chrome Top Bar with No-Scroll Responsive Tabs */}
@@ -86,7 +93,7 @@ export default function InteractiveMockup() {
             onClick={() => setActiveTab("calls")}
           >
             <span className="tab-icon">📹</span>
-            <span className="tab-label-desktop">HD Video Call</span>
+            <span className="tab-label-desktop">HD Video</span>
             <span className="tab-label-mobile">Video</span>
           </button>
           <button
@@ -289,7 +296,7 @@ export default function InteractiveMockup() {
           </div>
         )}
 
-        {/* TAB 3: SMART SHEETS */}
+        {/* TAB 3: SMART SHEETS (DESKTOP TABLE + ZERO-SCROLL MOBILE CARDS) */}
         {activeTab === "sheets" && (
           <div className="mockup-sheets-layout">
             <div className="mockup-sheets-header">
@@ -303,7 +310,8 @@ export default function InteractiveMockup() {
               </div>
             </div>
 
-            <div className="mockup-table-container">
+            {/* Desktop Full Table */}
+            <div className="mockup-table-container hide-on-mobile">
               <table className="mockup-table">
                 <thead>
                   <tr>
@@ -315,36 +323,34 @@ export default function InteractiveMockup() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td><strong>End-to-End WebSocket Relay</strong></td>
-                    <td><span className="user-tag">@alex_dev</span></td>
-                    <td><span className="status-pill status-done">Completed</span></td>
-                    <td>14 hrs</td>
-                    <td>Aug 18</td>
-                  </tr>
-                  <tr>
-                    <td><strong>WebRTC Group Video Rooms</strong></td>
-                    <td><span className="user-tag">@sarah_lead</span></td>
-                    <td><span className="status-pill status-progress">In Progress</span></td>
-                    <td>22 hrs</td>
-                    <td>Aug 22</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Biometric PIN Gate Shield</strong></td>
-                    <td><span className="user-tag">@you</span></td>
-                    <td><span className="status-pill status-done">Verified</span></td>
-                    <td>8 hrs</td>
-                    <td>Aug 19</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Capacitor Push Notifications</strong></td>
-                    <td><span className="user-tag">@rohan_qa</span></td>
-                    <td><span className="status-pill status-review">Testing</span></td>
-                    <td>10 hrs</td>
-                    <td>Aug 25</td>
-                  </tr>
+                  {sheetItems.map((item, idx) => (
+                    <tr key={idx}>
+                      <td><strong>{item.module}</strong></td>
+                      <td><span className="user-tag">{item.owner}</span></td>
+                      <td><span className={`status-pill status-${item.statusType}`}>{item.status}</span></td>
+                      <td>{item.est}</td>
+                      <td>{item.date}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Zero-Scroll Task Cards (100% Fit, No Horizontal Scrolling) */}
+            <div className="mockup-mobile-sheet-cards hide-on-desktop">
+              {sheetItems.map((item, idx) => (
+                <div key={idx} className="mobile-sheet-card">
+                  <div className="mobile-sheet-card-top">
+                    <strong className="mobile-sheet-title">{item.module}</strong>
+                    <span className={`status-pill status-${item.statusType}`}>{item.status}</span>
+                  </div>
+                  <div className="mobile-sheet-card-meta">
+                    <span className="user-tag">{item.owner}</span>
+                    <span className="mobile-meta-item">⏱️ {item.est}</span>
+                    <span className="mobile-meta-item">📅 {item.date}</span>
+                  </div>
+                </div>
+              ))}
             </div>
 
             <div className="mockup-sheets-footer">
@@ -354,7 +360,7 @@ export default function InteractiveMockup() {
           </div>
         )}
 
-        {/* TAB 4: CALENDAR */}
+        {/* TAB 4: CALENDAR (RESPONSIVE MEETING CARDS WITH CLEAN STACKING) */}
         {activeTab === "calendar" && (
           <div className="mockup-calendar-layout">
             <div className="mockup-calendar-header">
@@ -369,17 +375,22 @@ export default function InteractiveMockup() {
                 { time: "04:00 PM", title: "Mobile Capacitor Release QA", host: "Rohan Patel", active: false, duration: "25 min" }
               ].map((meeting, i) => (
                 <div key={i} className={`mockup-agenda-card ${meeting.active ? "agenda-active" : ""}`}>
-                  <div className="agenda-time-badge">{meeting.time}</div>
+                  <div className="agenda-top-row">
+                    <div className="agenda-time-badge">{meeting.time}</div>
+                    <span className="agenda-duration-pill">{meeting.duration}</span>
+                  </div>
+
                   <div className="agenda-details">
                     <div className="agenda-title">{meeting.title}</div>
-                    <div className="agenda-meta">Hosted by {meeting.host} • {meeting.duration}</div>
+                    <div className="agenda-meta">Hosted by {meeting.host}</div>
                   </div>
+
                   <button
                     type="button"
                     className="agenda-join-btn"
                     onClick={() => setActiveTab("calls")}
                   >
-                    {meeting.active ? "Join Now 🚀" : "View Details"}
+                    {meeting.active ? "Join HD Call 🚀" : "View Details"}
                   </button>
                 </div>
               ))}
