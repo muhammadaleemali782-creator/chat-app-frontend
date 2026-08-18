@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { useBackHandler } from "../utils/backHandlerStack";
 import LoadingScreen from "./LoadingScreen.jsx";
 import SheetHistoryModal from "./SheetHistoryModal.jsx";
+import ModalPortal from "./ModalPortal.jsx";
 
 const COLOR_OPTIONS = [
   "#7c6fea", "#d9663b", "#2f9e5b", "#1d6fe0", "#e0453f",
@@ -127,17 +128,20 @@ export default function SheetView({ sheetId, onClose }) {
 
   if (loading) {
     return (
-      <div style={styles.backdrop}>
-        <div style={styles.modal}>
-          <LoadingScreen message="Sheet load ho rahi hai..." />
+      <ModalPortal>
+        <div style={styles.backdrop}>
+          <div style={styles.modal}>
+            <LoadingScreen message="Sheet load ho rahi hai..." />
+          </div>
         </div>
-      </div>
+      </ModalPortal>
     );
   }
   if (!sheet) return null;
 
   return (
-    <div style={styles.backdrop} onClick={onClose}>
+    <ModalPortal>
+      <div style={styles.backdrop} onClick={onClose}>
       <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div style={styles.header}>
           <div>
@@ -282,6 +286,7 @@ export default function SheetView({ sheetId, onClose }) {
 
       {showHistory && <SheetHistoryModal sheetId={sheetId} onClose={() => setShowHistory(false)} />}
     </div>
+    </ModalPortal>
   );
 }
 

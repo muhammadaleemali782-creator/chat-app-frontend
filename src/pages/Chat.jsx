@@ -330,16 +330,21 @@ export default function Chat() {
 const styles = {
   outerWrap: {
     display: "flex",
+    height: "100%",
+    width: "100%",
+    overflow: "hidden",
   },
   wrap: {
     display: "grid",
     gridTemplateColumns: "320px 1fr",
     flex: 1,
     minHeight: 0,
+    minWidth: 0,
+    overflow: "hidden",
   },
   sidebarPane: { minWidth: 0, minHeight: 0, height: "100%", overflow: "hidden" },
   chatPane: { minWidth: 0, minHeight: 0, height: "100%", overflow: "hidden" },
-  fullPane: { flex: 1, minWidth: 0, minHeight: 0, overflow: "hidden" },
+  fullPane: { flex: 1, minWidth: 0, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column" },
   placeholder: {
     height: "100%",
     display: "flex",
@@ -351,3 +356,4 @@ const styles = {
     textAlign: "center",
   },
 };
+

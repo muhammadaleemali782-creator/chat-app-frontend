@@ -6,11 +6,15 @@ import { avatarColor } from "../utils/avatarColor";
 import LoadingScreen from "../components/LoadingScreen.jsx";
 import ScheduleMeetingModal from "../components/ScheduleMeetingModal.jsx";
 
-const HOURS = Array.from({ length: 24 }, (_, i) => i);
 const DAY_MS = 24 * 60 * 60 * 1000;
+// Show 180 days in the past and 365 days in the future
+const PAST_DAYS = 60;
+const FUTURE_DAYS = 365;
 
 const sameDay = (a, b) =>
-  a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  a.getFullYear() === b.getFullYear() &&
+  a.getMonth() === b.getMonth() &&
+  a.getDate() === b.getDate();
 
 const startOfDay = (d) => {
   const x = new Date(d);
@@ -24,6 +28,19 @@ const formatHour = (h) => {
   return `${h12} ${period}`;
 };
 
+const HOURS = Array.from({ length: 24 }, (_, i) => i);
+
+// Build the full day array: PAST_DAYS before today + today + FUTURE_DAYS ahead
+const buildDayList = () => {
+  const today = startOfDay(new Date());
+  return Array.from({ length: PAST_DAYS + 1 + FUTURE_DAYS }, (_, i) => {
+    const d = new Date(today.getTime() + (i - PAST_DAYS) * DAY_MS);
+    return startOfDay(d);
+  });
+};
+
+const DAY_LIST = buildDayList();
+
 export default function CalendarPage() {
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,61 +50,61 @@ export default function CalendarPage() {
   const { user } = useAuth();
   const { startCall } = useCall();
   const timelineRef = useRef(null);
+  const stripRef = useRef(null);
   const scrolledOnceRef = useRef(false);
+  const todayChipRef = useRef(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.get("/meetings");
       setMeetings(res.data);
-    } catch (err) {
+    } catch {
       // ignore
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => { load(); }, [load]);
 
-  // Live clock refresh every 30s
+  // Live clock
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 30000);
     return () => clearInterval(id);
+  }, []);
+
+  // Scroll strip to today on mount
+  useEffect(() => {
+    if (todayChipRef.current && stripRef.current) {
+      const chip = todayChipRef.current;
+      const strip = stripRef.current;
+      const chipLeft = chip.offsetLeft;
+      const stripWidth = strip.clientWidth;
+      const chipWidth = chip.offsetWidth;
+      strip.scrollLeft = chipLeft - stripWidth / 2 + chipWidth / 2;
+    }
   }, []);
 
   const handleCancel = async (meeting) => {
     const isOrganizer = (meeting.createdBy?._id || meeting.createdBy) === user.id;
     if (isOrganizer) {
       if (!window.confirm("Yeh meeting sabke liye cancel karni hai?")) return;
-      const reason = window.prompt("Cancel karne ki wajah kya hai? (khali bhi chhod sakte ho)", "");
+      const reason = window.prompt("Cancel karne ki wajah? (khali bhi chhod sakte ho)", "");
       if (reason === null) return;
-      try {
-        await api.delete(`/meetings/${meeting._id}`, { data: { reason } });
-        load();
-      } catch (err) {
-        alert(err.response?.data?.message || "Meeting cancel nahi ho payi, dobara try karo");
-      }
+      try { await api.delete(`/meetings/${meeting._id}`, { data: { reason } }); load(); }
+      catch (err) { alert(err.response?.data?.message || "Cancel nahi hua"); }
     } else {
       const reason = window.prompt("Kyun nahi aa sakte? (khali bhi chhod sakte ho)", "");
       if (reason === null) return;
-      try {
-        await api.put(`/meetings/${meeting._id}/decline`, { reason });
-        load();
-      } catch (err) {
-        alert(err.response?.data?.message || "Save nahi hua, dobara try karo");
-      }
+      try { await api.put(`/meetings/${meeting._id}/decline`, { reason }); load(); }
+      catch (err) { alert(err.response?.data?.message || "Save nahi hua"); }
     }
   };
 
   const handleDismiss = async (meetingId) => {
-    try {
-      await api.put(`/meetings/${meetingId}/dismiss`);
-      load();
-    } catch (err) {
-      // ignore
-    }
+    try { await api.put(`/meetings/${meetingId}/dismiss`); load(); }
+    catch { /* ignore */ }
   };
 
   const handleJoin = (meeting) => {
@@ -101,32 +118,25 @@ export default function CalendarPage() {
           meeting.conversation ||
           (await api.post("/conversations/start", { otherUserId: other._id })).data._id;
         startCall(other, convId, meeting.callType);
-      } catch (err) {
-        alert("Call shuru nahi ho payi");
-      }
+      } catch { alert("Call shuru nahi ho payi"); }
     })();
   };
-
-  const weekDays = useMemo(() => {
-    const today = startOfDay(new Date());
-    return Array.from({ length: 7 }, (_, i) => new Date(today.getTime() + i * DAY_MS));
-  }, []);
 
   const meetingsByDayKey = useMemo(() => {
     const map = {};
     meetings.forEach((m) => {
-      const d = new Date(m.scheduledAt);
-      const key = startOfDay(d).getTime();
+      const key = startOfDay(new Date(m.scheduledAt)).getTime();
       if (!map[key]) map[key] = [];
       map[key].push(m);
     });
-    Object.values(map).forEach((list) => list.sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt)));
+    Object.values(map).forEach((list) =>
+      list.sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt))
+    );
     return map;
   }, [meetings]);
 
   const selectedMeetings = meetingsByDayKey[selectedDay.getTime()] || [];
   const isSelectedToday = sameDay(selectedDay, now);
-
   const todayCount = (meetingsByDayKey[startOfDay(now).getTime()] || []).length;
   const tomorrowCount = (meetingsByDayKey[startOfDay(new Date(now.getTime() + DAY_MS)).getTime()] || []).length;
 
@@ -142,91 +152,112 @@ export default function CalendarPage() {
   const currentHour = now.getHours();
   const currentMinuteFraction = now.getMinutes() / 60;
 
+  // Auto-scroll timeline to current hour
   useEffect(() => {
     if (isSelectedToday && timelineRef.current && !scrolledOnceRef.current) {
-      const rowHeight = 56;
-      timelineRef.current.scrollTop = Math.max(0, currentHour * rowHeight - 100);
+      const rowH = 52;
+      timelineRef.current.scrollTop = Math.max(0, currentHour * rowH - 80);
       scrolledOnceRef.current = true;
     }
   }, [isSelectedToday, currentHour]);
 
+  const handleDayClick = (d) => {
+    setSelectedDay(startOfDay(d));
+    scrolledOnceRef.current = false;
+  };
+
+  // ─── Month label shown in strip when month changes ───────────────────────────
+  const monthLabel = (d) =>
+    d.toLocaleDateString("en-IN", { month: "short" });
+
   return (
-    <div style={styles.wrap} className="calendar-page-container">
-      {/* 1. Header with Clock & New Meeting CTA */}
-      <div style={styles.header}>
-        <div style={styles.headerTitleBlock}>
-          <div style={styles.titleRow}>
-            <span style={{ fontSize: 24 }}>📅</span>
-            <h1 style={styles.title}>Calendar</h1>
-          </div>
-          <div style={styles.liveClock}>
-            {now.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })} •{" "}
-            <span style={styles.liveTime}>{now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</span>
+    <div style={S.wrap}>
+      {/* ── HEADER ─────────────────────────────────────────────── */}
+      <div style={S.header}>
+        <div style={S.headerLeft}>
+          <span style={{ fontSize: 22 }}>📅</span>
+          <div>
+            <h1 style={S.title}>Calendar</h1>
+            <div style={S.liveClock}>
+              {now.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })}
+              {" • "}
+              <span style={S.liveTime}>
+                {now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+              </span>
+            </div>
           </div>
         </div>
-
-        <button
-          type="button"
-          style={styles.newMeetingBtn}
-          onClick={() => setShowScheduleModal(true)}
-        >
-          <span>+</span>
-          <span>Nayi Meeting</span>
+        <button style={S.newBtn} onClick={() => setShowScheduleModal(true)}>
+          <span>+</span> Nayi Meeting
         </button>
       </div>
 
-      {showScheduleModal && (
-        <ScheduleMeetingModal
-          onClose={() => setShowScheduleModal(false)}
-          onScheduled={() => {
-            setShowScheduleModal(false);
-            load();
-          }}
-        />
-      )}
-
-      {/* 2. Today / Tomorrow Counter Badges */}
-      <div style={styles.summaryRow}>
-        <div style={styles.pill}>
-          <strong>{todayCount}</strong> aaj
+      {/* ── STATS BAR ──────────────────────────────────────────── */}
+      <div style={S.statsBar}>
+        <div style={S.statChip}>
+          <span style={S.statNum}>{todayCount}</span>
+          <span style={S.statLbl}>aaj</span>
         </div>
-        <div style={styles.pill}>
-          <strong>{tomorrowCount}</strong> kal
+        <div style={S.statChip}>
+          <span style={S.statNum}>{tomorrowCount}</span>
+          <span style={S.statLbl}>kal</span>
         </div>
-        <div style={{ ...styles.pill, marginLeft: "auto", color: "var(--accent)" }}>
-          {selectedMeetings.length} on this day
+        <div style={{ marginLeft: "auto" }}>
+          <div style={{ ...S.statChip, background: "var(--accent-soft)", borderColor: "var(--accent)" }}>
+            <span style={{ ...S.statNum, color: "var(--accent)" }}>{selectedMeetings.length}</span>
+            <span style={{ ...S.statLbl, color: "var(--accent)" }}>is din</span>
+          </div>
         </div>
       </div>
 
-      {/* 3. 7-Day Week Strip (No Scrollbar, Perfectly Padded) */}
-      <div style={styles.weekStrip}>
-        {weekDays.map((d) => {
-          const key = d.getTime();
-          const active = selectedDay.getTime() === key;
-          const count = (meetingsByDayKey[key] || []).length;
-          return (
-            <button
-              key={key}
-              type="button"
-              style={{ ...styles.dayChip, ...(active ? styles.dayChipActive : {}) }}
-              onClick={() => setSelectedDay(startOfDay(d))}
-            >
-              <div style={{ ...styles.dayChipWeekday, ...(active ? { color: "#ffffff" } : {}) }}>
-                {d.toLocaleDateString("en-IN", { weekday: "short" })}
+      {/* ── INFINITE DAY STRIP ─────────────────────────────────── */}
+      <div style={S.stripOuter}>
+        <div style={S.strip} ref={stripRef}>
+          {DAY_LIST.map((d, idx) => {
+            const key = d.getTime();
+            const active = selectedDay.getTime() === key;
+            const isToday = sameDay(d, now);
+            const count = (meetingsByDayKey[key] || []).length;
+            const prevDay = idx > 0 ? DAY_LIST[idx - 1] : null;
+            const showMonthLabel = !prevDay || prevDay.getMonth() !== d.getMonth();
+
+            return (
+              <div key={key} style={S.chipCol} ref={isToday ? todayChipRef : null}>
+                {showMonthLabel && (
+                  <div style={S.monthPill}>{monthLabel(d)}</div>
+                )}
+                <button
+                  type="button"
+                  style={{
+                    ...S.dayChip,
+                    ...(active ? S.dayChipActive : {}),
+                    ...(isToday && !active ? S.dayChipToday : {}),
+                  }}
+                  onClick={() => handleDayClick(d)}
+                >
+                  <span style={{ ...S.chipWday, ...(active ? { color: "#fff" } : {}) }}>
+                    {d.toLocaleDateString("en-IN", { weekday: "short" }).slice(0, 3).toUpperCase()}
+                  </span>
+                  <span style={{ ...S.chipNum, ...(active ? { color: "#fff" } : {}) }}>
+                    {d.getDate()}
+                  </span>
+                  {/* Meeting dot indicator */}
+                  <span style={{
+                    ...S.chipDot,
+                    background: active ? "#fff" : count > 0 ? "var(--accent)" : "transparent",
+                    border: count === 0 ? "1.5px solid transparent" : active ? "none" : "none",
+                  }} />
+                </button>
               </div>
-              <div style={{ ...styles.dayChipNum, ...(active ? { color: "#ffffff" } : {}) }}>{d.getDate()}</div>
-              {count > 0 && (
-                <div style={{ ...styles.dayChipDot, ...(active ? { background: "#ffffff" } : {}) }} />
-              )}
-            </button>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
 
-      {/* 4. Selected Day Status Bar */}
-      <div style={styles.selectedDayHeader}>
-        <span style={{ fontWeight: 700, color: "var(--text)" }}>{dayLabel(selectedDay)}</span>
-        <span style={styles.selectedDayMeetingCount}>
+      {/* ── SELECTED DAY LABEL ─────────────────────────────────── */}
+      <div style={S.dayBar}>
+        <span style={S.dayBarLabel}>{dayLabel(selectedDay)}</span>
+        <span style={S.dayBarCount}>
           {selectedMeetings.length === 0
             ? "Koi meeting nahi"
             : `${selectedMeetings.length} meeting${selectedMeetings.length > 1 ? "s" : ""}`}
@@ -235,106 +266,110 @@ export default function CalendarPage() {
 
       {loading && <LoadingScreen message="Calendar load ho raha hai..." />}
 
-      {/* 5. 24-Hour Timeline */}
+      {/* ── 24-HOUR TIMELINE ──────────────────────────────────── */}
       {!loading && (
-        <div style={styles.timeline} ref={timelineRef}>
+        <div style={S.timeline} ref={timelineRef}>
+          {/* No meetings empty state shown inside timeline */}
+          {selectedMeetings.length === 0 && (
+            <div style={S.emptyCard}>
+              <div style={S.emptyIcon}>📅</div>
+              <div style={S.emptyTitle}>Koi meeting schedule nahi hai</div>
+              <div style={S.emptySub}>
+                Kisi bhi chat mein 📅 icon se ya upar ke button se meeting schedule karo.
+              </div>
+              <button style={S.newBtn} onClick={() => setShowScheduleModal(true)}>
+                + Abhi Schedule Karo
+              </button>
+            </div>
+          )}
+
           {HOURS.map((h) => {
             const hourMeetings = selectedMeetings.filter(
               (m) => new Date(m.scheduledAt).getHours() === h
             );
             const isCurrentHour = isSelectedToday && h === currentHour;
+            const hasContent = hourMeetings.length > 0 || isCurrentHour;
+
+            // Skip empty hours when there are meetings (show only hours with meetings + ±1 buffer)
+            const hasMeetings = selectedMeetings.length > 0;
+            const nearbyHour = hasMeetings && selectedMeetings.some(
+              (m) => Math.abs(new Date(m.scheduledAt).getHours() - h) <= 1
+            );
+            if (hasMeetings && !hasContent && !nearbyHour) {
+              return null;
+            }
+
             return (
-              <div key={h} style={styles.hourRow}>
-                <div style={styles.hourLabel}>{formatHour(h)}</div>
-                <div style={styles.hourContent}>
+              <div key={h} style={S.hourRow}>
+                <div style={{ ...S.hourLabel, ...(isCurrentHour ? S.hourLabelNow : {}) }}>
+                  {formatHour(h)}
+                </div>
+                <div style={S.hourContent}>
                   {isCurrentHour && (
-                    <div
-                      style={{
-                        ...styles.nowLine,
-                        top: `${currentMinuteFraction * 100}%`,
-                      }}
-                    >
-                      <span style={styles.nowDot} />
+                    <div style={{ ...S.nowLine, top: `${currentMinuteFraction * 100}%` }}>
+                      <span style={S.nowDot} />
                     </div>
                   )}
-                  {hourMeetings.length === 0 && <div style={styles.hourEmpty} />}
                   {hourMeetings.map((m) => {
                     const isOrganizer = (m.createdBy?._id || m.createdBy) === user.id;
-                    const myInvite = m.invitees?.find((inv) => (inv.user?._id || inv.user) === user.id);
+                    const myInvite = m.invitees?.find(
+                      (inv) => (inv.user?._id || inv.user) === user.id
+                    );
                     const iDeclined = myInvite?.status === "declined";
                     const otherNames = isOrganizer
                       ? m.invitees.map((inv) => inv.user?.displayName).filter(Boolean).join(", ")
                       : m.createdBy?.displayName;
                     const label = isOrganizer ? m.createdBy?.displayName : otherNames;
                     const color = avatarColor(label || "");
+
                     return (
                       <div
                         key={m._id}
-                        style={{ ...styles.meetingCard, ...(iDeclined ? styles.meetingCardDeclined : {}) }}
+                        style={{ ...S.meetCard, ...(iDeclined ? { opacity: 0.55 } : {}) }}
                       >
-                        <div
-                          style={{
-                            ...styles.avatar,
-                            background: color.bg,
-                            color: color.fg,
-                          }}
-                        >
+                        <div style={{ ...S.meetAvatar, background: color.bg, color: color.fg }}>
                           {(label || "?").charAt(0).toUpperCase()}
                         </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={styles.meetingTitle}>{m.title}</div>
-                          <div style={styles.meetingMeta}>
-                            {formatTime(m.scheduledAt)} ({m.duration || 30}m) ·{" "}
-                            {isOrganizer ? `Sabko invite kiya: ${otherNames}` : otherNames} ·{" "}
-                            {m.callType === "video" ? "🎥 Video" : "🎙️ Audio"}
+                        <div style={S.meetBody}>
+                          <div style={S.meetTitle}>{m.title}</div>
+                          <div style={S.meetMeta}>
+                            {formatTime(m.scheduledAt)} · {m.duration || 30}m ·{" "}
+                            {m.callType === "video" ? "🎥" : "🎙️"}{" "}
+                            {isOrganizer ? otherNames : `by ${otherNames}`}
                           </div>
                           {iDeclined && (
-                            <div style={styles.declinedTag}>
-                              Aapne decline kar diya {myInvite.declineReason ? `- "${myInvite.declineReason}"` : ""}
+                            <div style={S.declinedTag}>
+                              Decline kar diya{myInvite.declineReason ? ` — "${myInvite.declineReason}"` : ""}
                             </div>
                           )}
                         </div>
-                        {iDeclined ? (
-                          <button
-                            type="button"
-                            style={styles.cancelBtn}
-                            onClick={() => handleDismiss(m._id)}
-                            title="Calendar se hataao"
-                          >
-                            Hide
-                          </button>
-                        ) : (
-                          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                            <button
-                              type="button"
-                              className="primary-btn"
-                              style={{
-                                ...styles.joinBtn,
-                                ...(m.invitees.length !== 1 ? styles.joinBtnDisabled : {}),
-                              }}
-                              onClick={() => handleJoin(m)}
-                              disabled={m.invitees.length !== 1}
-                              title={
-                                m.invitees.length !== 1
-                                  ? "Group calling abhi available nahi hai"
-                                  : "Abhi call karo"
-                              }
-                            >
-                              Join 🚀
+                        <div style={{ display: "flex", gap: 5, flexShrink: 0 }}>
+                          {iDeclined ? (
+                            <button style={S.actBtn} onClick={() => handleDismiss(m._id)}>
+                              Hide
                             </button>
-                            <button
-                              type="button"
-                              style={styles.cancelBtn}
-                              onClick={() => handleCancel(m)}
-                              title={isOrganizer ? "Sabke liye cancel karo" : "Main nahi aa sakta"}
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        )}
+                          ) : (
+                            <>
+                              <button
+                                style={{
+                                  ...S.joinBtn,
+                                  ...(m.invitees.length !== 1 ? { opacity: 0.4, cursor: "not-allowed" } : {}),
+                                }}
+                                disabled={m.invitees.length !== 1}
+                                onClick={() => handleJoin(m)}
+                              >
+                                Join 🚀
+                              </button>
+                              <button style={S.actBtn} onClick={() => handleCancel(m)}>
+                                ✕
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </div>
                     );
                   })}
+                  {hourMeetings.length === 0 && <div style={{ height: 40 }} />}
                 </div>
               </div>
             );
@@ -342,303 +377,304 @@ export default function CalendarPage() {
         </div>
       )}
 
-      {!loading && meetings.length === 0 && (
-        <div style={styles.emptyStateCard}>
-          <div style={styles.emptyIconBadge}>📅</div>
-          <h2 style={styles.emptyTitle}>Koi meeting schedule nahi hai</h2>
-          <p style={styles.emptySub}>
-            Aap kisi bhi chat ke andar 📅 meeting icon par click karke ya upar diye button se nayi meeting schedule kar sakte hain.
-          </p>
-          <button
-            type="button"
-            style={styles.newMeetingBtn}
-            onClick={() => setShowScheduleModal(true)}
-          >
-            + Abhi Meeting Schedule Karo
-          </button>
-        </div>
+      {showScheduleModal && (
+        <ScheduleMeetingModal
+          onClose={() => setShowScheduleModal(false)}
+          onScheduled={() => { setShowScheduleModal(false); load(); }}
+        />
       )}
     </div>
   );
 }
 
-const styles = {
+// ─── STYLES ────────────────────────────────────────────────────────────────────
+const S = {
   wrap: {
     height: "100%",
     display: "flex",
     flexDirection: "column",
     background: "var(--bg)",
-    overflowY: "auto",
     overflowX: "hidden",
+    overflowY: "hidden",
   },
+
+  // Header
   header: {
-    padding: "18px 20px 12px",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 12,
+    padding: "14px 18px 10px",
     borderBottom: "1px solid var(--border-soft)",
+    gap: 8,
+    flexShrink: 0,
   },
-  headerTitleBlock: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  titleRow: {
+  headerLeft: {
     display: "flex",
     alignItems: "center",
-    gap: 8,
+    gap: 10,
+    minWidth: 0,
   },
   title: {
     fontFamily: "var(--font-display)",
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 800,
     margin: 0,
     color: "var(--text)",
+    lineHeight: 1.2,
   },
-  liveClock: {
-    color: "var(--text-muted)",
-    fontSize: 12,
-    marginTop: 2,
-  },
-  liveTime: {
-    color: "var(--accent)",
-    fontWeight: 700,
-  },
-  newMeetingBtn: {
+  liveClock: { color: "var(--text-muted)", fontSize: 11, marginTop: 1 },
+  liveTime: { color: "var(--accent)", fontWeight: 700 },
+  newBtn: {
     background: "var(--accent)",
-    color: "#ffffff",
+    color: "#fff",
     border: "none",
-    borderRadius: 12,
-    padding: "8px 16px",
-    fontSize: 13,
+    borderRadius: 10,
+    padding: "7px 14px",
+    fontSize: 12.5,
     fontWeight: 700,
     cursor: "pointer",
     display: "inline-flex",
     alignItems: "center",
-    gap: 6,
+    gap: 5,
     boxShadow: "0 2px 8px var(--accent-glow)",
     flexShrink: 0,
+    whiteSpace: "nowrap",
   },
-  summaryRow: {
+
+  // Stats bar
+  statsBar: {
     display: "flex",
     gap: 8,
-    padding: "10px 20px",
+    padding: "8px 18px",
     alignItems: "center",
+    flexShrink: 0,
   },
-  pill: {
-    background: "var(--surface)",
-    border: "1px solid var(--border)",
-    borderRadius: 16,
-    padding: "4px 12px",
-    fontSize: 12,
-    color: "var(--text-muted)",
+  statChip: {
     display: "inline-flex",
     alignItems: "center",
-    gap: 4,
+    gap: 5,
+    background: "var(--surface)",
+    border: "1px solid var(--border)",
+    borderRadius: 20,
+    padding: "4px 10px",
   },
-  weekStrip: {
-    display: "grid",
-    gridTemplateColumns: "repeat(7, 1fr)",
+  statNum: { fontWeight: 800, fontSize: 13, color: "var(--text)" },
+  statLbl: { fontSize: 11, color: "var(--text-muted)" },
+
+  // Infinite day strip
+  stripOuter: {
+    borderBottom: "1px solid var(--border-soft)",
+    flexShrink: 0,
+    position: "relative",
+  },
+  strip: {
+    display: "flex",
+    overflowX: "auto",
+    scrollbarWidth: "none",
+    padding: "6px 10px 8px",
     gap: 4,
-    padding: "4px 12px 12px",
-    overflowX: "hidden",
+    alignItems: "flex-end",
+    WebkitOverflowScrolling: "touch",
+  },
+  chipCol: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 2,
+    flexShrink: 0,
+  },
+  monthPill: {
+    fontSize: 9,
+    fontWeight: 700,
+    textTransform: "uppercase",
+    letterSpacing: "0.06em",
+    color: "var(--text-faint)",
+    background: "var(--surface-2)",
+    borderRadius: 4,
+    padding: "1px 4px",
+    marginBottom: 2,
   },
   dayChip: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center",
     gap: 2,
-    flex: 1,
-    minWidth: 40,
-    padding: "6px 2px",
+    width: 44,
+    padding: "7px 4px",
     borderRadius: 10,
-    border: "1px solid var(--border)",
-    background: "var(--surface)",
-    color: "var(--text)",
+    border: "1.5px solid transparent",
+    background: "transparent",
     cursor: "pointer",
-    transition: "all 0.15s ease",
+    transition: "all 0.13s ease",
   },
   dayChipActive: {
     background: "var(--accent)",
     borderColor: "var(--accent)",
     boxShadow: "0 4px 12px var(--accent-glow)",
   },
-  dayChipWeekday: {
-    fontSize: 10,
+  dayChipToday: {
+    borderColor: "var(--accent)",
+    background: "var(--accent-soft)",
+  },
+  chipWday: {
+    fontSize: 9,
     fontWeight: 700,
     color: "var(--text-muted)",
-    textTransform: "uppercase",
+    letterSpacing: "0.04em",
   },
-  dayChipNum: {
-    fontSize: 16,
+  chipNum: {
+    fontSize: 15,
     fontWeight: 800,
     fontFamily: "var(--font-display)",
     color: "var(--text)",
+    lineHeight: 1,
   },
-  dayChipDot: {
-    width: 4,
-    height: 4,
+  chipDot: {
+    width: 5,
+    height: 5,
     borderRadius: "50%",
-    background: "var(--accent)",
+    marginTop: 1,
+    transition: "background 0.13s ease",
   },
-  selectedDayHeader: {
-    padding: "8px 20px",
-    fontSize: 13,
+
+  // Day label bar
+  dayBar: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    padding: "8px 18px",
     background: "var(--surface-2)",
-    borderTop: "1px solid var(--border-soft)",
     borderBottom: "1px solid var(--border-soft)",
+    flexShrink: 0,
   },
-  selectedDayMeetingCount: {
-    fontSize: 12,
-    color: "var(--text-muted)",
-  },
+  dayBarLabel: { fontWeight: 700, fontSize: 13, color: "var(--text)" },
+  dayBarCount: { fontSize: 11.5, color: "var(--text-muted)" },
+
+  // Timeline
   timeline: {
     flex: 1,
     overflowY: "auto",
-    padding: "8px 16px 24px",
+    overflowX: "hidden",
+    padding: "6px 14px 24px",
   },
   hourRow: {
     display: "flex",
-    minHeight: 52,
+    gap: 10,
+    minHeight: 48,
     borderBottom: "1px dashed var(--border-soft)",
   },
   hourLabel: {
-    width: 60,
-    fontSize: 11,
+    width: 46,
+    fontSize: 10.5,
     color: "var(--text-faint)",
     paddingTop: 6,
     fontFamily: "monospace",
     flexShrink: 0,
+    textAlign: "right",
   },
+  hourLabelNow: { color: "#ef4444", fontWeight: 700 },
   hourContent: {
     flex: 1,
     position: "relative",
-    padding: "4px 0",
+    minWidth: 0,
     display: "flex",
     flexDirection: "column",
-    gap: 6,
+    gap: 5,
+    paddingTop: 4,
   },
   nowLine: {
     position: "absolute",
     left: 0,
     right: 0,
-    height: 2,
+    height: 1.5,
     background: "#ef4444",
-    zIndex: 10,
+    zIndex: 5,
   },
   nowDot: {
     position: "absolute",
-    left: -5,
+    left: -4,
     top: -4,
-    width: 10,
-    height: 10,
+    width: 9,
+    height: 9,
     borderRadius: "50%",
     background: "#ef4444",
+    display: "block",
   },
-  hourEmpty: {
-    height: "100%",
-  },
-  meetingCard: {
+
+  // Meeting card in timeline
+  meetCard: {
     background: "var(--surface)",
     border: "1px solid var(--border)",
-    borderRadius: 12,
-    padding: "10px 12px",
+    borderRadius: 10,
+    padding: "9px 11px",
     display: "flex",
     alignItems: "center",
-    gap: 10,
+    gap: 9,
     boxShadow: "var(--shadow-soft)",
   },
-  meetingCardDeclined: {
-    opacity: 0.6,
-  },
-  avatar: {
-    width: 34,
-    height: 34,
-    borderRadius: "50%",
+  meetAvatar: {
+    width: 30,
+    height: 30,
+    borderRadius: 8,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontWeight: 700,
-    fontSize: 13,
+    fontWeight: 800,
+    fontSize: 12,
     flexShrink: 0,
   },
-  meetingTitle: {
-    fontSize: 13.5,
-    fontWeight: 700,
-    color: "var(--text)",
-  },
-  meetingMeta: {
-    fontSize: 11.5,
+  meetBody: { flex: 1, minWidth: 0 },
+  meetTitle: { fontSize: 13, fontWeight: 700, color: "var(--text)", lineHeight: 1.3 },
+  meetMeta: {
+    fontSize: 11,
     color: "var(--text-muted)",
     marginTop: 2,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
   },
-  declinedTag: {
-    fontSize: 11,
-    color: "var(--danger)",
-    marginTop: 2,
-  },
+  declinedTag: { fontSize: 10.5, color: "var(--danger)", marginTop: 2 },
   joinBtn: {
-    padding: "6px 12px",
-    fontSize: 12,
-    borderRadius: 8,
     background: "var(--accent)",
     color: "#fff",
     border: "none",
+    borderRadius: 7,
+    padding: "5px 10px",
+    fontSize: 11.5,
     fontWeight: 700,
     cursor: "pointer",
   },
-  joinBtnDisabled: {
-    opacity: 0.5,
-    cursor: "not-allowed",
-  },
-  cancelBtn: {
+  actBtn: {
     background: "var(--surface-2)",
     border: "1px solid var(--border)",
+    borderRadius: 7,
+    padding: "5px 8px",
+    fontSize: 11,
     color: "var(--text-muted)",
-    padding: "6px 10px",
-    borderRadius: 8,
-    fontSize: 11.5,
     cursor: "pointer",
   },
-  emptyStateCard: {
-    margin: "40px 20px",
-    padding: "32px 20px",
+
+  // Empty state
+  emptyCard: {
+    margin: "32px 16px",
+    padding: "28px 20px",
     background: "var(--surface)",
     border: "1px solid var(--border)",
-    borderRadius: 20,
+    borderRadius: 18,
     textAlign: "center",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    gap: 8,
     boxShadow: "var(--shadow-soft)",
   },
-  emptyIconBadge: {
-    fontSize: 36,
-    width: 64,
-    height: 64,
-    borderRadius: "50%",
-    background: "var(--surface-2)",
-    border: "1px solid var(--border)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 14,
-  },
-  emptyTitle: {
-    fontSize: 17,
-    fontWeight: 800,
-    margin: "0 0 6px",
-    color: "var(--text)",
-  },
+  emptyIcon: { fontSize: 36, marginBottom: 4 },
+  emptyTitle: { fontSize: 15, fontWeight: 800, color: "var(--text)", margin: 0 },
   emptySub: {
-    fontSize: 13,
+    fontSize: 12.5,
     color: "var(--text-muted)",
-    maxWidth: 320,
+    maxWidth: 300,
     lineHeight: 1.5,
-    margin: "0 0 20px",
+    margin: 0,
   },
 };

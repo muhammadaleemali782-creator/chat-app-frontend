@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import api from "../api";
 import LoadingScreen from "./LoadingScreen.jsx";
 import SheetView from "./SheetView.jsx";
+import ModalPortal from "./ModalPortal.jsx";
 
 export default function SheetsListModal({ conversationId, onClose }) {
   const [sheets, setSheets] = useState([]);
@@ -49,6 +50,7 @@ export default function SheetsListModal({ conversationId, onClose }) {
   }
 
   return (
+    <ModalPortal>
     <div style={styles.backdrop} onClick={onClose}>
       <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div style={styles.header}>
@@ -98,6 +100,7 @@ export default function SheetsListModal({ conversationId, onClose }) {
         </div>
       </div>
     </div>
+    </ModalPortal>
   );
 }
 
