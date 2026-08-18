@@ -1,97 +1,67 @@
-// Auth pages (login/register) ka left-side visual panel
-// Desktop pe dikhta hai, mobile pe CSS se hide ho jaata hai (.auth-brand-panel)
-
 export default function BrandPanel({ heading, sub }) {
   return (
-    <div className="auth-brand-panel" style={styles.wrap}>
-      <div style={styles.glow} />
+    <div className="auth-brand-panel">
+      <div className="auth-brand-glow-1" />
+      <div className="auth-brand-glow-2" />
 
-      <div style={styles.bubbles}>
-        <div style={{ ...styles.bubble, ...styles.bubbleLeft1 }}>Hey! 👋</div>
-        <div style={{ ...styles.bubble, ...styles.bubbleRight1 }}>Kaise ho?</div>
-        <div style={{ ...styles.bubble, ...styles.bubbleLeft2 }}>@username se dhundo</div>
+      {/* Floating 3D Message Matrix */}
+      <div className="auth-floating-bubbles">
+        <div className="auth-bubble-3d bubble-float-1">
+          <span className="bubble-icon">👋</span>
+          <div>
+            <strong>Hey there!</strong>
+            <p>Welcome to Chatox v4</p>
+          </div>
+        </div>
+
+        <div className="auth-bubble-3d bubble-float-2">
+          <span className="bubble-icon">🛡️</span>
+          <div>
+            <strong>Zero Phone Leaks</strong>
+            <p>Pure @username identity</p>
+          </div>
+        </div>
+
+        <div className="auth-bubble-3d bubble-float-3">
+          <span className="bubble-icon">⚡</span>
+          <div>
+            <strong>Sub-30ms Sockets</strong>
+            <p>Real-time delivery ticks</p>
+          </div>
+        </div>
       </div>
 
-      <div style={styles.textBlock}>
-        <div className="wordmark" style={{ fontSize: 30, marginBottom: 14 }}>
-          Chatox<span className="dot">.</span>
+      {/* Bottom Brand Identity */}
+      <div className="auth-brand-footer-block">
+        <div className="landing-brand" style={{ marginBottom: 18 }}>
+          <div className="landing-brand-logo" style={{ width: 42, height: 42, borderRadius: 14 }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+          <div className="landing-brand-name" style={{ fontSize: 28 }}>
+            Chatox<span className="dot" style={{ color: "var(--amber)" }}>.</span>
+          </div>
         </div>
-        <h1 style={styles.heading}>{heading}</h1>
-        <p style={styles.sub}>{sub}</p>
-        <p style={styles.credit}>Powered by Educa Veda Digitals</p>
+
+        <h1 className="auth-brand-heading">{heading}</h1>
+        <p className="auth-brand-sub">{sub}</p>
+
+        <div className="auth-brand-stats-row">
+          <div className="auth-stat-pill">
+            <span className="online-dot" style={{ width: 7, height: 7, borderRadius: "50%", background: "#10b981", display: "inline-block" }} />
+            <span>100% Encrypted</span>
+          </div>
+          <div className="auth-stat-pill">
+            <span>📞 WebRTC HD Calls</span>
+          </div>
+          <div className="auth-stat-pill">
+            <span>📊 Live Sheets</span>
+          </div>
+        </div>
+
+        <p className="auth-brand-credit">Crafted with precision • Powered by <strong>Educa Veda Digitals</strong></p>
       </div>
     </div>
   );
 }
-
-const styles = {
-  wrap: {
-    position: "relative",
-    overflow: "hidden",
-    background:
-      "linear-gradient(160deg, #091326 0%, #0c182e 55%, #080d1a 100%)",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-end",
-    padding: "56px",
-  },
-  glow: {
-    position: "absolute",
-    top: "-20%",
-    left: "-10%",
-    width: 420,
-    height: 420,
-    borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(37,99,235,0.25), transparent 70%)",
-    filter: "blur(10px)",
-  },
-  bubbles: {
-    position: "absolute",
-    top: "18%",
-    left: 0,
-    right: 0,
-    height: "45%",
-  },
-  bubble: {
-    position: "absolute",
-    background: "rgba(255,255,255,0.06)",
-    border: "1px solid rgba(255,255,255,0.08)",
-    backdropFilter: "blur(6px)",
-    color: "var(--text)",
-    padding: "10px 16px",
-    borderRadius: 16,
-    fontSize: 14,
-    fontFamily: "var(--font-body)",
-    boxShadow: "0 8px 20px rgba(0,0,0,0.25)",
-  },
-  bubbleLeft1: { top: 0, left: "8%", borderBottomLeftRadius: 4 },
-  bubbleRight1: {
-    top: 60,
-    right: "10%",
-    background: "rgba(37,99,235,0.22)",
-    borderColor: "rgba(37,99,235,0.35)",
-    borderBottomRightRadius: 4,
-  },
-  bubbleLeft2: { top: 130, left: "14%", borderBottomLeftRadius: 4 },
-  textBlock: { position: "relative", maxWidth: 380 },
-  heading: {
-    fontFamily: "var(--font-display)",
-    fontSize: 30,
-    fontWeight: 700,
-    lineHeight: 1.25,
-    margin: "0 0 10px",
-    letterSpacing: "-0.01em",
-  },
-  sub: {
-    color: "var(--text-muted)",
-    fontSize: 15,
-    lineHeight: 1.5,
-    margin: 0,
-  },
-  credit: {
-    color: "var(--text-faint)",
-    fontSize: 11.5,
-    marginTop: 28,
-    letterSpacing: "0.02em",
-  },
-};

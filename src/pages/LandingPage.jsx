@@ -5,6 +5,9 @@ import { useTheme } from "../context/ThemeContext.jsx";
 import InteractiveMockup from "../components/InteractiveMockup.jsx";
 import ThreeDTiltCard from "../components/ThreeDTiltCard.jsx";
 import ThreeDFeatureShowcase from "../components/ThreeDFeatureShowcase.jsx";
+import Floating3DOrbs from "../components/Floating3DOrbs.jsx";
+import InteractivePinDemo from "../components/InteractivePinDemo.jsx";
+import ThreeDCommunityWall from "../components/ThreeDCommunityWall.jsx";
 
 export default function LandingPage() {
   const { user } = useAuth();
@@ -38,8 +41,10 @@ export default function LandingPage() {
 
   return (
     <div className="landing-page">
+      {/* 3D Atmospheric Background Glows & Floating Orbs */}
       <div className="landing-bg-glow-1" />
       <div className="landing-bg-glow-2" />
+      <Floating3DOrbs />
 
       {/* 1. Glassmorphism Sticky Navbar */}
       <header className="landing-navbar">
@@ -59,9 +64,10 @@ export default function LandingPage() {
             <nav className="landing-nav-links">
               <a href="#features" className="landing-nav-link">Features</a>
               <a href="#why-chatox" className="landing-nav-link">Why Chatox?</a>
-              <a href="#3d-showcase" className="landing-nav-link">3D Matrix</a>
+              <a href="#3d-matrix" className="landing-nav-link">3D Matrix</a>
               <a href="#demo" className="landing-nav-link">Live Demo</a>
-              <a href="#security" className="landing-nav-link">Security</a>
+              <a href="#security" className="landing-nav-link">Security & Lock</a>
+              <a href="#community" className="landing-nav-link">Community</a>
               <a href="#faq" className="landing-nav-link">FAQ</a>
             </nav>
 
@@ -115,9 +121,10 @@ export default function LandingPage() {
           <div className="mobile-menu-drawer">
             <a href="#features" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Features</a>
             <a href="#why-chatox" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Why Chatox?</a>
-            <a href="#3d-showcase" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>3D Spatial Matrix</a>
+            <a href="#3d-matrix" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>3D Spatial Matrix</a>
             <a href="#demo" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Live Interactive Demo</a>
-            <a href="#security" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Security & App Lock</a>
+            <a href="#security" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Security & PIN Lock</a>
+            <a href="#community" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Community Reviews</a>
             <a href="#faq" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
             <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
               {user ? (
@@ -159,7 +166,7 @@ export default function LandingPage() {
         <div className="landing-container">
           <div className="hero-pill-badge">
             <span>✨</span>
-            <span>Privacy-First • No Phone Number Required • HD Calling</span>
+            <span>Privacy-First • Zero Phone Tracking • WebRTC HD Calling</span>
           </div>
 
           <h1 className="hero-title">
@@ -178,7 +185,7 @@ export default function LandingPage() {
               <button
                 type="button"
                 className="btn-primary-glow"
-                style={{ fontSize: 16, padding: "14px 32px" }}
+                style={{ fontSize: 16, padding: "14px 34px" }}
                 onClick={() => navigate("/app")}
               >
                 <span>Open Chatox App</span>
@@ -189,7 +196,7 @@ export default function LandingPage() {
                 <Link
                   to="/register"
                   className="btn-primary-glow"
-                  style={{ fontSize: 16, padding: "14px 32px" }}
+                  style={{ fontSize: 16, padding: "14px 34px" }}
                 >
                   <span>Create Free Account</span>
                   <span style={{ fontSize: 18 }}>⚡</span>
@@ -224,11 +231,11 @@ export default function LandingPage() {
       </section>
 
       {/* 3. 3D Spatial Feature Showcase Section */}
-      <section id="3d-showcase" className="landing-container" style={{ padding: "40px 0 60px", scrollMarginTop: 80 }}>
+      <section id="3d-matrix" className="landing-container" style={{ padding: "40px 0 60px", scrollMarginTop: 80 }}>
         <div className="section-header" style={{ marginBottom: 30 }}>
           <span className="section-badge">3D SPATIAL ARCHITECTURE</span>
           <h2 className="section-title">Interactive 3D Workspace Engine</h2>
-          <p className="section-subtitle">Move your cursor or touch to rotate the 3D depth matrix.</p>
+          <p className="section-subtitle">Move your cursor or touch to rotate and explore the 3D multi-layered spatial matrix.</p>
         </div>
         <ThreeDFeatureShowcase />
       </section>
@@ -433,25 +440,10 @@ export default function LandingPage() {
             </ThreeDTiltCard>
           </div>
 
-          {/* Card 2: Security & Cross-Platform */}
+          {/* Card 2: Security & Interactive PIN Lock Simulator */}
           <div id="security" className="feature-highlight-card feature-highlight-reverse" style={{ scrollMarginTop: 80 }}>
             <ThreeDTiltCard maxTilt={6}>
-              <div style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 20, padding: 24, boxShadow: "var(--shadow-soft)" }}>
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  <div style={{ padding: "12px 14px", borderRadius: 12, background: "var(--surface)", border: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: 600, fontSize: 13 }}>🔒 Biometric & PIN Security Gate</span>
-                    <span style={{ color: "var(--amber)", fontSize: 11.5, fontWeight: 700 }}>Active</span>
-                  </div>
-                  <div style={{ padding: "12px 14px", borderRadius: 12, background: "var(--surface)", border: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: 600, fontSize: 13 }}>🔔 Capacitor Push Notifications</span>
-                    <span style={{ color: "var(--amber)", fontSize: 11.5, fontWeight: 700 }}>Enabled</span>
-                  </div>
-                  <div style={{ padding: "12px 14px", borderRadius: 12, background: "var(--surface)", border: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: 600, fontSize: 13 }}>🎨 5 Tailored Color Palettes</span>
-                    <span style={{ color: "var(--accent)", fontSize: 11.5, fontWeight: 700 }}>Active</span>
-                  </div>
-                </div>
-              </div>
+              <InteractivePinDemo />
             </ThreeDTiltCard>
 
             <div>
@@ -462,7 +454,7 @@ export default function LandingPage() {
                 PIN App Lock Gate & Native Hybrid Mobile App
               </h3>
               <p style={{ color: "var(--text-muted)", fontSize: 14.5, lineHeight: 1.6, margin: "0 0 16px" }}>
-                Protect sensitive company or personal chats when leaving your laptop open. Plus, install Chatox as an Android/iOS app with full offline resilience and hardware notification support.
+                Protect sensitive company or personal chats when leaving your laptop open. Try the live interactive PIN lock simulator on the left to experience instant vault locking!
               </p>
               <div className="feature-pill-list">
                 <div className="feature-pill-item">
@@ -483,7 +475,17 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 8. FAQ Section */}
+      {/* 8. 3D Community Wall & Reviews */}
+      <section id="community" className="landing-container" style={{ padding: "60px 0 80px", scrollMarginTop: 80 }}>
+        <div className="section-header">
+          <span className="section-badge">WALL OF TRUST</span>
+          <h2 className="section-title">Loved by Developers & Teams</h2>
+          <p className="section-subtitle">Real feedback from professionals collaborating in total privacy with Chatox.</p>
+        </div>
+        <ThreeDCommunityWall />
+      </section>
+
+      {/* 9. FAQ Section */}
       <section id="faq" className="faq-section landing-container" style={{ scrollMarginTop: 80 }}>
         <div className="section-header">
           <span className="section-badge">Got Questions?</span>
@@ -512,7 +514,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 9. Conversion CTA Banner */}
+      {/* 10. Conversion CTA Banner */}
       <section className="landing-container">
         <div className="cta-banner-card">
           <h2 className="cta-banner-title">
@@ -553,7 +555,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 10. Footer */}
+      {/* 11. Footer */}
       <footer className="landing-footer">
         <div className="landing-container">
           <div className="footer-top">
@@ -577,8 +579,9 @@ export default function LandingPage() {
                 <ul className="footer-link-list">
                   <li><a href="#features" className="footer-link">Features</a></li>
                   <li><a href="#why-chatox" className="footer-link">Why Chatox?</a></li>
-                  <li><a href="#3d-showcase" className="footer-link">3D Matrix</a></li>
-                  <li><a href="#demo" className="footer-link">Live Mockup</a></li>
+                  <li><a href="#3d-matrix" className="footer-link">3D Matrix</a></li>
+                  <li><a href="#demo" className="footer-link">Live Simulator</a></li>
+                  <li><a href="#community" className="footer-link">Community Wall</a></li>
                   <li><a href="#faq" className="footer-link">FAQ</a></li>
                 </ul>
               </div>
