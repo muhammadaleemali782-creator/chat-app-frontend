@@ -51,7 +51,7 @@ export default function CalendarPage() {
     load();
   }, [load]);
 
-  // Live ghadi - har 30 second me time refresh, taaki "abhi kitne baje hai" hamesha sahi dikhe
+  // Live clock refresh every 30s
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 30000);
     return () => clearInterval(id);
@@ -91,14 +91,10 @@ export default function CalendarPage() {
   };
 
   const handleJoin = (meeting) => {
-    // Abhi sirf 1-on-1 calling banayi hai - button already disable hai group
-    // meetings ke liye, yeh sirf ek safety check hai
     if (meeting.invitees.length !== 1) return;
     const isOrganizer = (meeting.createdBy?._id || meeting.createdBy) === user.id;
     const other = isOrganizer ? meeting.invitees[0].user : meeting.createdBy;
     if (!other?._id) return;
-    // Call ke liye ek conversation chahiye - agar meeting kisi chat se nahi bani thi,
-    // to us bande ke saath conversation dhoondo/bana lo
     (async () => {
       try {
         const convId =
@@ -111,7 +107,6 @@ export default function CalendarPage() {
     })();
   };
 
-  // Agle 7 dino ki list (aaj se shuru)
   const weekDays = useMemo(() => {
     const today = startOfDay(new Date());
     return Array.from({ length: 7 }, (_, i) => new Date(today.getTime() + i * DAY_MS));
@@ -132,10 +127,13 @@ export default function CalendarPage() {
   const selectedMeetings = meetingsByDayKey[selectedDay.getTime()] || [];
   const isSelectedToday = sameDay(selectedDay, now);
 
+  const todayCount = (meetingsByDayKey[startOfDay(now).getTime()] || []).length;
+  const tomorrowCount = (meetingsByDayKey[startOfDay(new Date(now.getTime() + DAY_MS)).getTime()] || []).length;
+
   const dayLabel = (d) => {
     if (sameDay(d, now)) return "Aaj";
     if (sameDay(d, new Date(startOfDay(now).getTime() + DAY_MS))) return "Kal";
-    return d.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" });
+    return d.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "short" });
   };
 
   const formatTime = (iso) =>
@@ -144,89 +142,100 @@ export default function CalendarPage() {
   const currentHour = now.getHours();
   const currentMinuteFraction = now.getMinutes() / 60;
 
-  // Timeline pehli baar khulte hi current time ke aas-paas scroll ho jaaye
   useEffect(() => {
     if (isSelectedToday && timelineRef.current && !scrolledOnceRef.current) {
       const rowHeight = 56;
-      timelineRef.current.scrollTop = Math.max(0, (currentHour - 2) * rowHeight);
+      timelineRef.current.scrollTop = Math.max(0, currentHour * rowHeight - 100);
       scrolledOnceRef.current = true;
     }
   }, [isSelectedToday, currentHour]);
 
-  // Aaj aur kal ki meetings ka quick summary
-  const todayCount = (meetingsByDayKey[startOfDay(now).getTime()] || []).length;
-  const tomorrowCount =
-    (meetingsByDayKey[startOfDay(new Date(now.getTime() + DAY_MS)).getTime()] || []).length;
-
   return (
-    <div style={styles.wrap}>
+    <div style={styles.wrap} className="calendar-page-container">
+      {/* 1. Header with Clock & New Meeting CTA */}
       <div style={styles.header}>
-        <div>
-          <h1 style={styles.title}>📅 Calendar</h1>
+        <div style={styles.headerTitleBlock}>
+          <div style={styles.titleRow}>
+            <span style={{ fontSize: 24 }}>📅</span>
+            <h1 style={styles.title}>Calendar</h1>
+          </div>
           <div style={styles.liveClock}>
-            {now.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" })}
-            {" · "}
-            <span style={styles.liveTime}>
-              {now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
-            </span>
+            {now.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })} •{" "}
+            <span style={styles.liveTime}>{now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</span>
           </div>
         </div>
-        <div style={styles.summaryPills}>
-          <div style={styles.pill}>
-            <strong>{todayCount}</strong> aaj
-          </div>
-          <div style={styles.pill}>
-            <strong>{tomorrowCount}</strong> kal
-          </div>
-          <button style={styles.newMeetingBtn} onClick={() => setShowScheduleModal(true)}>
-            + Nayi Meeting
-          </button>
-        </div>
+
+        <button
+          type="button"
+          style={styles.newMeetingBtn}
+          onClick={() => setShowScheduleModal(true)}
+        >
+          <span>+</span>
+          <span>Nayi Meeting</span>
+        </button>
       </div>
 
       {showScheduleModal && (
         <ScheduleMeetingModal
           onClose={() => setShowScheduleModal(false)}
-          onScheduled={load}
+          onScheduled={() => {
+            setShowScheduleModal(false);
+            load();
+          }}
         />
       )}
 
-      {/* 7 din ki week strip */}
+      {/* 2. Today / Tomorrow Counter Badges */}
+      <div style={styles.summaryRow}>
+        <div style={styles.pill}>
+          <strong>{todayCount}</strong> aaj
+        </div>
+        <div style={styles.pill}>
+          <strong>{tomorrowCount}</strong> kal
+        </div>
+        <div style={{ ...styles.pill, marginLeft: "auto", color: "var(--accent)" }}>
+          {selectedMeetings.length} on this day
+        </div>
+      </div>
+
+      {/* 3. 7-Day Week Strip (No Scrollbar, Perfectly Padded) */}
       <div style={styles.weekStrip}>
         {weekDays.map((d) => {
           const key = d.getTime();
+          const active = selectedDay.getTime() === key;
           const count = (meetingsByDayKey[key] || []).length;
-          const active = sameDay(d, selectedDay);
           return (
             <button
               key={key}
+              type="button"
               style={{ ...styles.dayChip, ...(active ? styles.dayChipActive : {}) }}
               onClick={() => setSelectedDay(startOfDay(d))}
             >
-              <div style={styles.dayChipWeekday}>
+              <div style={{ ...styles.dayChipWeekday, ...(active ? { color: "#ffffff" } : {}) }}>
                 {d.toLocaleDateString("en-IN", { weekday: "short" })}
               </div>
-              <div style={styles.dayChipNum}>{d.getDate()}</div>
+              <div style={{ ...styles.dayChipNum, ...(active ? { color: "#ffffff" } : {}) }}>{d.getDate()}</div>
               {count > 0 && (
-                <div style={{ ...styles.dayChipDot, ...(active ? { background: "#fff" } : {}) }} />
+                <div style={{ ...styles.dayChipDot, ...(active ? { background: "#ffffff" } : {}) }} />
               )}
             </button>
           );
         })}
       </div>
 
+      {/* 4. Selected Day Status Bar */}
       <div style={styles.selectedDayHeader}>
-        {dayLabel(selectedDay)}
+        <span style={{ fontWeight: 700, color: "var(--text)" }}>{dayLabel(selectedDay)}</span>
         <span style={styles.selectedDayMeetingCount}>
           {selectedMeetings.length === 0
-            ? "koi meeting nahi"
+            ? "Koi meeting nahi"
             : `${selectedMeetings.length} meeting${selectedMeetings.length > 1 ? "s" : ""}`}
         </span>
       </div>
 
       {loading && <LoadingScreen message="Calendar load ho raha hai..." />}
 
-      {/* 24-hour timeline - poora din hour-by-hour dikhta hai, khali ghante bhi */}
+      {/* 5. 24-Hour Timeline */}
       {!loading && (
         <div style={styles.timeline} ref={timelineRef}>
           {HOURS.map((h) => {
@@ -286,12 +295,18 @@ export default function CalendarPage() {
                           )}
                         </div>
                         {iDeclined ? (
-                          <button style={styles.cancelBtn} onClick={() => handleDismiss(m._id)} title="Calendar se hataao">
-                            Hide karo
+                          <button
+                            type="button"
+                            style={styles.cancelBtn}
+                            onClick={() => handleDismiss(m._id)}
+                            title="Calendar se hataao"
+                          >
+                            Hide
                           </button>
                         ) : (
-                          <>
+                          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
                             <button
+                              type="button"
                               className="primary-btn"
                               style={{
                                 ...styles.joinBtn,
@@ -305,16 +320,17 @@ export default function CalendarPage() {
                                   : "Abhi call karo"
                               }
                             >
-                              Join
+                              Join 🚀
                             </button>
                             <button
+                              type="button"
                               style={styles.cancelBtn}
                               onClick={() => handleCancel(m)}
                               title={isOrganizer ? "Sabke liye cancel karo" : "Main nahi aa sakta"}
                             >
                               ✕
                             </button>
-                          </>
+                          </div>
                         )}
                       </div>
                     );
@@ -327,8 +343,19 @@ export default function CalendarPage() {
       )}
 
       {!loading && meetings.length === 0 && (
-        <div style={styles.emptyState}>
-          🗓️ Koi meeting schedule nahi hai. Kisi chat mein 📅 icon se meeting schedule kar sakte ho.
+        <div style={styles.emptyStateCard}>
+          <div style={styles.emptyIconBadge}>📅</div>
+          <h2 style={styles.emptyTitle}>Koi meeting schedule nahi hai</h2>
+          <p style={styles.emptySub}>
+            Aap kisi bhi chat ke andar 📅 meeting icon par click karke ya upar diye button se nayi meeting schedule kar sakte hain.
+          </p>
+          <button
+            type="button"
+            style={styles.newMeetingBtn}
+            onClick={() => setShowScheduleModal(true)}
+          >
+            + Abhi Meeting Schedule Karo
+          </button>
         </div>
       )}
     </div>
@@ -341,184 +368,277 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     background: "var(--bg)",
+    overflowY: "auto",
+    overflowX: "hidden",
   },
   header: {
-    padding: "22px 24px 14px",
+    padding: "18px 20px 12px",
     display: "flex",
-    alignItems: "flex-start",
+    alignItems: "center",
     justifyContent: "space-between",
     gap: 12,
-    flexWrap: "wrap",
+    borderBottom: "1px solid var(--border-soft)",
+  },
+  headerTitleBlock: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  titleRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
   },
   title: {
     fontFamily: "var(--font-display)",
-    fontSize: 22,
-    fontWeight: 700,
+    fontSize: 20,
+    fontWeight: 800,
     margin: 0,
+    color: "var(--text)",
   },
-  liveClock: { color: "var(--text-muted)", fontSize: 13, marginTop: 6 },
-  liveTime: { color: "var(--accent)", fontWeight: 700 },
-  summaryPills: { display: "flex", gap: 8 },
-  pill: {
-    background: "var(--surface)",
-    border: "1px solid var(--border)",
-    borderRadius: 20,
-    padding: "6px 14px",
-    fontSize: 12.5,
+  liveClock: {
     color: "var(--text-muted)",
+    fontSize: 12,
+    marginTop: 2,
+  },
+  liveTime: {
+    color: "var(--accent)",
+    fontWeight: 700,
   },
   newMeetingBtn: {
     background: "var(--accent)",
-    color: "#fff",
+    color: "#ffffff",
     border: "none",
-    borderRadius: 20,
+    borderRadius: 12,
     padding: "8px 16px",
-    fontSize: 12.5,
-    fontWeight: 600,
+    fontSize: 13,
+    fontWeight: 700,
+    cursor: "pointer",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    boxShadow: "0 2px 8px var(--accent-glow)",
+    flexShrink: 0,
+  },
+  summaryRow: {
+    display: "flex",
+    gap: 8,
+    padding: "10px 20px",
+    alignItems: "center",
+  },
+  pill: {
+    background: "var(--surface)",
+    border: "1px solid var(--border)",
+    borderRadius: 16,
+    padding: "4px 12px",
+    fontSize: 12,
+    color: "var(--text-muted)",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 4,
   },
   weekStrip: {
     display: "flex",
-    gap: 8,
-    padding: "0 24px 14px",
+    gap: 6,
+    padding: "4px 16px 12px",
     overflowX: "auto",
+    scrollbarWidth: "none",
   },
   dayChip: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    gap: 4,
-    minWidth: 52,
-    padding: "8px 6px 10px",
+    justifyContent: "center",
+    gap: 2,
+    flex: 1,
+    minWidth: 44,
+    padding: "8px 4px",
     borderRadius: 12,
     border: "1px solid var(--border)",
     background: "var(--surface)",
     color: "var(--text)",
-    flexShrink: 0,
+    cursor: "pointer",
+    transition: "all 0.15s ease",
   },
   dayChipActive: {
     background: "var(--accent)",
     borderColor: "var(--accent)",
-    color: "#fff",
+    boxShadow: "0 4px 12px var(--accent-glow)",
   },
-  dayChipWeekday: { fontSize: 10.5, fontWeight: 700, opacity: 0.75, textTransform: "uppercase" },
-  dayChipNum: { fontSize: 16, fontWeight: 700 },
-  dayChipDot: { width: 5, height: 5, borderRadius: "50%", background: "var(--accent)" },
-  selectedDayHeader: {
-    padding: "0 24px 10px",
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    fontSize: 14.5,
+  dayChipWeekday: {
+    fontSize: 10,
     fontWeight: 700,
+    color: "var(--text-muted)",
+    textTransform: "uppercase",
+  },
+  dayChipNum: {
+    fontSize: 16,
+    fontWeight: 800,
+    fontFamily: "var(--font-display)",
     color: "var(--text)",
-    borderBottom: "1px solid var(--border)",
-    paddingBottom: 12,
+  },
+  dayChipDot: {
+    width: 4,
+    height: 4,
+    borderRadius: "50%",
+    background: "var(--accent)",
+  },
+  selectedDayHeader: {
+    padding: "8px 20px",
+    fontSize: 13,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    background: "var(--surface-2)",
+    borderTop: "1px solid var(--border-soft)",
+    borderBottom: "1px solid var(--border-soft)",
   },
   selectedDayMeetingCount: {
     fontSize: 12,
-    fontWeight: 500,
     color: "var(--text-muted)",
-  },
-  emptyText: { color: "var(--text-muted)", fontSize: 14, padding: "20px 24px" },
-  emptyState: {
-    color: "var(--text-muted)",
-    fontSize: 13,
-    textAlign: "center",
-    padding: "14px 20px 20px",
-    lineHeight: 1.6,
   },
   timeline: {
     flex: 1,
     overflowY: "auto",
-    padding: "6px 24px 24px",
+    padding: "8px 16px 24px",
   },
   hourRow: {
     display: "flex",
-    gap: 12,
-    minHeight: 56,
-    borderTop: "1px solid var(--border-soft)",
+    minHeight: 52,
+    borderBottom: "1px dashed var(--border-soft)",
   },
   hourLabel: {
-    width: 54,
-    flexShrink: 0,
+    width: 60,
     fontSize: 11,
     color: "var(--text-faint)",
     paddingTop: 6,
+    fontFamily: "monospace",
+    flexShrink: 0,
   },
   hourContent: {
     flex: 1,
     position: "relative",
-    padding: "6px 0",
+    padding: "4px 0",
     display: "flex",
     flexDirection: "column",
     gap: 6,
   },
-  hourEmpty: { height: 30 },
   nowLine: {
     position: "absolute",
     left: 0,
     right: 0,
-    height: 0,
-    borderTop: "2px solid var(--danger)",
-    zIndex: 2,
+    height: 2,
+    background: "#ef4444",
+    zIndex: 10,
   },
   nowDot: {
     position: "absolute",
-    left: -4,
+    left: -5,
     top: -4,
-    width: 8,
-    height: 8,
+    width: 10,
+    height: 10,
     borderRadius: "50%",
-    background: "var(--danger)",
+    background: "#ef4444",
+  },
+  hourEmpty: {
+    height: "100%",
   },
   meetingCard: {
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
     background: "var(--surface)",
     border: "1px solid var(--border)",
     borderRadius: 12,
-    padding: "9px 12px",
+    padding: "10px 12px",
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    boxShadow: "var(--shadow-soft)",
   },
-  meetingCardDeclined: { opacity: 0.55 },
-  declinedTag: { fontSize: 10.5, color: "var(--danger)", fontWeight: 600, marginTop: 2 },
+  meetingCardDeclined: {
+    opacity: 0.6,
+  },
   avatar: {
-    width: 30,
-    height: 30,
+    width: 34,
+    height: 34,
     borderRadius: "50%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     fontWeight: 700,
-    fontFamily: "var(--font-display)",
-    fontSize: 12.5,
+    fontSize: 13,
     flexShrink: 0,
   },
-  meetingTitle: { fontSize: 13.5, fontWeight: 600 },
-  meetingMeta: { fontSize: 11.5, color: "var(--text-muted)", marginTop: 2 },
+  meetingTitle: {
+    fontSize: 13.5,
+    fontWeight: 700,
+    color: "var(--text)",
+  },
+  meetingMeta: {
+    fontSize: 11.5,
+    color: "var(--text-muted)",
+    marginTop: 2,
+  },
+  declinedTag: {
+    fontSize: 11,
+    color: "var(--danger)",
+    marginTop: 2,
+  },
   joinBtn: {
+    padding: "6px 12px",
+    fontSize: 12,
+    borderRadius: 8,
     background: "var(--accent)",
     color: "#fff",
     border: "none",
-    borderRadius: 8,
-    padding: "6px 12px",
-    fontSize: 12,
-    fontWeight: 600,
-    flexShrink: 0,
+    fontWeight: 700,
+    cursor: "pointer",
   },
   joinBtnDisabled: {
-    background: "var(--surface-2)",
-    color: "var(--text-faint)",
-    opacity: 0.7,
+    opacity: 0.5,
+    cursor: "not-allowed",
   },
   cancelBtn: {
-    background: "transparent",
+    background: "var(--surface-2)",
     border: "1px solid var(--border)",
-    color: "var(--text-faint)",
+    color: "var(--text-muted)",
+    padding: "6px 10px",
     borderRadius: 8,
-    width: 26,
-    height: 26,
-    fontSize: 12,
-    flexShrink: 0,
+    fontSize: 11.5,
+    cursor: "pointer",
+  },
+  emptyStateCard: {
+    margin: "40px 20px",
+    padding: "32px 20px",
+    background: "var(--surface)",
+    border: "1px solid var(--border)",
+    borderRadius: 20,
+    textAlign: "center",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    boxShadow: "var(--shadow-soft)",
+  },
+  emptyIconBadge: {
+    fontSize: 36,
+    width: 64,
+    height: 64,
+    borderRadius: "50%",
+    background: "var(--surface-2)",
+    border: "1px solid var(--border)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 14,
+  },
+  emptyTitle: {
+    fontSize: 17,
+    fontWeight: 800,
+    margin: "0 0 6px",
+    color: "var(--text)",
+  },
+  emptySub: {
+    fontSize: 13,
+    color: "var(--text-muted)",
+    maxWidth: 320,
+    lineHeight: 1.5,
+    margin: "0 0 20px",
   },
 };

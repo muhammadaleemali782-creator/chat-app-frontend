@@ -340,34 +340,66 @@ button:focus-visible,
   .chat-layout { flex-direction: column !important; }
   .icon-rail {
     width: 100% !important;
-    height: 52px !important;
+    height: 56px !important;
     flex-direction: row !important;
     align-items: center !important;
-    padding: 0 12px !important;
+    padding: 0 16px !important;
     border-right: none !important;
     border-bottom: none !important;
     border-top: 1px solid var(--border) !important;
     justify-content: space-between !important;
     order: 2 !important;
     flex-shrink: 0 !important;
+    background: var(--surface) !important;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06) !important;
+    z-index: 100 !important;
+    box-sizing: border-box !important;
   }
   /* Chat khuli hone par yeh bottom bar chhup jaati hai, taaki chat pura screen use kare */
   .icon-rail.icon-rail-hide-mobile { display: none !important; }
   .page-content { order: 1 !important; flex: 1 !important; min-height: 0 !important; }
-  .icon-rail-avatar { margin-bottom: 0 !important; }
+  .icon-rail-avatar {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    aspect-ratio: 1 / 1 !important;
+    border-radius: 50% !important;
+    margin-bottom: 0 !important;
+    flex-shrink: 0 !important;
+  }
   .icon-rail-items {
     flex-direction: row !important;
     flex: none !important;
-    gap: 4px !important;
+    gap: 8px !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
   .icon-rail-item {
-    width: auto !important;
+    width: 44px !important;
+    height: 38px !important;
     flex-direction: row !important;
-    padding: 6px 10px !important;
-    gap: 6px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 12px !important;
   }
   .icon-rail-item-label { display: none !important; }
-  .icon-rail-bottom { flex-direction: row !important; }
+  .icon-rail-bottom {
+    flex-direction: row !important;
+    display: flex !important;
+    gap: 8px !important;
+    align-items: center !important;
+  }
+  .theme-popover {
+    bottom: 64px !important;
+    right: 12px !important;
+    left: auto !important;
+    position: fixed !important;
+    box-shadow: var(--shadow) !important;
+    z-index: 9999 !important;
+  }
 }
 
 /* Bahut chhote phones (jaise purane 320-360px wide devices) ke liye extra tight fit -

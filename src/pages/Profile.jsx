@@ -4,8 +4,6 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { avatarColor } from "../utils/avatarColor";
 import { hasPinSet, setPin, clearPin, verifyPin } from "../utils/appLock";
 
-// Yeh aapki website ka link hai - jab koi app share karega, yehi link jaayega.
-// Agar kabhi Vercel URL badal jaaye to bas yahan update kar dena.
 const APP_SHARE_URL = "https://chat-app-frontend-iota-coral.vercel.app";
 
 export default function Profile({ onClose }) {
@@ -26,11 +24,11 @@ export default function Profile({ onClose }) {
   const initial = (user?.displayName || "?").charAt(0).toUpperCase();
 
   const handleShareApp = async () => {
-    const shareText = `${user?.displayName} (@${user?.username}) ne aapko ChatApp use karne ke liye invite kiya hai!\n\n${APP_SHARE_URL}`;
+    const shareText = `${user?.displayName} (@${user?.username}) ne aapko Chatox use karne ke liye invite kiya hai!\n\n${APP_SHARE_URL}`;
     try {
       if (navigator.share) {
         await navigator.share({
-          title: "ChatApp",
+          title: "Chatox",
           text: shareText,
           url: APP_SHARE_URL,
         });
@@ -39,7 +37,7 @@ export default function Profile({ onClose }) {
         alert("Link copy ho gaya - kisi ko bhi paste karke bhej do!");
       }
     } catch (err) {
-      // User ne share cancel kar diya ho sakta hai - kuch nahi karna
+      // User cancelled
     }
   };
 
@@ -91,7 +89,6 @@ export default function Profile({ onClose }) {
       return;
     }
 
-    // set mode
     if (pinStep === 1) {
       if (pinValue.length >= 4) return;
       const next = pinValue + d;
@@ -123,13 +120,21 @@ export default function Profile({ onClose }) {
   return (
     <div style={styles.overlay} onClick={onClose}>
       <div style={styles.card} onClick={(e) => e.stopPropagation()}>
-        <button style={styles.closeBtn} onClick={onClose}>
-          ✕
+        {/* Close Button */}
+        <button type="button" style={styles.closeBtn} onClick={onClose} aria-label="Close Profile">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
 
-        <div style={{ ...styles.avatar, background: color.bg, color: color.fg }}>{initial}</div>
+        {/* Profile Avatar (Perfect 1:1 Circle) */}
+        <div style={{ ...styles.avatar, background: color.bg, color: color.fg }}>
+          {initial}
+        </div>
         <div style={styles.username}>@{user?.username}</div>
 
+        {/* Form Inputs */}
         <label style={styles.label}>Naam</label>
         <input
           style={styles.input}
@@ -147,27 +152,35 @@ export default function Profile({ onClose }) {
         />
         <div style={styles.charCount}>{bio.length}/140</div>
 
-        <button className="primary-btn" style={styles.saveBtn} onClick={handleSave} disabled={saving}>
+        <button
+          type="button"
+          className="primary-btn"
+          style={styles.saveBtn}
+          onClick={handleSave}
+          disabled={saving}
+        >
           {saving ? "Save ho raha hai..." : saved ? "✓ Save ho gaya" : "Save karo"}
         </button>
 
-        <button style={styles.shareBtn} onClick={handleShareApp}>
+        <button type="button" style={styles.shareBtn} onClick={handleShareApp}>
           🔗 App Share Karo
         </button>
 
         <div style={styles.divider} />
 
+        {/* Biometric / PIN Lock Section */}
         <div style={styles.lockSection}>
           <div style={{ flex: 1 }}>
-            <div style={styles.lockTitle}>🔒 App Lock (PIN)</div>
+            <div style={styles.lockTitle}>🔒 App Lock (PIN Gate)</div>
             <div style={styles.lockSub}>
               {lockEnabled
                 ? "Chalu hai - app kholte hi PIN maangega"
-                : "Band hai - chahe to laga sakte ho, na chaho to koi zaroorat nahi"}
+                : "Band hai - privacy ke liye 4-digit PIN lock lagao"}
             </div>
           </div>
           {!pinMode && (
             <button
+              type="button"
               style={{ ...styles.lockToggleBtn, ...(lockEnabled ? styles.lockToggleOn : {}) }}
               onClick={lockEnabled ? startDisableLock : startEnableLock}
             >
@@ -201,6 +214,7 @@ export default function Profile({ onClose }) {
                 ) : (
                   <button
                     key={i}
+                    type="button"
                     style={styles.pinKey}
                     onClick={() => {
                       if (k === "⌫") {
@@ -217,7 +231,7 @@ export default function Profile({ onClose }) {
                 )
               )}
             </div>
-            <button style={styles.cancelPinBtn} onClick={() => setPinMode(null)}>
+            <button type="button" style={styles.cancelPinBtn} onClick={() => setPinMode(null)}>
               Cancel karo
             </button>
           </div>
@@ -231,8 +245,10 @@ const styles = {
   overlay: {
     position: "fixed",
     inset: 0,
-    background: "rgba(6,8,14,0.6)",
-    zIndex: 500,
+    background: "rgba(0, 0, 0, 0.6)",
+    backdropFilter: "blur(6px)",
+    WebkitBackdropFilter: "blur(6px)",
+    zIndex: 999,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -245,42 +261,53 @@ const styles = {
     overflowY: "auto",
     background: "var(--surface)",
     border: "1px solid var(--border)",
-    borderRadius: "var(--radius)",
-    boxShadow: "var(--shadow-soft)",
+    borderRadius: 24,
+    boxShadow: "var(--shadow)",
     padding: "32px 24px 24px",
     position: "relative",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    boxSizing: "border-box",
   },
   closeBtn: {
     position: "absolute",
-    top: 14,
-    right: 14,
+    top: 16,
+    right: 16,
     background: "var(--surface-2)",
     border: "1px solid var(--border)",
     color: "var(--text-muted)",
-    borderRadius: 8,
-    width: 28,
-    height: 28,
-    fontSize: 12,
+    borderRadius: 10,
+    width: 32,
+    height: 32,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    transition: "all 0.15s ease",
   },
   avatar: {
-    width: 72,
-    height: 72,
+    width: 76,
+    height: 76,
+    minWidth: 76,
+    minHeight: 76,
+    aspectRatio: "1 / 1",
     borderRadius: "50%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: 28,
-    fontWeight: 700,
+    fontSize: 30,
+    fontWeight: 800,
     fontFamily: "var(--font-display)",
     marginBottom: 8,
+    flexShrink: 0,
+    boxShadow: "0 6px 18px rgba(0, 0, 0, 0.12)",
   },
-  username: { color: "var(--text-muted)", fontSize: 13.5, marginBottom: 22 },
+  username: { color: "var(--text-muted)", fontSize: 13.5, marginBottom: 18, fontWeight: 600 },
   label: {
     alignSelf: "flex-start",
     fontSize: 12.5,
+    fontWeight: 600,
     color: "var(--text-muted)",
     marginBottom: 6,
     marginTop: 10,
@@ -289,22 +316,26 @@ const styles = {
     width: "100%",
     background: "var(--surface-2)",
     border: "1px solid var(--border)",
-    borderRadius: 10,
-    padding: "10px 12px",
+    borderRadius: 12,
+    padding: "10px 14px",
     color: "var(--text)",
-    fontSize: 14.5,
+    fontSize: 14,
+    outline: "none",
+    boxSizing: "border-box",
   },
   textarea: {
     width: "100%",
     background: "var(--surface-2)",
     border: "1px solid var(--border)",
-    borderRadius: 10,
-    padding: "10px 12px",
+    borderRadius: 12,
+    padding: "10px 14px",
     color: "var(--text)",
     fontSize: 13.5,
-    minHeight: 70,
+    minHeight: 72,
     resize: "none",
     fontFamily: "inherit",
+    outline: "none",
+    boxSizing: "border-box",
   },
   charCount: {
     alignSelf: "flex-end",
@@ -316,12 +347,14 @@ const styles = {
     marginTop: 18,
     width: "100%",
     background: "var(--accent)",
-    color: "#fff",
+    color: "#ffffff",
     border: "none",
-    borderRadius: 10,
-    padding: "11px 14px",
+    borderRadius: 12,
+    padding: "12px 16px",
     fontSize: 14,
-    fontWeight: 600,
+    fontWeight: 700,
+    cursor: "pointer",
+    boxShadow: "0 4px 14px var(--accent-glow)",
   },
   shareBtn: {
     marginTop: 10,
@@ -329,16 +362,17 @@ const styles = {
     background: "var(--surface-2)",
     border: "1px solid var(--border)",
     color: "var(--text)",
-    borderRadius: 10,
+    borderRadius: 12,
     padding: "11px 14px",
     fontSize: 13.5,
     fontWeight: 600,
+    cursor: "pointer",
   },
   divider: {
     width: "100%",
     height: 1,
     background: "var(--border-soft)",
-    margin: "22px 0 16px",
+    margin: "20px 0 16px",
   },
   lockSection: {
     width: "100%",
@@ -346,19 +380,20 @@ const styles = {
     alignItems: "center",
     gap: 10,
   },
-  lockTitle: { fontSize: 14, fontWeight: 600 },
-  lockSub: { fontSize: 11.5, color: "var(--text-muted)", marginTop: 3, lineHeight: 1.5 },
+  lockTitle: { fontSize: 13.5, fontWeight: 700, color: "var(--text)" },
+  lockSub: { fontSize: 11.5, color: "var(--text-muted)", marginTop: 2, lineHeight: 1.4 },
   lockToggleBtn: {
     background: "var(--surface-2)",
     border: "1px solid var(--border)",
     color: "var(--text)",
-    borderRadius: 8,
+    borderRadius: 10,
     padding: "8px 14px",
     fontSize: 12.5,
-    fontWeight: 600,
+    fontWeight: 700,
     flexShrink: 0,
+    cursor: "pointer",
   },
-  lockToggleOn: { background: "var(--danger)", color: "#fff", borderColor: "var(--danger)" },
+  lockToggleOn: { background: "var(--danger)", color: "#ffffff", borderColor: "var(--danger)" },
   pinSetupWrap: {
     width: "100%",
     marginTop: 18,
@@ -385,7 +420,8 @@ const styles = {
     background: "var(--surface-2)",
     color: "var(--text)",
     fontSize: 16,
-    fontWeight: 600,
+    fontWeight: 700,
+    cursor: "pointer",
   },
   cancelPinBtn: {
     marginTop: 14,
@@ -394,5 +430,6 @@ const styles = {
     color: "var(--text-faint)",
     fontSize: 12.5,
     textDecoration: "underline",
+    cursor: "pointer",
   },
 };

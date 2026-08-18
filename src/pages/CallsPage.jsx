@@ -53,18 +53,25 @@ export default function CallsPage() {
 
   return (
     <div style={styles.wrap}>
+      {/* Header */}
       <div style={styles.header}>
-        <h1 style={styles.title}>📞 Calls</h1>
-        <p style={styles.subtitle}>Recent audio/video calls ki history</p>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 22 }}>📞</span>
+          <h1 style={styles.title}>Calls</h1>
+        </div>
+        <p style={styles.subtitle}>Recent audio & HD video calls ki history</p>
       </div>
 
       <div style={styles.content}>
         {loading && <LoadingScreen message="Call history load ho rahi hai..." />}
 
         {!loading && logs.length === 0 && (
-          <div style={styles.emptyState}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>📞</div>
-            Abhi tak koi call nahi hui.
+          <div style={styles.emptyStateCard}>
+            <div style={styles.emptyIconBadge}>📞</div>
+            <h2 style={styles.emptyTitle}>Abhi tak koi call nahi hui</h2>
+            <p style={styles.emptySub}>
+              Aap kisi bhi user ki chat khol kar top header me diye 📹 video ya 🎙️ audio call icon se instant call shuru kar sakte hain.
+            </p>
           </div>
         )}
 
@@ -95,19 +102,20 @@ export default function CallsPage() {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={styles.callName}>{other?.displayName || "Unknown"}</div>
                 <div style={{ ...styles.callMeta, color: statusColor }}>
-                  {statusIcon} {log.callType === "video" ? "Video" : "Audio"}
+                  {statusIcon} {log.callType === "video" ? "HD Video" : "Audio"}
                   {log.status === "missed" && " · Missed"}
-                  {log.status === "rejected" && " · Reject ki gayi"}
+                  {log.status === "rejected" && " · Declined"}
                   {log.status === "completed" && log.durationSeconds > 0 && ` · ${formatDuration(log.durationSeconds)}`}
                 </div>
               </div>
               <div style={styles.timeCol}>{formatTime(log.createdAt)}</div>
               <button
+                type="button"
                 style={styles.callBtn}
                 onClick={() => handleCallBack(log, other)}
                 title="Wapas call karo"
               >
-                {log.callType === "video" ? "🎥" : "🎙️"}
+                {log.callType === "video" ? "📹" : "🎙️"}
               </button>
             </div>
           );
@@ -119,52 +127,99 @@ export default function CallsPage() {
 
 const styles = {
   wrap: { height: "100%", overflowY: "auto", background: "var(--bg)" },
-  header: { padding: "28px 32px 10px", maxWidth: 640, margin: "0 auto" },
+  header: {
+    padding: "20px 24px 14px",
+    maxWidth: 680,
+    margin: "0 auto",
+    borderBottom: "1px solid var(--border-soft)",
+  },
   title: {
     fontFamily: "var(--font-display)",
-    fontSize: 24,
-    fontWeight: 700,
+    fontSize: 22,
+    fontWeight: 800,
     margin: 0,
+    color: "var(--text)",
   },
-  subtitle: { color: "var(--text-muted)", fontSize: 13.5, marginTop: 6 },
-  content: { padding: "10px 32px 40px", maxWidth: 640, margin: "0 auto" },
-  emptyText: { color: "var(--text-muted)", fontSize: 14, padding: "20px 0" },
-  emptyState: {
-    color: "var(--text-muted)",
-    fontSize: 14,
+  subtitle: { color: "var(--text-muted)", fontSize: 13, marginTop: 4 },
+  content: { padding: "16px 20px 40px", maxWidth: 680, margin: "0 auto" },
+  emptyStateCard: {
+    margin: "40px auto",
+    padding: "36px 24px",
+    background: "var(--surface)",
+    border: "1px solid var(--border)",
+    borderRadius: 20,
     textAlign: "center",
-    padding: "60px 20px",
-    lineHeight: 1.6,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    boxShadow: "var(--shadow-soft)",
+    maxWidth: 420,
+  },
+  emptyIconBadge: {
+    fontSize: 34,
+    width: 64,
+    height: 64,
+    borderRadius: "50%",
+    background: "var(--surface-2)",
+    border: "1px solid var(--border)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 14,
+  },
+  emptyTitle: {
+    fontSize: 17,
+    fontWeight: 800,
+    margin: "0 0 6px",
+    color: "var(--text)",
+  },
+  emptySub: {
+    fontSize: 13,
+    color: "var(--text-muted)",
+    lineHeight: 1.5,
+    margin: 0,
   },
   callItem: {
     display: "flex",
     alignItems: "center",
     gap: 12,
-    padding: "12px 4px",
-    borderBottom: "1px solid var(--border-soft)",
+    padding: "12px 14px",
+    background: "var(--surface)",
+    border: "1px solid var(--border)",
+    borderRadius: 14,
+    marginBottom: 8,
+    boxShadow: "var(--shadow-soft)",
   },
   avatar: {
-    width: 40,
-    height: 40,
+    width: 42,
+    height: 42,
+    minWidth: 42,
+    minHeight: 42,
+    aspectRatio: "1 / 1",
     borderRadius: "50%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontWeight: 700,
+    fontWeight: 800,
     fontFamily: "var(--font-display)",
     fontSize: 15,
     flexShrink: 0,
   },
-  callName: { fontSize: 14.5, fontWeight: 600 },
-  callMeta: { fontSize: 12.5, marginTop: 2 },
-  timeCol: { fontSize: 12, color: "var(--text-faint)" },
+  callName: { fontSize: 14.5, fontWeight: 700, color: "var(--text)" },
+  callMeta: { fontSize: 12, marginTop: 2 },
+  timeCol: { fontSize: 11.5, color: "var(--text-faint)", marginLeft: "auto", marginRight: 6 },
   callBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: "50%",
-    background: "var(--surface-2)",
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    background: "var(--accent-soft)",
     border: "1px solid var(--border)",
-    fontSize: 15,
-    color: "var(--text)",
+    fontSize: 16,
+    color: "var(--accent)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    flexShrink: 0,
   },
 };
