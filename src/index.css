@@ -1962,5 +1962,255 @@ button:focus-visible,
   display: block;
 }
 
+/* ==========================================================================
+   COSMIC PORTAL BLACK HOLE VORTEX & HOLOGRAPHIC LASER UNLOCK
+   ========================================================================== */
+
+.pin-guide-banner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-soft);
+}
+
+.pin-status-banner {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 6px 10px;
+  text-align: center;
+  margin-bottom: 10px;
+  animation: badgeFloat 1.5s infinite alternate;
+}
+
+/* 1. Cosmic Portal Overlay */
+.cosmic-portal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(10, 10, 20, 0.95) 0%, rgba(2, 6, 23, 0.98) 100%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  overflow: hidden;
+  animation: portalRiftOpen 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes portalRiftOpen {
+  0% { transform: scale(0.2); opacity: 0; filter: blur(20px); }
+  100% { transform: scale(1); opacity: 1; filter: blur(0px); }
+}
+
+.portal-singularity {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.portal-core {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #000000;
+  box-shadow: 0 0 25px #ef4444, 0 0 50px #8b5cf6, inset 0 0 15px #000000;
+  border: 2px solid #ef4444;
+  position: relative;
+  z-index: 3;
+  animation: corePulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes corePulse {
+  0% { transform: scale(0.85); box-shadow: 0 0 20px #ef4444, 0 0 40px #8b5cf6; }
+  100% { transform: scale(1.15); box-shadow: 0 0 35px #f43f5e, 0 0 70px #a855f7; }
+}
+
+.portal-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  pointer-events: none;
+}
+
+.ring-1 {
+  width: 100px;
+  height: 100px;
+  border-top-color: #ef4444;
+  border-right-color: #f43f5e;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+  animation: portalSpin 1.2s linear infinite;
+}
+
+.ring-2 {
+  width: 130px;
+  height: 130px;
+  border-bottom-color: #8b5cf6;
+  border-left-color: #3b82f6;
+  box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);
+  animation: portalSpinRev 1.8s linear infinite;
+}
+
+.ring-3 {
+  width: 160px;
+  height: 160px;
+  border: 1px dashed rgba(239, 68, 68, 0.4);
+  animation: portalSpin 3s linear infinite;
+}
+
+@keyframes portalSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes portalSpinRev {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* Void Sucking Particles */
+.void-particles-stream {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.void-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #f43f5e;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #f43f5e;
+  animation: suckIntoVoid 1.5s cubic-bezier(0.7, 0, 0.84, 0) infinite;
+}
+
+.p-1 { top: 10%; left: 20%; animation-delay: 0.1s; }
+.p-2 { top: 15%; right: 25%; animation-delay: 0.3s; }
+.p-3 { bottom: 20%; left: 15%; animation-delay: 0.5s; }
+.p-4 { bottom: 15%; right: 20%; animation-delay: 0.2s; }
+.p-5 { top: 40%; left: 10%; animation-delay: 0.7s; }
+.p-6 { top: 50%; right: 10%; animation-delay: 0.4s; }
+.p-7 { top: 5%; left: 50%; animation-delay: 0.6s; }
+.p-8 { bottom: 5%; left: 50%; animation-delay: 0.8s; }
+
+@keyframes suckIntoVoid {
+  0% { transform: scale(1.5) translate(0, 0); opacity: 1; }
+  100% { transform: scale(0.1) translate(calc(50% - 100px), calc(50% - 100px)); opacity: 0; }
+}
+
+/* HUD Glitch Warning */
+.portal-hud-warning {
+  text-align: center;
+  margin-top: 16px;
+  padding: 0 16px;
+  z-index: 4;
+}
+
+.portal-hud-badge {
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 800;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 3px 10px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+  animation: glitchShake 0.3s infinite;
+}
+
+.portal-hud-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+}
+
+.portal-hud-desc {
+  font-size: 11.5px;
+  color: #94a3b8;
+  max-width: 280px;
+  margin: 0 auto;
+  line-height: 1.4;
+}
+
+@keyframes glitchShake {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 1px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-1px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Keypad Implosion into Void */
+.keypad-vortex-imploding {
+  transform: scale(0.3) rotate(360deg);
+  opacity: 0;
+  filter: blur(12px);
+  transition: all 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+}
+
+/* 2. Holographic Laser Scanner Unlock */
+.holographic-laser-scan {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, #10b981 50%, transparent 100%);
+  box-shadow: 0 0 15px #10b981, 0 0 30px #34d399;
+  animation: laserScanDown 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes laserScanDown {
+  0% { top: 0%; opacity: 0.8; }
+  100% { top: 100%; opacity: 0.2; }
+}
+
+.pin-success-icon-wrap {
+  position: relative;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.success-pulse-ring {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border-radius: 50%;
+  border: 2px solid #10b981;
+  animation: ringPulse 1.5s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+@keyframes ringPulse {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+
 
 
