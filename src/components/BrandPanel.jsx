@@ -14,7 +14,7 @@ export default function BrandPanel({ heading, sub }) {
 
       <div style={styles.textBlock}>
         <div className="wordmark" style={{ fontSize: 30, marginBottom: 14 }}>
-          Chat<span className="dot">.</span>
+          Chatox<span className="dot">.</span>
         </div>
         <h1 style={styles.heading}>{heading}</h1>
         <p style={styles.sub}>{sub}</p>

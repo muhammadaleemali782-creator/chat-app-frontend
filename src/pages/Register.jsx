@@ -27,7 +27,7 @@ export default function Register() {
         password,
       });
       login(res.data.token, res.data.user);
-      navigate("/");
+      navigate("/app");
     } catch (err) {
       setError(err.response?.data?.message || "Kuch galat ho gaya, dobara try karo");
     } finally {
@@ -43,8 +43,13 @@ export default function Register() {
       />
       <div style={styles.formSide}>
         <div className="auth-card" style={styles.card}>
-          <div className="wordmark" style={{ fontSize: 26, marginBottom: 4 }}>
-            Chat<span className="dot">.</span>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <div className="wordmark" style={{ fontSize: 26 }}>
+              Chatox<span className="dot">.</span>
+            </div>
+            <Link to="/" style={{ fontSize: 12.5, color: "var(--text-muted)", textDecoration: "none", display: "flex", alignItems: "center", gap: 4 }}>
+              ← Home
+            </Link>
           </div>
           <p style={styles.subtitle}>Naya account banao — sirf username se</p>
 

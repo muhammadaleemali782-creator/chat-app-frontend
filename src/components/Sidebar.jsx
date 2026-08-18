@@ -56,7 +56,7 @@ export default function Sidebar({
     <div style={styles.wrap}>
       <div style={styles.header}>
         <div className="wordmark" style={{ fontSize: 22 }}>
-          Chat<span className="dot">.</span>
+          Chatox<span className="dot">.</span>
         </div>
         <button
           style={styles.newGroupBtn}

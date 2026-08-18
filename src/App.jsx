@@ -12,6 +12,7 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import Chat from "./pages/Chat.jsx";
+import LandingPage from "./pages/LandingPage.jsx";
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -31,28 +32,31 @@ export default function App() {
             <BackButtonHandler />
             <NotificationManager />
             <Routes>
-            <Route
-              path="/login"
-              element={user ? <Navigate to="/" replace /> : <Login />}
-            />
-            <Route
-              path="/register"
-              element={user ? <Navigate to="/" replace /> : <Register />}
-            />
-            <Route
-              path="/forgot-password"
-              element={user ? <Navigate to="/" replace /> : <ForgotPassword />}
-            />
-            <Route
-              path="/"
-              element={
-                <PrivateRoute>
-                  <Chat />
-                </PrivateRoute>
-              }
-            />
-          </Routes>
-          <CallOverlay />
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/landing" element={<LandingPage />} />
+              <Route
+                path="/app"
+                element={
+                  <PrivateRoute>
+                    <Chat />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/login"
+                element={user ? <Navigate to="/app" replace /> : <Login />}
+              />
+              <Route
+                path="/register"
+                element={user ? <Navigate to="/app" replace /> : <Register />}
+              />
+              <Route
+                path="/forgot-password"
+                element={user ? <Navigate to="/app" replace /> : <ForgotPassword />}
+              />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+            <CallOverlay />
           </AppLockGate>
         </CallProvider>
       </PresenceProvider>
