@@ -121,8 +121,39 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
     { key: "calls", label: "CALLS", icon: "📞", badge: null },
   ];
 
+  const [prevIndex, setPrevIndex] = useState(0);
+
+  const [isFlowing, setIsFlowing] = useState(false);
+  const activeIndex = Math.max(0, navItems.findIndex((i) => i.key === page));
+
+  const handleNavClick = (key) => {
+    const targetIdx = navItems.findIndex((i) => i.key === key);
+    if (targetIdx !== activeIndex && targetIdx >= 0) {
+      setPrevIndex(activeIndex);
+      setIsFlowing(true);
+      onPageChange(key);
+      setTimeout(() => setIsFlowing(false), 580);
+    }
+  };
+
   return (
     <>
+      {/* SVG Gooey Filter for True Liquid / Water / Venom Surface Tension */}
+      <svg style={{ position: "absolute", width: 0, height: 0, pointerEvents: "none" }} aria-hidden="true">
+        <defs>
+          <filter id="venom-liquid-goo">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
+            <feColorMatrix
+              in="blur"
+              mode="matrix"
+              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9"
+              result="goo"
+            />
+            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+          </filter>
+        </defs>
+      </svg>
+
       <nav
         style={{
           ...styles.rail,
@@ -186,19 +217,34 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
           </button>
         </div>
 
-        {/* Navigation List with Continuous Venom Sliding Liquid Scoop */}
+        {/* Navigation List with Continuous Venom Liquid Symbiote Scoop */}
         <div style={styles.navList}>
           {!collapsed && <div style={styles.navSectionLabel}>NAVIGATION</div>}
           <div style={styles.navContainerRelative}>
-            {/* VENOM LIQUID SLIDING SYMBIOTE SCOOP */}
+            {/* VENOM GOOEY LIQUID LAYER */}
             {!collapsed && (
-              <div
-                className="venom-liquid-scoop"
-                style={{
-                  transform: `translateY(${Math.max(0, navItems.findIndex((i) => i.key === page)) * 48}px)`,
-                  background: "var(--surface)",
-                }}
-              />
+              <div className="venom-goo-container">
+                {/* Main Sliding Liquid Scoop */}
+                <div
+                  className={`venom-liquid-scoop ${isFlowing ? "venom-stretching" : ""}`}
+                  style={{
+                    transform: `translateY(${activeIndex * 48}px)`,
+                    background: "var(--surface)",
+                  }}
+                />
+
+                {/* Flowing Liquid Bridge Tendon (Venom Trail) */}
+                {isFlowing && (
+                  <div
+                    className="venom-liquid-bridge"
+                    style={{
+                      top: Math.min(prevIndex, activeIndex) * 48,
+                      height: Math.abs(activeIndex - prevIndex) * 48 + 42,
+                      background: "var(--surface)",
+                    }}
+                  />
+                )}
+              </div>
             )}
 
             {navItems.map((item) => {
@@ -222,7 +268,7 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
                         : {}),
                     }}
                     className={`rail-nav-item ${isActive ? "rail-item-active" : ""}`}
-                    onClick={() => onPageChange(item.key)}
+                    onClick={() => handleNavClick(item.key)}
                     title={item.label}
                   >
                     <span style={styles.navIcon}>{item.icon}</span>
@@ -244,6 +290,7 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
             })}
           </div>
         </div>
+
 
 
         {/* Bottom Actions: Theme Selector & Logout */}
