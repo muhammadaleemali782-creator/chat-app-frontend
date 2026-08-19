@@ -339,7 +339,6 @@ const styles = {
     gap: 0,
     transition: "background 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
   },
-
   wrap: {
     display: "grid",
     gridTemplateColumns: "310px 1fr",
@@ -356,9 +355,10 @@ const styles = {
     overflow: "hidden",
     display: "flex",
     flexDirection: "column",
-    background: "#FFFFFF",
+    background: "var(--surface)",
     borderRadius: 0,
-    borderRight: "1px solid #F1F5F9",
+    borderRight: "1px solid var(--border)",
+    transition: "background 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
   },
   chatPane: {
     minWidth: 0,
@@ -367,9 +367,10 @@ const styles = {
     overflow: "hidden",
     display: "flex",
     flexDirection: "column",
-    background: "#FFFFFF",
+    background: "var(--surface)",
     borderRadius: "0 28px 28px 0",
     boxShadow: "0 10px 40px rgba(0,0,0,0.06)",
+    transition: "background 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
   },
   fullPane: {
     flex: 1,
@@ -380,6 +381,7 @@ const styles = {
     flexDirection: "column",
     height: "100%",
     borderRadius: "0 28px 28px 0",
+    background: "var(--surface)",
   },
   placeholder: {
     height: "100%",
@@ -387,14 +389,15 @@ const styles = {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    color: "#64748B",
+    color: "var(--text-muted)",
     fontSize: 14,
     padding: 40,
     textAlign: "center",
-    background: "#FFFFFF",
+    background: "var(--surface)",
     borderRadius: "0 28px 28px 0",
   },
 };
+
 
 
 

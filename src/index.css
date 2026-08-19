@@ -430,22 +430,22 @@ button:focus-visible,
 
 /* Organic Cutout Scoop Active Tab (Image 2 Reference) */
 .rail-nav-item {
-  transition: background 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-              color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: background 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .rail-scoop-active {
   position: relative !important;
-  background: #FFFFFF !important;
-  color: var(--accent, #4F46E5) !important;
+  background: var(--surface) !important;
+  color: var(--accent) !important;
   border-radius: 28px 0 0 28px !important;
   font-weight: 800 !important;
   z-index: 10 !important;
   margin-right: -12px !important;
   padding-right: 20px !important;
   box-shadow: -4px 6px 18px rgba(0, 0, 0, 0.08) !important;
-  animation: scoopGlide 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: scoopGlide 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes scoopGlide {
@@ -468,10 +468,10 @@ button:focus-visible,
   height: 20px !important;
   background: transparent !important;
   border-bottom-right-radius: 20px !important;
-  box-shadow: 8px 8px 0 8px #FFFFFF !important;
+  box-shadow: 8px 8px 0 8px var(--surface) !important;
   pointer-events: none !important;
   z-index: 11 !important;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .rail-scoop-active::after {
@@ -483,11 +483,12 @@ button:focus-visible,
   height: 20px !important;
   background: transparent !important;
   border-top-right-radius: 20px !important;
-  box-shadow: 8px -8px 0 8px #FFFFFF !important;
+  box-shadow: 8px -8px 0 8px var(--surface) !important;
   pointer-events: none !important;
   z-index: 11 !important;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
+
 
 
 .pane-fade { animation: paneFade 0.2s ease both; }
