@@ -274,35 +274,11 @@ export default function CalendarPage() {
       {/* ── 24-HOUR TIMELINE ──────────────────────────────────── */}
       {!loading && (
         <div style={S.timeline} ref={timelineRef}>
-          {/* No meetings empty state shown inside timeline */}
-          {selectedMeetings.length === 0 && (
-            <div style={S.emptyCard}>
-              <div style={S.emptyIcon}>📅</div>
-              <div style={S.emptyTitle}>Koi meeting schedule nahi hai</div>
-              <div style={S.emptySub}>
-                Kisi bhi chat mein 📅 icon se ya upar ke button se meeting schedule karo.
-              </div>
-              <button style={S.newBtn} onClick={() => setShowScheduleModal(true)}>
-                + Abhi Schedule Karo
-              </button>
-            </div>
-          )}
-
           {HOURS.map((h) => {
             const hourMeetings = selectedMeetings.filter(
               (m) => new Date(m.scheduledAt).getHours() === h
             );
             const isCurrentHour = isSelectedToday && h === currentHour;
-            const hasContent = hourMeetings.length > 0 || isCurrentHour;
-
-            // Skip empty hours when there are meetings (show only hours with meetings + ±1 buffer)
-            const hasMeetings = selectedMeetings.length > 0;
-            const nearbyHour = hasMeetings && selectedMeetings.some(
-              (m) => Math.abs(new Date(m.scheduledAt).getHours() - h) <= 1
-            );
-            if (hasMeetings && !hasContent && !nearbyHour) {
-              return null;
-            }
 
             return (
               <div key={h} style={S.hourRow}>

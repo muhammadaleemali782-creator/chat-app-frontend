@@ -150,8 +150,10 @@ export default function Sidebar({
               className={`conv-item ${isActive ? "active-conv" : ""}`}
               style={{
                 ...styles.convItem,
-                background: isActive ? "var(--surface-hover)" : "transparent",
-                border: isActive ? "1px solid var(--accent)" : "1px solid transparent",
+                background: isActive ? "var(--surface)" : "transparent",
+                border: isActive ? "1px solid var(--border)" : "1px solid transparent",
+                borderLeft: isActive ? "4px solid #EC4899" : "4px solid transparent",
+                boxShadow: isActive ? "var(--shadow-soft)" : "none",
               }}
               onClick={() => onSelect(conv)}
             >
