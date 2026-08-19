@@ -130,11 +130,13 @@ const styles = {
     height: "100%",
     display: "flex",
     flexDirection: "column",
-    background: "#FFFFFF",
-    borderRadius: "28px",
+    background: "var(--surface, #FFFFFF)",
+    borderRadius: "0 28px 28px 0",
     boxShadow: "0 10px 40px rgba(0,0,0,0.06)",
     overflowY: "auto",
+    transition: "background 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
   },
+
   header: {
     padding: "20px 24px 14px",
     borderBottom: "1px solid #F1F5F9",

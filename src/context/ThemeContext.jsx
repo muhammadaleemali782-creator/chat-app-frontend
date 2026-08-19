@@ -11,8 +11,12 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
+    document.body.setAttribute("data-theme", theme);
+    const rootEl = document.getElementById("root");
+    if (rootEl) rootEl.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
+
 
   const setTheme = (t) => {
     if (THEME_ORDER.includes(t)) setThemeState(t);
