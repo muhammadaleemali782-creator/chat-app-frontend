@@ -33,7 +33,6 @@ export default function ChatDetailsPanel({ conversation, messages, onClose, onOp
         type: m.text.includes("📊") ? "sheet" : "doc",
       }));
 
-    // Default sample docs if empty so it looks lively and functional like the design comp
     if (fromMsgs.length === 0) {
       return [
         { id: "d1", name: "Project_Requirements.pdf", size: "2.4 MB", type: "pdf" },
@@ -68,7 +67,7 @@ export default function ChatDetailsPanel({ conversation, messages, onClose, onOp
 
   return (
     <div style={styles.panel} className="chat-details-panel">
-      {/* Top close button for mobile/responsive */}
+      {/* Top close button */}
       <div style={styles.topBar}>
         <span style={styles.topBarTitle}>Details</span>
         {onClose && (
@@ -98,41 +97,50 @@ export default function ChatDetailsPanel({ conversation, messages, onClose, onOp
             onClick={() => toggleSection("starred")}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 16, color: "#F59E0B" }}>⭐</span>
-              <span style={{ fontWeight: 700, fontSize: 13, color: "#92400E" }}>Starred Messages</span>
+              <span style={{ fontSize: 16 }}>⭐</span>
+              <span style={{ fontWeight: 800, fontSize: 13, color: "#92400E" }}>
+                Starred Messages
+              </span>
             </div>
             <span style={styles.arrowIcon}>{openSection === "starred" ? "▲" : "▼"}</span>
           </button>
+
           {openSection === "starred" && (
             <div style={styles.accordionContent}>
-              <div style={styles.emptyNote}>Koi starred message nahi hai abhi.</div>
+              <div style={styles.emptyNote}>Koi starred message nahi hai</div>
             </div>
           )}
         </div>
 
-        {/* 2. Media */}
+        {/* 2. Media Section */}
         <div style={styles.accordionCard}>
           <button
             type="button"
-            style={{ ...styles.accordionHeader, background: "#FFF1F2" }}
+            style={{ ...styles.accordionHeader, background: "#FDF2F8" }}
             onClick={() => toggleSection("media")}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 16, color: "#F43F5E" }}>🖼️</span>
-              <span style={{ fontWeight: 700, fontSize: 13, color: "#9F1239" }}>
+              <span style={{ fontSize: 16 }}>🖼️</span>
+              <span style={{ fontWeight: 800, fontSize: 13, color: "#9D174D" }}>
                 Media ({mediaItems.length})
               </span>
             </div>
             <span style={styles.arrowIcon}>{openSection === "media" ? "▲" : "▼"}</span>
           </button>
+
           {openSection === "media" && (
             <div style={styles.accordionContent}>
               {mediaItems.length === 0 ? (
-                <div style={styles.emptyNote}>Abhi koi photo share nahi hui.</div>
+                <div style={styles.emptyNote}>Koi shared media nahi hai</div>
               ) : (
                 <div style={styles.mediaGrid}>
                   {mediaItems.map((m) => (
-                    <img key={m._id} src={m.mediaData} alt="Media" style={styles.mediaThumb} />
+                    <img
+                      key={m._id}
+                      src={m.mediaData}
+                      alt="shared"
+                      style={styles.mediaThumb}
+                    />
                   ))}
                 </div>
               )}
@@ -140,7 +148,7 @@ export default function ChatDetailsPanel({ conversation, messages, onClose, onOp
           )}
         </div>
 
-        {/* 3. Files & Docs */}
+        {/* 3. Files & Docs Section */}
         <div style={styles.accordionCard}>
           <button
             type="button"
@@ -148,45 +156,51 @@ export default function ChatDetailsPanel({ conversation, messages, onClose, onOp
             onClick={() => toggleSection("files")}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 16, color: "#2563EB" }}>📁</span>
-              <span style={{ fontWeight: 700, fontSize: 13, color: "#1E40AF" }}>
+              <span style={{ fontSize: 16 }}>📁</span>
+              <span style={{ fontWeight: 800, fontSize: 13, color: "#1E40AF" }}>
                 Files & Docs ({docItems.length})
               </span>
             </div>
             <span style={styles.arrowIcon}>{openSection === "files" ? "▲" : "▼"}</span>
           </button>
+
           {openSection === "files" && (
             <div style={styles.accordionContent}>
-              {docItems.map((doc) => {
-                const meta = getDocIcon(doc.type);
-                return (
-                  <div key={doc.id} style={styles.docRow}>
-                    <div style={{ ...styles.docIconBox, background: meta.bg, color: meta.color }}>
-                      {meta.label}
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {docItems.map((doc) => {
+                  const iconInfo = getDocIcon(doc.type);
+                  return (
+                    <div key={doc.id} style={styles.docRow}>
+                      <div
+                        style={{
+                          ...styles.docIconBox,
+                          background: iconInfo.bg,
+                          color: iconInfo.color,
+                        }}
+                      >
+                        {iconInfo.label}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={styles.docName} title={doc.name}>
+                          {doc.name}
+                        </div>
+                        <div style={styles.docSize}>{doc.size}</div>
+                      </div>
+                      <button
+                        type="button"
+                        style={styles.docDownloadBtn}
+                        onClick={onOpenFiles}
+                        title="Download / Open"
+                      >
+                        ⬇
+                      </button>
                     </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={styles.docName}>{doc.name}</div>
-                      <div style={styles.docSize}>{doc.size}</div>
-                    </div>
-                    <button
-                      type="button"
-                      style={styles.docDownloadBtn}
-                      title="Download file"
-                      onClick={() => {
-                        if (doc.type === "sheet" && onOpenFiles) {
-                          onOpenFiles();
-                        } else {
-                          alert(`Downloading ${doc.name}...`);
-                        }
-                      }}
-                    >
-                      ⬇
-                    </button>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+
               {onOpenFiles && (
-                <button style={styles.openSheetsBtn} onClick={onOpenFiles}>
+                <button type="button" style={styles.openSheetsBtn} onClick={onOpenFiles}>
                   📊 Open Excel / Sheets Manager ↗
                 </button>
               )}
@@ -194,32 +208,35 @@ export default function ChatDetailsPanel({ conversation, messages, onClose, onOp
           )}
         </div>
 
-        {/* 4. Information */}
+        {/* 4. Information Section */}
         <div style={styles.accordionCard}>
           <button
             type="button"
-            style={{ ...styles.accordionHeader, background: "#FFF7ED" }}
+            style={{ ...styles.accordionHeader, background: "#F8FAFC" }}
             onClick={() => toggleSection("info")}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 16, color: "#EA580C" }}>ℹ️</span>
-              <span style={{ fontWeight: 700, fontSize: 13, color: "#9A3412" }}>Information</span>
+              <span style={{ fontSize: 16 }}>ℹ️</span>
+              <span style={{ fontWeight: 800, fontSize: 13, color: "#334155" }}>
+                Information
+              </span>
             </div>
             <span style={styles.arrowIcon}>{openSection === "info" ? "▲" : "▼"}</span>
           </button>
+
           {openSection === "info" && (
             <div style={styles.accordionContent}>
               <div style={styles.infoRow}>
-                <span style={styles.infoLabel}>End-to-End:</span>
-                <span style={styles.infoVal}>🔒 Encrypted</span>
+                <span style={styles.infoLabel}>Encryption</span>
+                <span style={styles.infoVal}>End-to-End</span>
               </div>
               <div style={styles.infoRow}>
-                <span style={styles.infoLabel}>Cloud Sync:</span>
-                <span style={styles.infoVal}>⚡ Real-time Active</span>
+                <span style={styles.infoLabel}>Cloud Backup</span>
+                <span style={styles.infoVal}>Active</span>
               </div>
               <div style={styles.infoRow}>
-                <span style={styles.infoLabel}>Status:</span>
-                <span style={{ ...styles.infoVal, color: "#10B981", fontWeight: 700 }}>● Online</span>
+                <span style={styles.infoLabel}>Real-time Sync</span>
+                <span style={{ ...styles.infoVal, color: "#10B981" }}>Connected</span>
               </div>
             </div>
           )}
@@ -231,19 +248,19 @@ export default function ChatDetailsPanel({ conversation, messages, onClose, onOp
 
 const styles = {
   panel: {
-    width: 300,
-    minWidth: 280,
-    maxWidth: 340,
+    width: 290,
+    minWidth: 270,
+    maxWidth: 320,
     height: "100%",
-    background: "var(--surface, #ffffff)",
-    borderLeft: "1px solid var(--border, #e2e8f0)",
+    background: "#FFFFFF",
+    borderLeft: "1px solid #F1F5F9",
     display: "flex",
     flexDirection: "column",
     overflowY: "auto",
     padding: "20px 16px",
     boxSizing: "border-box",
     flexShrink: 0,
-    borderRadius: "0 24px 24px 0",
+    borderRadius: "0 28px 28px 0",
   },
   topBar: {
     display: "flex",
@@ -254,19 +271,22 @@ const styles = {
   topBarTitle: {
     fontSize: 14,
     fontWeight: 800,
-    color: "var(--text)",
+    color: "#0F172A",
     fontFamily: "var(--font-display)",
     letterSpacing: "-0.02em",
   },
   closeBtn: {
-    background: "var(--surface-2)",
-    border: "1px solid var(--border)",
-    color: "var(--text-muted)",
+    background: "#F8FAFC",
+    border: "1px solid #E2E8F0",
+    color: "#64748B",
     width: 28,
     height: 28,
     borderRadius: "50%",
     cursor: "pointer",
     fontSize: 12,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   profileSection: {
     display: "flex",
@@ -274,7 +294,7 @@ const styles = {
     alignItems: "center",
     textAlign: "center",
     padding: "16px 8px 20px",
-    borderBottom: "1px solid var(--border-soft)",
+    borderBottom: "1px solid #F1F5F9",
     marginBottom: 16,
   },
   avatarLarge: {
@@ -287,7 +307,7 @@ const styles = {
     fontSize: 26,
     fontWeight: 900,
     position: "relative",
-    boxShadow: "0 8px 24px rgba(37, 99, 235, 0.2)",
+    boxShadow: "0 8px 24px rgba(79, 70, 229, 0.2)",
     border: "3px solid #ffffff",
     marginBottom: 12,
   },
@@ -304,13 +324,13 @@ const styles = {
   profileName: {
     fontSize: 16,
     fontWeight: 800,
-    color: "var(--text)",
+    color: "#0F172A",
     fontFamily: "var(--font-display)",
     lineHeight: 1.2,
   },
   profileRole: {
     fontSize: 12,
-    color: "var(--text-muted)",
+    color: "#64748B",
     marginTop: 4,
     fontWeight: 500,
   },
@@ -321,9 +341,9 @@ const styles = {
   },
   accordionCard: {
     borderRadius: 16,
-    border: "1px solid var(--border)",
+    border: "1px solid #E2E8F0",
     overflow: "hidden",
-    background: "var(--surface)",
+    background: "#FFFFFF",
   },
   accordionHeader: {
     width: "100%",
@@ -337,16 +357,16 @@ const styles = {
   },
   arrowIcon: {
     fontSize: 10,
-    color: "var(--text-muted)",
+    color: "#64748B",
   },
   accordionContent: {
     padding: "12px 14px",
-    background: "var(--surface)",
-    borderTop: "1px solid var(--border-soft)",
+    background: "#FFFFFF",
+    borderTop: "1px solid #F1F5F9",
   },
   emptyNote: {
     fontSize: 12,
-    color: "var(--text-muted)",
+    color: "#64748B",
     textAlign: "center",
     padding: "8px 0",
   },
@@ -366,7 +386,7 @@ const styles = {
     alignItems: "center",
     gap: 10,
     padding: "8px 0",
-    borderBottom: "1px solid var(--border-soft)",
+    borderBottom: "1px solid #F1F5F9",
   },
   docIconBox: {
     fontSize: 9,
@@ -379,20 +399,20 @@ const styles = {
   docName: {
     fontSize: 12,
     fontWeight: 700,
-    color: "var(--text)",
+    color: "#0F172A",
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
   },
   docSize: {
     fontSize: 10.5,
-    color: "var(--text-muted)",
+    color: "#64748B",
     marginTop: 1,
   },
   docDownloadBtn: {
-    background: "var(--surface-2)",
-    border: "1px solid var(--border)",
-    color: "var(--text-muted)",
+    background: "#F8FAFC",
+    border: "1px solid #E2E8F0",
+    color: "#64748B",
     borderRadius: 6,
     width: 26,
     height: 26,
@@ -406,8 +426,8 @@ const styles = {
   openSheetsBtn: {
     marginTop: 10,
     width: "100%",
-    background: "var(--accent-soft)",
-    color: "var(--accent)",
+    background: "rgba(79, 70, 229, 0.08)",
+    color: "#4F46E5",
     border: "none",
     borderRadius: 10,
     padding: "8px 12px",
@@ -423,10 +443,10 @@ const styles = {
     padding: "4px 0",
   },
   infoLabel: {
-    color: "var(--text-muted)",
+    color: "#64748B",
   },
   infoVal: {
     fontWeight: 600,
-    color: "var(--text)",
+    color: "#0F172A",
   },
 };
