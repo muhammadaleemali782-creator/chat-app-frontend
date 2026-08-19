@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
 const ThemeContext = createContext(null);
-const THEME_ORDER = ["blue", "dark", "light", "white", "talkiepro"];
+const THEME_ORDER = ["blue", "chatox", "talkiepro", "pinky", "dark", "light", "white"];
 
 export function ThemeProvider({ children }) {
   const [theme, setThemeState] = useState(() => {
