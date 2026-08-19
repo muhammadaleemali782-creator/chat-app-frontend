@@ -428,11 +428,21 @@ button:focus-visible,
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Organic Cutout Scoop Active Tab (Image 2 Reference) */
+/* Organic Cutout Scoop Active Tab (Image 2 Reference - Slimy Liquid Spring Motion) */
 .rail-nav-item {
-  transition: background 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-              color 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+              background 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  will-change: transform;
+}
+
+.rail-nav-item:hover:not(.rail-scoop-active) {
+  transform: translateX(3px) scale(1.02);
+}
+
+.rail-nav-item:active {
+  transform: scale(0.95);
+  transition-duration: 0.1s !important;
 }
 
 .rail-scoop-active {
@@ -444,18 +454,21 @@ button:focus-visible,
   z-index: 10 !important;
   margin-right: -12px !important;
   padding-right: 20px !important;
-  box-shadow: -4px 6px 18px rgba(0, 0, 0, 0.08) !important;
-  animation: scoopGlide 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  box-shadow: -6px 8px 24px rgba(0, 0, 0, 0.09) !important;
+  animation: slimyLiquidGlide 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-@keyframes scoopGlide {
+@keyframes slimyLiquidGlide {
   0% {
-    opacity: 0.8;
-    transform: translateX(-4px);
+    opacity: 0.7;
+    transform: translateX(-10px) scaleY(0.9) scaleX(1.04);
+  }
+  60% {
+    transform: translateX(2px) scaleY(1.04) scaleX(0.98);
   }
   100% {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) scaleY(1) scaleX(1);
   }
 }
 
@@ -471,7 +484,8 @@ button:focus-visible,
   box-shadow: 8px 8px 0 8px var(--surface) !important;
   pointer-events: none !important;
   z-index: 11 !important;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: all 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  animation: scoopFilletTop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 .rail-scoop-active::after {
@@ -486,8 +500,20 @@ button:focus-visible,
   box-shadow: 8px -8px 0 8px var(--surface) !important;
   pointer-events: none !important;
   z-index: 11 !important;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: all 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  animation: scoopFilletBottom 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
+
+@keyframes scoopFilletTop {
+  0% { transform: translateY(-4px) scale(0.85); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes scoopFilletBottom {
+  0% { transform: translateY(4px) scale(0.85); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
 
 
 
