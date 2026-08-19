@@ -359,11 +359,9 @@ button:focus-visible,
   50% { opacity: 0.55; transform: scale(0.85); }
 }
 
-.conv-item { transition: background 0.15s ease; }
-.conv-item:hover { background: var(--surface-hover) !important; }
-
-.result-item { transition: background 0.12s ease; }
-.result-item:hover { background: var(--surface-hover) !important; }
+.conv-item { transition: background 0.15s ease; border-radius: 12px; }
+.conv-item:hover { background: #F8FAFC !important; }
+.active-conv { background: #EEF2FF !important; }
 
 .msg-bubble-enter { animation: bubbleIn 0.22s ease both; }
 @keyframes bubbleIn {

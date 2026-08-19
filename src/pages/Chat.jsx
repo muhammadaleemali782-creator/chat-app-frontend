@@ -334,6 +334,9 @@ const styles = {
     width: "100%",
     overflow: "hidden",
     background: "#EEF2FF",
+    padding: "16px",
+    boxSizing: "border-box",
+    gap: 0,
   },
   wrap: {
     display: "grid",
@@ -342,7 +345,7 @@ const styles = {
     minHeight: 0,
     minWidth: 0,
     overflow: "hidden",
-    padding: "14px 18px 14px 0",
+    height: "100%",
   },
   sidebarPane: {
     minWidth: 0,
@@ -352,8 +355,7 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     background: "#FFFFFF",
-    borderRadius: "28px 0 0 28px",
-    boxShadow: "0 10px 40px rgba(0,0,0,0.05)",
+    borderRadius: 0,
     borderRight: "1px solid #F1F5F9",
   },
   chatPane: {
@@ -365,7 +367,7 @@ const styles = {
     flexDirection: "column",
     background: "#FFFFFF",
     borderRadius: "0 28px 28px 0",
-    boxShadow: "0 10px 40px rgba(0,0,0,0.05)",
+    boxShadow: "0 10px 40px rgba(0,0,0,0.06)",
   },
   fullPane: {
     flex: 1,
@@ -374,7 +376,8 @@ const styles = {
     overflow: "hidden",
     display: "flex",
     flexDirection: "column",
-    padding: "14px 18px 14px 0",
+    height: "100%",
+    borderRadius: "0 28px 28px 0",
   },
   placeholder: {
     height: "100%",
@@ -390,5 +393,6 @@ const styles = {
     borderRadius: "0 28px 28px 0",
   },
 };
+
 
 
