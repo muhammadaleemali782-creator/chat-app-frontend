@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
+import { avatarColor } from "../utils/avatarColor";
 import ModalPortal from "./ModalPortal.jsx";
 
 const THEME_META = {
@@ -17,122 +18,152 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const [showThemePicker, setShowThemePicker] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const color = avatarColor(user?.displayName || "User");
+  const initial = (user?.displayName || "?").charAt(0).toUpperCase();
 
   const navItems = [
-    { key: "dashboard", label: "DASHBOARD", icon: "⚡", route: false },
-    { key: "shipment", label: "SHIPMENT", icon: "📦", route: false },
-    { key: "tracking", label: "TRACKING", icon: "🌐", route: false },
-    { key: "chat", label: "MESSAGES", icon: "✉️", badge: "358", route: true },
-    { key: "calendar", label: "CALENDAR", icon: "📅", badge: null, route: true },
-    { key: "calls", label: "CALLS", icon: "📞", badge: null, route: true },
-  ];
-
-  const miniChips = [
-    { id: "c1", label: "D", bg: "#F59E0B" },
-    { id: "c2", label: "A", bg: "#8B5CF6" },
-    { id: "c3", label: "C", bg: "#EC4899" },
-    { id: "c4", label: "+", bg: "rgba(255,255,255,0.22)" },
+    { key: "chat", label: "MESSAGES", icon: "💬", badge: "358" },
+    { key: "calendar", label: "CALENDAR", icon: "📅", badge: null },
+    { key: "calls", label: "CALLS", icon: "📞", badge: null },
   ];
 
   return (
     <>
       <nav
-        style={styles.rail}
+        style={{
+          ...styles.rail,
+          width: collapsed ? 74 : 200,
+          minWidth: collapsed ? 74 : 200,
+          padding: collapsed ? "16px 8px" : "20px 0 16px 14px",
+        }}
         className={`icon-rail${hideOnMobileChat ? " icon-rail-hide-mobile" : ""}`}
         aria-label="Main Navigation"
       >
-        {/* Left Sub-Strip: Vertical Wordmark & Circular Chips */}
-        <div style={styles.miniStrip} className="hide-on-mobile">
-          <div style={styles.verticalBrand}>Chatox.</div>
-          <div style={styles.chipStack}>
-            {miniChips.map((c) => (
-              <div
-                key={c.id}
-                style={{ ...styles.miniChip, background: c.bg }}
-                title={`Workspace ${c.label}`}
-              >
-                {c.label}
-              </div>
-            ))}
-          </div>
+        {/* Top Header: Brand Wordmark + Collapse Toggle */}
+        <div
+          style={{
+            ...styles.brandHeader,
+            justifyContent: collapsed ? "center" : "space-between",
+            paddingRight: collapsed ? 0 : 14,
+          }}
+        >
+          {!collapsed && (
+            <div style={styles.brandTitleWrap}>
+              <div style={styles.brandIconCircle}>⚡</div>
+              <span style={styles.brandTitle}>Chatox</span>
+            </div>
+          )}
+
+          <button
+            type="button"
+            style={styles.collapseToggleBtn}
+            onClick={() => setCollapsed((prev) => !prev)}
+            title={collapsed ? "Sidebar Expand Karo" : "Sidebar Collapse Karo"}
+          >
+            {collapsed ? "›" : "‹"}
+          </button>
         </div>
 
-        {/* Main Rail Section */}
-        <div style={styles.railMain}>
-          {/* Top Organization Dropdown Pill */}
-          <div style={styles.topHeader}>
-            <button
-              type="button"
-              style={styles.orgDropdownBtn}
-              onClick={onOpenProfile}
-              title={`Profile: @${user?.username}`}
-            >
-              <span style={styles.orgName}>CHATOX HUB</span>
-              <span style={styles.orgArrow}>⌄</span>
-            </button>
-          </div>
+        {/* User Profile Pill / Avatar */}
+        <div style={{ paddingRight: collapsed ? 0 : 14, marginBottom: 20 }}>
+          <button
+            type="button"
+            style={{
+              ...styles.userProfilePill,
+              justifyContent: collapsed ? "center" : "flex-start",
+              padding: collapsed ? "6px" : "7px 12px",
+            }}
+            onClick={onOpenProfile}
+            title={`Profile: @${user?.username}`}
+          >
+            <div style={{ ...styles.userAvatar, background: color.bg, color: color.fg }}>
+              {initial}
+            </div>
+            {!collapsed && (
+              <div style={styles.userInfo}>
+                <div style={styles.userName}>{user?.displayName || "User"}</div>
+                <div style={styles.userHandle}>@{user?.username || "me"}</div>
+              </div>
+            )}
+          </button>
+        </div>
 
-          {/* Navigation Items with Organic Cutout Scoop Curve */}
-          <div style={styles.navList}>
-            {navItems.map((item) => {
-              const isActive = page === item.key;
-              return (
-                <div key={item.key} style={styles.navItemWrap}>
-                  <button
-                    type="button"
-                    style={{
-                      ...styles.navBtn,
-                      ...(isActive ? styles.navBtnActive : {}),
-                    }}
-                    className={`rail-nav-item ${isActive ? "rail-scoop-active" : ""}`}
-                    onClick={() => {
-                      if (item.route) onPageChange(item.key);
-                    }}
-                  >
-                    <span style={styles.navIcon}>{item.icon}</span>
-                    <span style={styles.navLabel}>{item.label}</span>
-                    {item.badge && (
-                      <span
-                        style={{
-                          ...styles.navBadge,
-                          ...(isActive ? styles.navBadgeActive : {}),
-                        }}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
+        {/* Navigation List with Organic Cutout Scoop Curve */}
+        <div style={styles.navList}>
+          {!collapsed && <div style={styles.navSectionLabel}>NAVIGATION</div>}
+          {navItems.map((item) => {
+            const isActive = page === item.key;
+            return (
+              <div key={item.key} style={styles.navItemWrap}>
+                <button
+                  key={item.key}
+                  type="button"
+                  style={{
+                    ...styles.navBtn,
+                    ...(collapsed ? styles.navBtnCollapsed : {}),
+                    ...(isActive && !collapsed ? styles.navBtnActive : {}),
+                    ...(isActive && collapsed ? styles.navBtnCollapsedActive : {}),
+                  }}
+                  className={`rail-nav-item ${isActive && !collapsed ? "rail-scoop-active" : ""}`}
+                  onClick={() => onPageChange(item.key)}
+                  title={item.label}
+                >
+                  <span style={styles.navIcon}>{item.icon}</span>
+                  {!collapsed && <span style={styles.navLabel}>{item.label}</span>}
+                  {!collapsed && item.badge && (
+                    <span
+                      style={{
+                        ...styles.navBadge,
+                        ...(isActive ? styles.navBadgeActive : {}),
+                      }}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              </div>
+            );
+          })}
+        </div>
 
-          {/* Bottom Controls */}
-          <div style={styles.bottomSection}>
-            <button
-              type="button"
-              style={styles.bottomBtn}
-              onClick={() => setShowThemePicker(true)}
-              title="Theme change karo"
-            >
-              <span style={{ fontSize: 16 }}>⚙️</span>
-              <span style={styles.bottomBtnLabel}>SETTINGS / THEME</span>
-            </button>
+        {/* Bottom Actions: Theme Selector & Logout */}
+        <div
+          style={{
+            ...styles.bottomSection,
+            paddingRight: collapsed ? 0 : 14,
+          }}
+        >
+          <button
+            type="button"
+            style={{
+              ...styles.bottomBtn,
+              ...(collapsed ? styles.bottomBtnCollapsed : {}),
+            }}
+            onClick={() => setShowThemePicker(true)}
+            title="Theme badlo"
+          >
+            <span style={{ fontSize: 16 }}>🎨</span>
+            {!collapsed && <span style={styles.bottomBtnLabel}>THEME / SETTINGS</span>}
+          </button>
 
-            <button
-              type="button"
-              style={styles.bottomBtn}
-              onClick={() => {
-                if (window.confirm("Kya aap logout karna chahte hain?")) {
-                  logout();
-                }
-              }}
-              title="Logout"
-            >
-              <span style={{ fontSize: 16 }}>🚪</span>
-              <span style={styles.bottomBtnLabel}>LOGOUT</span>
-            </button>
-          </div>
+          <button
+            type="button"
+            style={{
+              ...styles.bottomBtn,
+              ...(collapsed ? styles.bottomBtnCollapsed : {}),
+              color: "#FECACA",
+            }}
+            onClick={() => {
+              if (window.confirm("Kya aap logout karna chahte hain?")) {
+                logout();
+              }
+            }}
+            title="Logout"
+          >
+            <span style={{ fontSize: 16 }}>🚪</span>
+            {!collapsed && <span style={styles.bottomBtnLabel}>LOGOUT</span>}
+          </button>
         </div>
       </nav>
 
@@ -199,90 +230,113 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
 
 const styles = {
   rail: {
-    width: 220,
-    minWidth: 200,
     flexShrink: 0,
     background: "linear-gradient(180deg, #6366F1 0%, #4F46E5 100%)",
     display: "flex",
+    flexDirection: "column",
     height: "100%",
     position: "relative",
     zIndex: 10,
     userSelect: "none",
     overflow: "hidden",
+    boxSizing: "border-box",
+    transition: "width 0.25s cubic-bezier(0.16, 1, 0.3, 1), min-width 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
+    borderRadius: "24px 0 0 24px",
+    boxShadow: "0 10px 40px rgba(0,0,0,0.06)",
   },
-  miniStrip: {
-    width: 44,
-    background: "rgba(0, 0, 0, 0.16)",
+  brandHeader: {
     display: "flex",
-    flexDirection: "column",
     alignItems: "center",
-    padding: "24px 0 20px",
-    borderRight: "1px solid rgba(255, 255, 255, 0.1)",
+    marginBottom: 16,
+    height: 34,
   },
-  verticalBrand: {
-    color: "#ffffff",
-    fontWeight: 900,
-    fontFamily: "var(--font-display)",
-    fontSize: 14,
-    letterSpacing: "0.08em",
-    writingMode: "vertical-rl",
-    transform: "rotate(180deg)",
-    marginBottom: 40,
-  },
-  chipStack: {
+  brandTitleWrap: {
     display: "flex",
-    flexDirection: "column",
-    gap: 10,
-    marginTop: "auto",
+    alignItems: "center",
+    gap: 8,
   },
-  miniChip: {
+  brandIconCircle: {
     width: 28,
     height: 28,
     borderRadius: "50%",
+    background: "rgba(255, 255, 255, 0.2)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 14,
+    boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+  },
+  brandTitle: {
+    fontSize: 16,
+    fontWeight: 900,
     color: "#ffffff",
-    fontSize: 11,
+    fontFamily: "var(--font-display)",
+    letterSpacing: "-0.02em",
+  },
+  collapseToggleBtn: {
+    width: 26,
+    height: 26,
+    borderRadius: "50%",
+    background: "rgba(255, 255, 255, 0.16)",
+    border: "none",
+    color: "#ffffff",
+    fontSize: 15,
     fontWeight: 900,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    boxShadow: "0 3px 8px rgba(0,0,0,0.25)",
     cursor: "pointer",
-    transition: "transform 0.15s ease",
+    transition: "transform 0.15s ease, background 0.15s ease",
   },
-  railMain: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    padding: "20px 0 16px 14px",
-    height: "100%",
-    boxSizing: "border-box",
-    position: "relative",
-  },
-  topHeader: {
-    marginBottom: 24,
-    paddingRight: 14,
-  },
-  orgDropdownBtn: {
-    background: "rgba(255, 255, 255, 0.15)",
-    border: "1px solid rgba(255, 255, 255, 0.25)",
-    borderRadius: 20,
-    padding: "7px 16px",
-    color: "#ffffff",
+  userProfilePill: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
+    gap: 8,
+    background: "rgba(255, 255, 255, 0.12)",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
+    borderRadius: 22,
     cursor: "pointer",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+    transition: "all 0.2s ease",
+    textAlign: "left",
+    width: "100%",
   },
-  orgName: {
-    fontSize: 11.5,
-    fontWeight: 900,
-    letterSpacing: "0.05em",
+  userAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: 800,
+    fontSize: 13,
+    flexShrink: 0,
+    boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
   },
-  orgArrow: {
+  userInfo: {
+    flex: 1,
+    minWidth: 0,
+  },
+  userName: {
     fontSize: 12,
-    opacity: 0.8,
+    fontWeight: 800,
+    color: "#ffffff",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  userHandle: {
+    fontSize: 10,
+    color: "#C7D2FE",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  navSectionLabel: {
+    fontSize: 9.5,
+    fontWeight: 800,
+    color: "rgba(255, 255, 255, 0.45)",
+    letterSpacing: "0.08em",
+    padding: "0 8px 4px",
   },
   navList: {
     display: "flex",
@@ -310,24 +364,42 @@ const styles = {
     textAlign: "left",
     width: "100%",
   },
+  navBtnCollapsed: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 0,
+    width: 44,
+    height: 44,
+    margin: "0 auto",
+    borderRadius: "50%",
+  },
   navBtnActive: {
     background: "#FFFFFF",
     color: "#4F46E5",
     fontWeight: 900,
   },
+  navBtnCollapsedActive: {
+    background: "#FFFFFF",
+    color: "#4F46E5",
+    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)",
+    fontWeight: 900,
+    transform: "scale(1.05)",
+  },
   navIcon: {
-    fontSize: 15,
+    fontSize: 16,
   },
   navLabel: {
     flex: 1,
+    whiteSpace: "nowrap",
   },
   navBadge: {
     background: "rgba(255, 255, 255, 0.25)",
     color: "#ffffff",
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: 800,
-    padding: "2px 8px",
-    borderRadius: 12,
+    padding: "2px 7px",
+    borderRadius: 10,
   },
   navBadgeActive: {
     background: "rgba(79, 70, 229, 0.12)",
@@ -339,7 +411,6 @@ const styles = {
     gap: 6,
     borderTop: "1px solid rgba(255, 255, 255, 0.15)",
     paddingTop: 14,
-    paddingRight: 14,
   },
   bottomBtn: {
     display: "flex",
@@ -348,7 +419,7 @@ const styles = {
     background: "transparent",
     border: "none",
     color: "#C7D2FE",
-    padding: "8px 10px",
+    padding: "9px 10px",
     borderRadius: 10,
     fontSize: 11,
     fontWeight: 700,
@@ -356,9 +427,21 @@ const styles = {
     cursor: "pointer",
     transition: "all 0.15s ease",
     textAlign: "left",
+    width: "100%",
+  },
+  bottomBtnCollapsed: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 0,
+    width: 44,
+    height: 44,
+    margin: "0 auto",
+    borderRadius: "50%",
   },
   bottomBtnLabel: {
     flex: 1,
+    whiteSpace: "nowrap",
   },
   themeBackdrop: {
     position: "fixed",
