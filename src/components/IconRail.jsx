@@ -186,56 +186,65 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
           </button>
         </div>
 
-        {/* Navigation List with Organic Cutout Scoop Curve */}
+        {/* Navigation List with Continuous Venom Sliding Liquid Scoop */}
         <div style={styles.navList}>
           {!collapsed && <div style={styles.navSectionLabel}>NAVIGATION</div>}
-          {navItems.map((item) => {
-            const isActive = page === item.key;
-            return (
-              <div key={item.key} style={styles.navItemWrap}>
-                <button
-                  key={item.key}
-                  type="button"
-                  style={{
-                    ...styles.navBtn,
-                    color: isActive ? currentTheme.accent : currentTheme.text,
-                    ...(collapsed ? styles.navBtnCollapsed : {}),
-                    ...(isActive && !collapsed
-                      ? {
-                          ...styles.navBtnActive,
-                          color: currentTheme.accent,
-                        }
-                      : {}),
-                    ...(isActive && collapsed
-                      ? {
-                          ...styles.navBtnCollapsedActive,
-                          color: currentTheme.accent,
-                          boxShadow: currentTheme.activeShadow,
-                        }
-                      : {}),
-                  }}
-                  className={`rail-nav-item ${isActive && !collapsed ? "rail-scoop-active" : ""}`}
-                  onClick={() => onPageChange(item.key)}
-                  title={item.label}
-                >
-                  <span style={styles.navIcon}>{item.icon}</span>
-                  {!collapsed && <span style={styles.navLabel}>{item.label}</span>}
-                  {!collapsed && item.badge && (
-                    <span
-                      style={{
-                        ...styles.navBadge,
-                        background: isActive ? currentTheme.accentSoft : "rgba(255, 255, 255, 0.25)",
-                        color: isActive ? currentTheme.accent : "#FFFFFF",
-                      }}
-                    >
-                      {item.badge}
-                    </span>
-                  )}
-                </button>
-              </div>
-            );
-          })}
+          <div style={styles.navContainerRelative}>
+            {/* VENOM LIQUID SLIDING SYMBIOTE SCOOP */}
+            {!collapsed && (
+              <div
+                className="venom-liquid-scoop"
+                style={{
+                  transform: `translateY(${Math.max(0, navItems.findIndex((i) => i.key === page)) * 48}px)`,
+                  background: "var(--surface)",
+                }}
+              />
+            )}
+
+            {navItems.map((item) => {
+              const isActive = page === item.key;
+              return (
+                <div key={item.key} style={styles.navItemWrap}>
+                  <button
+                    key={item.key}
+                    type="button"
+                    style={{
+                      ...styles.navBtn,
+                      color: isActive ? currentTheme.accent : currentTheme.text,
+                      fontWeight: isActive ? 900 : 700,
+                      ...(collapsed ? styles.navBtnCollapsed : {}),
+                      ...(isActive && collapsed
+                        ? {
+                            ...styles.navBtnCollapsedActive,
+                            color: currentTheme.accent,
+                            boxShadow: currentTheme.activeShadow,
+                          }
+                        : {}),
+                    }}
+                    className={`rail-nav-item ${isActive ? "rail-item-active" : ""}`}
+                    onClick={() => onPageChange(item.key)}
+                    title={item.label}
+                  >
+                    <span style={styles.navIcon}>{item.icon}</span>
+                    {!collapsed && <span style={styles.navLabel}>{item.label}</span>}
+                    {!collapsed && item.badge && (
+                      <span
+                        style={{
+                          ...styles.navBadge,
+                          background: isActive ? currentTheme.accentSoft : "rgba(255, 255, 255, 0.25)",
+                          color: isActive ? currentTheme.accent : "#FFFFFF",
+                        }}
+                      >
+                        {item.badge}
+                      </span>
+                    )}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         </div>
+
 
         {/* Bottom Actions: Theme Selector & Logout */}
         <div
@@ -467,9 +476,16 @@ const styles = {
     gap: 6,
     flex: 1,
   },
+  navContainerRelative: {
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    gap: 6,
+  },
   navItemWrap: {
     position: "relative",
   },
+
   navBtn: {
     display: "flex",
     alignItems: "center",
