@@ -217,34 +217,29 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
           </button>
         </div>
 
-        {/* Navigation List with Continuous Venom Liquid Symbiote Scoop */}
+        {/* Navigation List with Ultra-Smooth 120FPS Liquid Symbiote Wave */}
         <div style={styles.navList}>
           {!collapsed && <div style={styles.navSectionLabel}>NAVIGATION</div>}
           <div style={styles.navContainerRelative}>
-            {/* VENOM GOOEY LIQUID LAYER */}
             {!collapsed && (
-              <div className="venom-goo-container">
-                {/* Main Sliding Liquid Scoop */}
+              <>
+                {/* Layer 1: Fluid Water Aura Ripple */}
                 <div
-                  className={`venom-liquid-scoop ${isFlowing ? "venom-stretching" : ""}`}
+                  className="liquid-aura-ripple"
                   style={{
-                    transform: `translateY(${activeIndex * 48}px)`,
-                    background: "var(--surface)",
+                    transform: `translate3d(0, ${activeIndex * 48}px, 0)`,
                   }}
                 />
 
-                {/* Flowing Liquid Bridge Tendon (Venom Trail) */}
-                {isFlowing && (
-                  <div
-                    className="venom-liquid-bridge"
-                    style={{
-                      top: Math.min(prevIndex, activeIndex) * 48,
-                      height: Math.abs(activeIndex - prevIndex) * 48 + 42,
-                      background: "var(--surface)",
-                    }}
-                  />
-                )}
-              </div>
+                {/* Layer 2: Core Liquid Symbiote Scoop */}
+                <div
+                  className={`ultra-liquid-scoop ${isFlowing ? "liquid-flowing-stretch" : ""}`}
+                  style={{
+                    transform: `translate3d(0, ${activeIndex * 48}px, 0)`,
+                    background: "var(--surface)",
+                  }}
+                />
+              </>
             )}
 
             {navItems.map((item) => {
@@ -290,6 +285,7 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
             })}
           </div>
         </div>
+
 
 
 
