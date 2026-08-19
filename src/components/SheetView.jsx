@@ -6,9 +6,11 @@ import LoadingScreen from "./LoadingScreen.jsx";
 import SheetHistoryModal from "./SheetHistoryModal.jsx";
 import ModalPortal from "./ModalPortal.jsx";
 
-const COLOR_OPTIONS = [
-  "#4F46E5", "#06B6D4", "#10B981", "#F59E0B", "#EF4444",
-  "#EC4899", "#8B5CF6", "#3B82F6", "#14B8A6", "#64748B",
+const DEFAULT_COLS = [
+  { id: "col_a", label: "Title / Task", color: "#4F46E5" },
+  { id: "col_b", label: "Assignee / Name", color: "#06B6D4" },
+  { id: "col_c", label: "Status", color: "#10B981" },
+  { id: "col_d", label: "Notes / Details", color: "#F59E0B" },
 ];
 
 // Helper: Export Sheet data to Excel-compatible CSV
@@ -46,6 +48,8 @@ export default function SheetView({ sheetId, onClose }) {
   const [showAddCol, setShowAddCol] = useState(false);
   const [savingCell, setSavingCell] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [editingColId, setEditingColId] = useState(null);
+  const [editingColName, setEditingColName] = useState("");
 
   useBackHandler("sheet-history", showHistory, () => {
     setShowHistory(false);
@@ -62,7 +66,12 @@ export default function SheetView({ sheetId, onClose }) {
     setLoadError("");
     try {
       const res = await api.get(`/sheets/${sheetId}`);
-      setSheet(res.data);
+      let s = res.data;
+      // If columns are empty or single default, ensure clean columns
+      if (!s.columns || s.columns.length === 0) {
+        s.columns = DEFAULT_COLS;
+      }
+      setSheet(s);
     } catch (err) {
       console.error("Sheet load error:", err);
       setLoadError(err.response?.data?.message || "Sheet open nahi ho paayi");
@@ -83,7 +92,7 @@ export default function SheetView({ sheetId, onClose }) {
       setNewColLabel("");
       setShowAddCol(false);
     } catch (err) {
-      alert(err.response?.data?.message || "Field add nahi hua");
+      alert(err.response?.data?.message || "Column add nahi hua");
     }
   };
 
@@ -117,7 +126,7 @@ export default function SheetView({ sheetId, onClose }) {
   };
 
   const handleDeleteRow = async (rowId) => {
-    if (!window.confirm("Yeh entry delete karni hai?")) return;
+    if (!window.confirm("Yeh row delete karni hai?")) return;
     try {
       await api.delete(`/sheets/${sheetId}/rows/${rowId}`);
       setSheet((s) => ({ ...s, rows: s.rows.filter((r) => r._id !== rowId) }));
@@ -151,10 +160,12 @@ export default function SheetView({ sheetId, onClose }) {
     return (
       <ModalPortal>
         <div style={styles.backdrop} onClick={onClose}>
-          <div style={{ ...styles.modal, padding: 24, textAlign: "center" }} onClick={(e) => e.stopPropagation()}>
-            <div style={{ fontSize: 36, marginBottom: 8 }}>⚠️</div>
-            <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 6px" }}>Sheet load nahi hui</h3>
-            <p style={{ fontSize: 13, color: "var(--text-muted)", margin: "0 0 16px" }}>
+          <div style={{ ...styles.modal, padding: 28, textAlign: "center" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ fontSize: 38, marginBottom: 8 }}>⚠️</div>
+            <h3 style={{ fontSize: 16, fontWeight: 800, margin: "0 0 6px", color: "var(--text)" }}>
+              Sheet Load Nahi Hui
+            </h3>
+            <p style={{ fontSize: 13, color: "var(--text-muted)", margin: "0 0 18px" }}>
               {loadError || "Sheet ka access nahi mila ya server pe issue hai."}
             </p>
             <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
@@ -171,26 +182,26 @@ export default function SheetView({ sheetId, onClose }) {
     <ModalPortal>
       <div style={styles.backdrop} onClick={onClose}>
         <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-          {/* ── HEADER ── */}
-          <div style={styles.header}>
-            <div style={styles.headerLeft}>
-              <span style={styles.excelBadge}>📊 EXCEL</span>
+          {/* ── TOP RIBBON ── */}
+          <div style={styles.ribbon}>
+            <div style={styles.ribbonLeft}>
+              <div style={styles.excelIcon}>📊</div>
               <div>
-                <div style={styles.headerTitle}>{sheet.name}</div>
-                <div style={styles.headerSub}>
-                  {sheet.rows.length} rows · {sheet.columns.length} columns · {sheet.isOwner ? "👑 Aap Owner ho" : "Shared"}
+                <div style={styles.sheetTitle}>{sheet.name}</div>
+                <div style={styles.sheetMeta}>
+                  {sheet.rows.length} rows · {sheet.columns.length} columns · {sheet.isOwner ? "👑 Owner" : "Shared"}
                 </div>
               </div>
             </div>
 
-            <div style={styles.headerActions}>
+            <div style={styles.ribbonRight}>
               <button
                 style={styles.exportBtn}
                 onClick={() => exportSheetCSV(sheet)}
                 title="Download Excel / CSV File"
               >
                 <span>⬇</span>
-                <span className="hide-on-mobile">Download (.csv)</span>
+                <span>Download (.csv)</span>
               </button>
               <button
                 style={styles.iconBtn}
@@ -205,25 +216,25 @@ export default function SheetView({ sheetId, onClose }) {
             </div>
           </div>
 
-          {/* ── TOOLBAR ── */}
+          {/* ── ACTION TOOLBAR ── */}
           <div style={styles.toolbar}>
             <div style={styles.searchBox}>
-              <span style={{ fontSize: 13 }}>🔍</span>
+              <span style={{ fontSize: 13, opacity: 0.7 }}>🔍</span>
               <input
                 style={styles.searchInput}
-                placeholder="Sheet mein search karo..."
+                placeholder="Sheet mein data dhoondo..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               {searchQuery && (
-                <button style={styles.clearSearchBtn} onClick={() => setSearchQuery("")}>
+                <button style={styles.clearSearch} onClick={() => setSearchQuery("")}>
                   ✕
                 </button>
               )}
             </div>
 
-            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-              <button style={styles.addFieldBtn} onClick={() => setShowAddCol((v) => !v)}>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <button style={styles.addColBtn} onClick={() => setShowAddCol((v) => !v)}>
                 + Add Column
               </button>
               <button style={styles.addRowTopBtn} onClick={handleAddRow}>
@@ -232,37 +243,45 @@ export default function SheetView({ sheetId, onClose }) {
             </div>
           </div>
 
-          {/* ── ADD COLUMN POPUP ── */}
+          {/* ── ADD COLUMN INLINE FORM ── */}
           {showAddCol && (
-            <div style={styles.addColBox}>
+            <div style={styles.addColBanner}>
               <input
-                style={styles.input}
-                placeholder="Column ka naam (jaise: Name, Amount, Status)"
+                style={styles.colInput}
+                placeholder="Naye column ka naam (jaise: Due Date, Amount, Remarks)"
                 value={newColLabel}
                 onChange={(e) => setNewColLabel(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAddColumn()}
                 autoFocus
               />
-              <button style={styles.addColConfirmBtn} onClick={handleAddColumn}>
+              <button style={styles.colConfirmBtn} onClick={handleAddColumn}>
                 Add Column ✓
               </button>
-              <button style={styles.addColCancelBtn} onClick={() => setShowAddCol(false)}>
+              <button style={styles.colCancelBtn} onClick={() => setShowAddCol(false)}>
                 Cancel
               </button>
             </div>
           )}
 
-          {/* ── EXCEL GRID TABLE ── */}
-          <div style={styles.tableScroll}>
-            <table style={styles.table}>
+          {/* ── EXCEL GRID SPREADSHEET ── */}
+          <div style={styles.gridContainer}>
+            <table style={styles.excelTable}>
               <thead>
                 <tr>
-                  <th style={styles.rowNumberTh}>#</th>
+                  <th style={styles.rowHeaderTh}>#</th>
                   {sheet.columns.map((col, idx) => (
-                    <th key={col.id} style={{ ...styles.th, borderTop: `3px solid ${col.color || "#4F46E5"}` }}>
-                      <div style={styles.colHeaderTitle}>
-                        <span style={styles.colLetter}>{String.fromCharCode(65 + idx)}</span>
-                        <span>{col.label}</span>
+                    <th
+                      key={col.id}
+                      style={{
+                        ...styles.colTh,
+                        borderTop: `3px solid ${col.color || "#4F46E5"}`,
+                      }}
+                    >
+                      <div style={styles.colHeaderContent}>
+                        <span style={styles.colLetterBadge}>
+                          {String.fromCharCode(65 + (idx % 26))}
+                        </span>
+                        <span style={styles.colLabelText}>{col.label}</span>
                       </div>
                     </th>
                   ))}
@@ -271,27 +290,27 @@ export default function SheetView({ sheetId, onClose }) {
               </thead>
               <tbody>
                 {filteredRows.map((row, rIdx) => (
-                  <tr key={row._id} style={styles.tr}>
-                    <td style={styles.rowNumberTd}>{rIdx + 1}</td>
+                  <tr key={row._id} style={styles.tableRow}>
+                    <td style={styles.rowNumberCell}>{rIdx + 1}</td>
                     {sheet.columns.map((col) => (
-                      <td key={col.id} style={styles.td}>
+                      <td key={col.id} style={styles.cellTd}>
                         <input
-                          style={styles.cellInput}
+                          style={styles.cellInputField}
                           value={row.values?.[col.id] || ""}
                           placeholder="—"
                           onChange={(e) => handleCellChange(row._id, col.id, e.target.value)}
                           onBlur={(e) => handleCellBlur(row._id, col.id, e.target.value)}
                         />
                         {savingCell === `${row._id}:${col.id}` && (
-                          <span style={styles.savingDot} title="Saving..." />
+                          <span style={styles.savingIndicator} title="Saving..." />
                         )}
                       </td>
                     ))}
-                    <td style={styles.actionTd}>
+                    <td style={styles.actionCell}>
                       <button
-                        style={styles.rowDeleteBtn}
+                        style={styles.deleteRowBtn}
                         onClick={() => handleDeleteRow(row._id)}
-                        title="Row Delete Karo"
+                        title="Delete Row"
                       >
                         🗑
                       </button>
@@ -300,10 +319,17 @@ export default function SheetView({ sheetId, onClose }) {
                 ))}
                 {filteredRows.length === 0 && (
                   <tr>
-                    <td colSpan={sheet.columns.length + 2} style={styles.emptyCell}>
-                      {searchQuery
-                        ? "Koi match nahi mila"
-                        : "Koi entry nahi hai abhi — '+ Add Row' pe click karke data bharna shuru karo!"}
+                    <td colSpan={sheet.columns.length + 2} style={styles.emptyGridCell}>
+                      <div style={{ fontSize: 24, marginBottom: 6 }}>📝</div>
+                      <div style={{ fontWeight: 700, fontSize: 13, color: "var(--text)" }}>
+                        {searchQuery ? "Koi matching row nahi mili" : "Sheet khali hai"}
+                      </div>
+                      <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginTop: 2 }}>
+                        Neeche diye button se nayi row add karo aur likhna shuru karo.
+                      </div>
+                      <button style={styles.emptyAddBtn} onClick={handleAddRow}>
+                        + Add First Row
+                      </button>
                     </td>
                   </tr>
                 )}
@@ -311,14 +337,14 @@ export default function SheetView({ sheetId, onClose }) {
             </table>
           </div>
 
-          {/* ── FOOTER ── */}
-          <div style={styles.footer}>
+          {/* ── FOOTER BAR ── */}
+          <div style={styles.footerBar}>
             <button style={styles.addRowBottomBtn} onClick={handleAddRow}>
-              <span>+</span>
+              <span style={{ fontSize: 16 }}>+</span>
               <span>Nayi Row Likho</span>
             </button>
-            <div style={styles.footerNote}>
-              💡 Ultra-lightweight cloud sync · Auto-saves on blur
+            <div style={styles.footerHint}>
+              ⚡ Real-time cloud sync · Auto-saves on blur
             </div>
           </div>
         </div>
@@ -333,9 +359,9 @@ const styles = {
   backdrop: {
     position: "fixed",
     inset: 0,
-    background: "rgba(15, 23, 42, 0.65)",
-    backdropFilter: "blur(4px)",
-    zIndex: 9999,
+    background: "rgba(15, 23, 42, 0.7)",
+    backdropFilter: "blur(6px)",
+    zIndex: 99999,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -343,17 +369,17 @@ const styles = {
   },
   modal: {
     width: "100%",
-    maxWidth: 900,
+    maxWidth: 960,
     maxHeight: "92vh",
     display: "flex",
     flexDirection: "column",
     background: "var(--surface, #ffffff)",
     border: "1px solid var(--border, #e2e8f0)",
     borderRadius: 20,
-    boxShadow: "0 25px 60px rgba(0, 0, 0, 0.25)",
+    boxShadow: "0 25px 60px rgba(0, 0, 0, 0.3)",
     overflow: "hidden",
   },
-  header: {
+  ribbon: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -361,69 +387,78 @@ const styles = {
     borderBottom: "1px solid var(--border, #e2e8f0)",
     background: "var(--surface-2, #f8fafc)",
   },
-  headerLeft: {
+  ribbonLeft: {
     display: "flex",
     alignItems: "center",
     gap: 12,
   },
-  excelBadge: {
-    background: "#10B981",
-    color: "#ffffff",
-    fontSize: 10,
-    fontWeight: 900,
-    letterSpacing: "0.06em",
-    padding: "4px 8px",
-    borderRadius: 6,
-    boxShadow: "0 2px 6px rgba(16, 185, 129, 0.3)",
+  excelIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    background: "linear-gradient(135deg, #10B981, #059669)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 18,
+    color: "#fff",
+    boxShadow: "0 4px 12px rgba(16, 185, 129, 0.3)",
+    flexShrink: 0,
   },
-  headerTitle: {
+  sheetTitle: {
     fontSize: 16,
     fontWeight: 800,
     fontFamily: "var(--font-display)",
     color: "var(--text)",
   },
-  headerSub: {
+  sheetMeta: {
     fontSize: 11.5,
     color: "var(--text-muted)",
     marginTop: 1,
   },
-  headerActions: {
+  ribbonRight: {
     display: "flex",
-    gap: 6,
+    gap: 8,
     alignItems: "center",
   },
   exportBtn: {
-    background: "#4F46E5",
+    background: "linear-gradient(135deg, #4F46E5, #06B6D4)",
     color: "#ffffff",
     border: "none",
-    borderRadius: 8,
-    padding: "7px 12px",
-    fontSize: 12,
+    borderRadius: 9,
+    padding: "8px 14px",
+    fontSize: 12.5,
     fontWeight: 700,
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
-    gap: 5,
-    boxShadow: "0 2px 8px rgba(79, 70, 229, 0.25)",
+    gap: 6,
+    boxShadow: "0 3px 10px rgba(79, 70, 229, 0.28)",
   },
   iconBtn: {
     background: "var(--surface)",
     border: "1px solid var(--border)",
-    borderRadius: 8,
-    width: 32,
-    height: 32,
-    fontSize: 14,
+    borderRadius: 9,
+    width: 34,
+    height: 34,
+    fontSize: 15,
     cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   closeBtn: {
     background: "var(--surface)",
     border: "1px solid var(--border)",
     color: "var(--text-muted)",
     fontSize: 13,
-    width: 32,
-    height: 32,
+    width: 34,
+    height: 34,
     borderRadius: "50%",
     cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   toolbar: {
     display: "flex",
@@ -438,13 +473,13 @@ const styles = {
   searchBox: {
     display: "flex",
     alignItems: "center",
-    gap: 6,
+    gap: 8,
     background: "var(--surface-2)",
     border: "1px solid var(--border)",
     borderRadius: 8,
-    padding: "5px 10px",
+    padding: "6px 12px",
     flex: 1,
-    minWidth: 160,
+    minWidth: 180,
     maxWidth: 320,
   },
   searchInput: {
@@ -455,20 +490,20 @@ const styles = {
     fontSize: 12.5,
     width: "100%",
   },
-  clearSearchBtn: {
+  clearSearch: {
     background: "transparent",
     border: "none",
     color: "var(--text-muted)",
-    fontSize: 11,
+    fontSize: 12,
     cursor: "pointer",
   },
-  addFieldBtn: {
+  addColBtn: {
     background: "var(--surface-2)",
     color: "var(--text)",
     border: "1px solid var(--border)",
     borderRadius: 8,
-    padding: "7px 12px",
-    fontSize: 12,
+    padding: "7px 14px",
+    fontSize: 12.5,
     fontWeight: 700,
     cursor: "pointer",
   },
@@ -477,12 +512,12 @@ const styles = {
     color: "var(--accent)",
     border: "none",
     borderRadius: 8,
-    padding: "7px 12px",
-    fontSize: 12,
+    padding: "7px 14px",
+    fontSize: 12.5,
     fontWeight: 700,
     cursor: "pointer",
   },
-  addColBox: {
+  addColBanner: {
     display: "flex",
     gap: 8,
     padding: "10px 18px",
@@ -490,7 +525,7 @@ const styles = {
     borderBottom: "1px solid var(--border)",
     alignItems: "center",
   },
-  input: {
+  colInput: {
     flex: 1,
     background: "var(--surface)",
     border: "1px solid var(--border)",
@@ -499,7 +534,7 @@ const styles = {
     color: "var(--text)",
     fontSize: 13,
   },
-  addColConfirmBtn: {
+  colConfirmBtn: {
     background: "var(--accent)",
     color: "#fff",
     border: "none",
@@ -509,7 +544,7 @@ const styles = {
     fontWeight: 700,
     cursor: "pointer",
   },
-  addColCancelBtn: {
+  colCancelBtn: {
     background: "transparent",
     border: "1px solid var(--border)",
     borderRadius: 8,
@@ -518,114 +553,133 @@ const styles = {
     color: "var(--text-muted)",
     cursor: "pointer",
   },
-  tableScroll: {
+  gridContainer: {
     flex: 1,
     overflow: "auto",
     background: "var(--surface)",
+    minHeight: 280,
   },
-  table: {
+  excelTable: {
     width: "100%",
     borderCollapse: "collapse",
     fontSize: 13,
+    minWidth: 500,
   },
-  th: {
+  rowHeaderTh: {
+    width: 44,
+    minWidth: 44,
     background: "var(--surface-2)",
-    padding: "8px 12px",
+    textAlign: "center",
+    color: "var(--text-muted)",
+    fontSize: 11,
+    fontWeight: 800,
+    borderBottom: "2px solid var(--border)",
+    borderRight: "1px solid var(--border)",
+    userSelect: "none",
+  },
+  colTh: {
+    background: "var(--surface-2)",
+    padding: "10px 14px",
     textAlign: "left",
     fontWeight: 700,
     borderBottom: "2px solid var(--border)",
     borderRight: "1px solid var(--border-soft)",
+    minWidth: 140,
     whiteSpace: "nowrap",
   },
-  rowNumberTh: {
-    width: 42,
-    minWidth: 42,
-    background: "var(--surface-2)",
-    textAlign: "center",
-    color: "var(--text-muted)",
-    fontSize: 11,
-    fontWeight: 700,
-    borderBottom: "2px solid var(--border)",
-    borderRight: "1px solid var(--border)",
-  },
-  colHeaderTitle: {
+  colHeaderContent: {
     display: "flex",
     alignItems: "center",
-    gap: 6,
-    color: "var(--text)",
-    fontSize: 12.5,
+    gap: 8,
   },
-  colLetter: {
+  colLetterBadge: {
     fontSize: 10,
     color: "var(--text-muted)",
     background: "var(--surface)",
-    padding: "1px 5px",
+    padding: "2px 6px",
     borderRadius: 4,
     border: "1px solid var(--border)",
-    fontWeight: 800,
+    fontWeight: 900,
+  },
+  colLabelText: {
+    color: "var(--text)",
+    fontSize: 13,
+    fontWeight: 700,
   },
   actionTh: {
-    width: 40,
+    width: 42,
     background: "var(--surface-2)",
     borderBottom: "2px solid var(--border)",
   },
-  tr: {
+  tableRow: {
     borderBottom: "1px solid var(--border-soft)",
+    transition: "background 0.1s ease",
   },
-  rowNumberTd: {
+  rowNumberCell: {
     textAlign: "center",
     color: "var(--text-faint)",
     fontSize: 11,
-    fontWeight: 700,
+    fontWeight: 800,
     background: "var(--surface-2)",
     borderRight: "1px solid var(--border)",
     userSelect: "none",
   },
-  td: {
+  cellTd: {
     padding: 0,
     borderRight: "1px solid var(--border-soft)",
     position: "relative",
   },
-  cellInput: {
+  cellInputField: {
     width: "100%",
     border: "none",
     outline: "none",
     background: "transparent",
-    padding: "10px 12px",
+    padding: "11px 14px",
     color: "var(--text)",
-    fontSize: 13,
+    fontSize: 13.5,
     fontFamily: "inherit",
     boxSizing: "border-box",
   },
-  savingDot: {
+  savingIndicator: {
     position: "absolute",
-    top: 6,
-    right: 6,
+    top: 8,
+    right: 8,
     width: 6,
     height: 6,
     borderRadius: "50%",
     background: "#10B981",
   },
-  actionTd: {
+  actionCell: {
     textAlign: "center",
     padding: "4px",
   },
-  rowDeleteBtn: {
+  deleteRowBtn: {
     background: "transparent",
     border: "none",
     color: "var(--text-faint)",
     fontSize: 13,
     cursor: "pointer",
     padding: 4,
-    opacity: 0.6,
+    opacity: 0.5,
+    transition: "opacity 0.15s ease",
   },
-  emptyCell: {
+  emptyGridCell: {
     textAlign: "center",
-    padding: "36px 16px",
+    padding: "48px 16px",
     color: "var(--text-muted)",
-    fontSize: 13,
   },
-  footer: {
+  emptyAddBtn: {
+    marginTop: 12,
+    background: "var(--accent)",
+    color: "#fff",
+    border: "none",
+    borderRadius: 8,
+    padding: "7px 14px",
+    fontSize: 12.5,
+    fontWeight: 700,
+    cursor: "pointer",
+  },
+  footerBar: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -640,7 +694,7 @@ const styles = {
     color: "#fff",
     border: "none",
     borderRadius: 10,
-    padding: "9px 16px",
+    padding: "10px 18px",
     fontSize: 13,
     fontWeight: 700,
     cursor: "pointer",
@@ -649,8 +703,8 @@ const styles = {
     gap: 6,
     boxShadow: "0 2px 8px var(--accent-glow)",
   },
-  footerNote: {
-    fontSize: 11,
+  footerHint: {
+    fontSize: 11.5,
     color: "var(--text-muted)",
   },
   actionBtnPrimary: {
@@ -658,7 +712,7 @@ const styles = {
     color: "#fff",
     border: "none",
     borderRadius: 8,
-    padding: "8px 16px",
+    padding: "9px 18px",
     fontSize: 13,
     fontWeight: 700,
     cursor: "pointer",
@@ -668,7 +722,7 @@ const styles = {
     color: "var(--text)",
     border: "1px solid var(--border)",
     borderRadius: 8,
-    padding: "8px 16px",
+    padding: "9px 18px",
     fontSize: 13,
     cursor: "pointer",
   },

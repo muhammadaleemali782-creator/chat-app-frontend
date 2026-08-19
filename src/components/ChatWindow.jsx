@@ -621,9 +621,9 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
                     {m.type === "audio" && m.mediaData && (
                       <audio controls src={m.mediaData} style={styles.msgAudio} />
                     )}
-                    {m.type !== "image" && m.type !== "audio" && <span>{m.text}</span>}
+                    {m.type !== "image" && m.type !== "audio" && <span style={styles.msgText}>{m.text}</span>}
                     {(m.type === "image" || m.type === "audio") && m.text && (
-                      <span>{m.text}</span>
+                      <span style={styles.msgText}>{m.text}</span>
                     )}
                   </div>
 
@@ -948,18 +948,27 @@ const styles = {
     flexShrink: 0,
   },
   bubble: {
-    maxWidth: "72%",
+    maxWidth: "75%",
     width: "fit-content",
-    padding: "9px 14px",
+    minWidth: 48,
+    padding: "10px 16px",
     borderRadius: 18,
-    fontSize: 14,
+    fontSize: 14.5,
     lineHeight: 1.45,
-    wordBreak: "break-word",
-    overflowWrap: "break-word",
+    wordBreak: "normal",
+    overflowWrap: "anywhere",
+    whiteSpace: "pre-wrap",
     boxShadow: "var(--shadow-bubble)",
     display: "flex",
     flexDirection: "column",
-    gap: 5,
+    gap: 4,
+  },
+  msgText: {
+    wordBreak: "normal",
+    overflowWrap: "anywhere",
+    whiteSpace: "pre-wrap",
+    display: "inline-block",
+    maxWidth: "100%",
   },
   quotedBox: {
     borderLeft: "3px solid",
