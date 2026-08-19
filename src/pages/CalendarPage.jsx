@@ -187,8 +187,13 @@ export default function CalendarPage() {
             </div>
           </div>
         </div>
-        <button style={S.newBtn} onClick={() => setShowScheduleModal(true)}>
-          <span>+</span> Nayi Meeting
+        <button
+          style={{ ...S.newBtn, padding: "8px 14px", fontSize: 12.5, gap: 4 }}
+          onClick={() => setShowScheduleModal(true)}
+          title="Nayi Meeting schedule karo"
+        >
+          <span style={{ fontSize: 16, lineHeight: 1 }}>+</span>
+          <span>Meeting</span>
         </button>
       </div>
 

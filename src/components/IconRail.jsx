@@ -5,10 +5,12 @@ import { avatarColor } from "../utils/avatarColor";
 
 const THEME_META = {
   talkiepro: { icon: "🟣", label: "TalkiePro" },
-  dark: { icon: "🌙", label: "Dark" },
-  light: { icon: "☀️", label: "Light" },
-  blue: { icon: "🔵", label: "Blue" },
-  white: { icon: "⚪", label: "White" },
+  dark:       { icon: "🌙", label: "Dark" },
+  light:      { icon: "☀️", label: "Light" },
+  blue:       { icon: "🔵", label: "Blue" },
+  white:      { icon: "⚪", label: "White" },
+  chatox:     { icon: "🌊", label: "Chatox Teal" },
+  pinky:      { icon: "🌸", label: "Pinky Rose" },
 };
 
 export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenProfile }) {
@@ -192,9 +194,9 @@ const styles = {
     transition: "all 0.15s ease",
   },
   itemActive: {
-    background: "var(--accent)",
-    color: "#ffffff !important",
-    boxShadow: "0 4px 12px var(--accent-glow)",
+    background: "var(--rail-active-bg)",
+    color: "var(--rail-bg)",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
   },
   icon: { fontSize: 18, lineHeight: 1 },
   label: { fontSize: 10.5, fontWeight: 700 },

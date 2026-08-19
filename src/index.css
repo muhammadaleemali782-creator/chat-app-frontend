@@ -1,28 +1,46 @@
 :root {
-  --bg: #f8fafc;
-  --surface: #ffffff;
-  --surface-2: #f1f5f9;
-  --surface-hover: #e2e8f0;
-  --border: #e2e8f0;
-  --border-soft: #f1f5f9;
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
-  --accent-soft: rgba(37, 99, 235, 0.12);
-  --accent-glow: rgba(37, 99, 235, 0.28);
-  --amber: #10b981;
-  --text: #0f172a;
-  --text-muted: #64748b;
-  --text-faint: #94a3b8;
-  --danger: #ef4444;
+  /* ── Background Layers ─────────────────────────── */
+  --bg: #EEF2FF;              /* soft lavender-white, like the ref design */
+  --surface: #FFFFFF;
+  --surface-2: #F5F7FF;
+  --surface-hover: #E8EDFF;
+  --border: #DDE3F4;
+  --border-soft: #EEF2FF;
+
+  /* ── Brand Accent ─────────────────────────────── */
+  --accent: #4F46E5;          /* indigo */
+  --accent-hover: #4338CA;
+  --accent-soft: rgba(79,70,229,0.10);
+  --accent-glow: rgba(79,70,229,0.25);
+  --amber: #10B981;
+
+  /* ── Text ─────────────────────────────────────── */
+  --text: #1E293B;
+  --text-muted: #64748B;
+  --text-faint: #94A3B8;
+  --danger: #EF4444;
+
+  /* ── Radius / Font ────────────────────────────── */
   --radius: 16px;
   --radius-sm: 10px;
   --font-display: "Plus Jakarta Sans", sans-serif;
   --font-body: "Inter", sans-serif;
-  --shadow-soft: 0 8px 24px rgba(15, 23, 42, 0.08);
-  --shadow-bubble: 0 2px 8px rgba(15, 23, 42, 0.06);
-  --rail-bg: #ffffff;
-  --rail-text: #64748b;
-  --rail-active-bg: #2563eb;
+
+  /* ── Shadows ──────────────────────────────────── */
+  --shadow-soft: 0 4px 24px rgba(79,70,229,0.10);
+  --shadow-bubble: 0 2px 8px rgba(79,70,229,0.10);
+
+  /* ── Icon Rail ────────────────────────────────── */
+  --rail-bg: #1E1B4B;         /* deep indigo — matches dark left sidebar in design */
+  --rail-text: #A5B4FC;
+  --rail-active-bg: #FFFFFF;
+
+  /* ── Chat Bubbles ─────────────────────────────── */
+  --bubble-me-bg: linear-gradient(135deg, #EC4899 0%, #F472B6 100%);
+  --bubble-me-text: #ffffff;
+  --bubble-other-bg: #FFFFFF;
+  --bubble-other-text: #1E293B;
+  --bubble-other-border: #E2E8F0;
 }
 
 [data-theme="dark"] {
@@ -135,9 +153,72 @@
   --danger: #ef4444;
   --shadow-soft: 0 8px 24px rgba(15, 23, 42, 0.06);
   --shadow-bubble: 0 2px 8px rgba(15, 23, 42, 0.05);
-  --rail-bg: #ffffff;
-  --rail-text: #64748b;
-  --rail-active-bg: #2563eb;
+  --rail-bg: #1E1B4B;
+  --rail-text: #A5B4FC;
+  --rail-active-bg: #ffffff;
+  --bubble-me-bg: linear-gradient(135deg, #EC4899, #F472B6);
+  --bubble-me-text: #fff;
+  --bubble-other-bg: #F5F7FF;
+  --bubble-other-text: #1E293B;
+  --bubble-other-border: #E2E8F0;
+}
+
+/* ── Chatox Teal Theme (inspired by mobile design: teal gradients) ─────── */
+[data-theme="chatox"] {
+  --bg: #F0FDFA;
+  --surface: #FFFFFF;
+  --surface-2: #CCFBF1;
+  --surface-hover: #99F6E4;
+  --border: #5EEAD4;
+  --border-soft: #CCFBF1;
+  --accent: #0D9488;
+  --accent-hover: #0F766E;
+  --accent-soft: rgba(13, 148, 136, 0.12);
+  --accent-glow: rgba(13, 148, 136, 0.30);
+  --amber: #F59E0B;
+  --text: #134E4A;
+  --text-muted: #0F766E;
+  --text-faint: #14B8A6;
+  --danger: #EF4444;
+  --shadow-soft: 0 4px 24px rgba(13, 148, 136, 0.12);
+  --shadow-bubble: 0 2px 8px rgba(13, 148, 136, 0.10);
+  --rail-bg: #134E4A;
+  --rail-text: #5EEAD4;
+  --rail-active-bg: #14B8A6;
+  --bubble-me-bg: linear-gradient(135deg, #0D9488, #14B8A6);
+  --bubble-me-text: #ffffff;
+  --bubble-other-bg: #F0FDFA;
+  --bubble-other-text: #134E4A;
+  --bubble-other-border: #99F6E4;
+}
+
+/* ── Pinky Rose Theme ────────────────────────────────────────────────────── */
+[data-theme="pinky"] {
+  --bg: #FFF0F6;
+  --surface: #FFFFFF;
+  --surface-2: #FFE4F0;
+  --surface-hover: #FFD6E8;
+  --border: #FBCFE8;
+  --border-soft: #FFF0F6;
+  --accent: #DB2777;
+  --accent-hover: #BE185D;
+  --accent-soft: rgba(219, 39, 119, 0.10);
+  --accent-glow: rgba(219, 39, 119, 0.28);
+  --amber: #F59E0B;
+  --text: #500724;
+  --text-muted: #9D174D;
+  --text-faint: #BE185D;
+  --danger: #DC2626;
+  --shadow-soft: 0 4px 24px rgba(219, 39, 119, 0.10);
+  --shadow-bubble: 0 2px 8px rgba(219, 39, 119, 0.10);
+  --rail-bg: #500724;
+  --rail-text: #FBCFE8;
+  --rail-active-bg: #F472B6;
+  --bubble-me-bg: linear-gradient(135deg, #DB2777, #F472B6);
+  --bubble-me-text: #ffffff;
+  --bubble-other-bg: #FFFFFF;
+  --bubble-other-text: #500724;
+  --bubble-other-border: #FBCFE8;
 }
 
 * {

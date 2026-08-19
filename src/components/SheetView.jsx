@@ -142,11 +142,11 @@ export default function SheetView({ sheetId, onClose }) {
   return (
     <ModalPortal>
       <div style={styles.backdrop} onClick={onClose}>
-      <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <div style={styles.header}>
-          <div>
-            <div style={styles.headerTitle}>📊 {sheet.name}</div>
-            <div style={styles.headerSub}>
+        <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
+          <div style={styles.header}>
+            <div>
+              <div style={styles.headerTitle}>📊 {sheet.name}</div>
+              <div style={styles.headerSub}>
               {sheet.rows.length} entries · {sheet.isOwner ? "Aap owner ho" : "Shared hai aapke saath"}
             </div>
           </div>
@@ -282,10 +282,10 @@ export default function SheetView({ sheetId, onClose }) {
         <button style={styles.addRowBtn} onClick={handleAddRow}>
           + Naya Row
         </button>
-      </div>
+        </div>{/* closes modal */}
 
       {showHistory && <SheetHistoryModal sheetId={sheetId} onClose={() => setShowHistory(false)} />}
-    </div>
+      </div>{/* closes backdrop */}
     </ModalPortal>
   );
 }

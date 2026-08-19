@@ -584,8 +584,11 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
                   <div
                     style={{
                       ...styles.bubble,
-                      background: isMine ? "var(--accent)" : "var(--surface-2)",
+                      background: isMine
+                        ? "linear-gradient(135deg, #EC4899, #F472B6)"
+                        : "var(--bubble-other-bg, var(--surface))",
                       color: isMine ? "#fff" : "var(--text)",
+                      border: isMine ? "none" : "1px solid var(--bubble-other-border, var(--border))",
                       borderBottomRightRadius: isMine ? 4 : 18,
                       borderBottomLeftRadius: isMine ? 18 : 4,
                     }}
@@ -852,9 +855,8 @@ const styles = {
     padding: "22px 24px",
     display: "flex",
     flexDirection: "column",
-    gap: 10,
-    background:
-      "radial-gradient(circle at 20% 10%, rgba(124,111,240,0.05), transparent 40%)",
+    gap: 6,
+    background: "var(--bg)",
   },
   emptyChat: {
     margin: "auto",
@@ -946,11 +948,11 @@ const styles = {
     flexShrink: 0,
   },
   bubble: {
-    maxWidth: "75%",
-    minWidth: 80,
-    padding: "10px 14px",
+    maxWidth: "72%",
+    width: "fit-content",
+    padding: "9px 14px",
     borderRadius: 18,
-    fontSize: 14.5,
+    fontSize: 14,
     lineHeight: 1.45,
     wordBreak: "break-word",
     overflowWrap: "break-word",
