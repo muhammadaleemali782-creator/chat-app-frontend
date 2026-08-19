@@ -384,7 +384,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
   return (
     <div style={styles.outerLayout} className="pane-fade">
       <div style={styles.wrap} className="chat-main-stream">
-        <div style={{ ...styles.header, position: "relative" }}>
+        <div style={{ ...styles.header, position: "relative" }} className="chat-header-wave">
         <button
           style={styles.backBtn}
           onClick={onBack}
@@ -393,6 +393,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
         >
           ←
         </button>
+
         {isGroup ? (
           <div
             style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, cursor: "pointer" }}

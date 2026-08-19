@@ -166,169 +166,202 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
         className={`icon-rail${hideOnMobileChat ? " icon-rail-hide-mobile" : ""}`}
         aria-label="Main Navigation"
       >
-        {/* Top Header: Brand Wordmark + Collapse Toggle */}
-        <div
-          style={{
-            ...styles.brandHeader,
-            justifyContent: collapsed ? "center" : "space-between",
-            paddingRight: collapsed ? 0 : 14,
-          }}
-        >
-          {!collapsed && (
-            <div style={styles.brandTitleWrap}>
-              <div style={styles.brandIconCircle}>⚡</div>
-              <span style={styles.brandTitle}>Chatox</span>
-            </div>
-          )}
-
-          <button
-            type="button"
-            style={styles.collapseToggleBtn}
-            onClick={() => setCollapsed((prev) => !prev)}
-            title={collapsed ? "Sidebar Expand Karo" : "Sidebar Collapse Karo"}
-          >
-            {collapsed ? "›" : "‹"}
-          </button>
-        </div>
-
-        {/* User Profile Pill / Avatar */}
-        <div style={{ paddingRight: collapsed ? 0 : 14, marginBottom: 20 }}>
-          <button
-            type="button"
+        {/* Desktop Rail Elements (Hidden on mobile) */}
+        <div className="desktop-rail-content" style={{ display: "flex", flexDirection: "column", height: "100%", width: "100%" }}>
+          {/* Top Header: Brand Wordmark + Collapse Toggle */}
+          <div
             style={{
-              ...styles.userProfilePill,
-              background: currentTheme.pillBg,
-              borderColor: currentTheme.pillBorder,
-              justifyContent: collapsed ? "center" : "flex-start",
-              padding: collapsed ? "6px" : "7px 12px",
+              ...styles.brandHeader,
+              justifyContent: collapsed ? "center" : "space-between",
+              paddingRight: collapsed ? 0 : 14,
             }}
-            onClick={onOpenProfile}
-            title={`Profile: @${user?.username}`}
           >
-            <div style={{ ...styles.userAvatar, background: color.bg, color: color.fg }}>
-              {initial}
-            </div>
             {!collapsed && (
-              <div style={styles.userInfo}>
-                <div style={{ ...styles.userName, color: "#FFFFFF" }}>{user?.displayName || "User"}</div>
-                <div style={{ ...styles.userHandle, color: currentTheme.subText }}>@{user?.username || "me"}</div>
+              <div style={styles.brandTitleWrap}>
+                <div style={styles.brandIconCircle}>⚡</div>
+                <span style={styles.brandTitle}>Chatox</span>
               </div>
             )}
-          </button>
-        </div>
 
-        {/* Navigation List with Ultra-Smooth 120FPS Liquid Symbiote Wave */}
-        <div style={styles.navList}>
-          {!collapsed && <div style={styles.navSectionLabel}>NAVIGATION</div>}
-          <div style={styles.navContainerRelative}>
-            {!collapsed && (
-              <>
-                {/* Layer 1: Fluid Water Aura Ripple */}
-                <div
-                  className="liquid-aura-ripple"
-                  style={{
-                    transform: `translate3d(0, ${activeIndex * 48}px, 0)`,
-                  }}
-                />
+            <button
+              type="button"
+              style={styles.collapseToggleBtn}
+              onClick={() => setCollapsed((prev) => !prev)}
+              title={collapsed ? "Sidebar Expand Karo" : "Sidebar Collapse Karo"}
+            >
+              {collapsed ? "›" : "‹"}
+            </button>
+          </div>
 
-                {/* Layer 2: Core Liquid Symbiote Scoop */}
-                <div
-                  className={`ultra-liquid-scoop ${isFlowing ? "liquid-flowing-stretch" : ""}`}
-                  style={{
-                    transform: `translate3d(0, ${activeIndex * 48}px, 0)`,
-                    background: "var(--surface)",
-                  }}
-                />
-              </>
-            )}
-
-            {navItems.map((item) => {
-              const isActive = page === item.key;
-              return (
-                <div key={item.key} style={styles.navItemWrap}>
-                  <button
-                    key={item.key}
-                    type="button"
-                    style={{
-                      ...styles.navBtn,
-                      color: isActive ? currentTheme.accent : currentTheme.text,
-                      fontWeight: isActive ? 900 : 700,
-                      ...(collapsed ? styles.navBtnCollapsed : {}),
-                      ...(isActive && collapsed
-                        ? {
-                            ...styles.navBtnCollapsedActive,
-                            color: currentTheme.accent,
-                            boxShadow: currentTheme.activeShadow,
-                          }
-                        : {}),
-                    }}
-                    className={`rail-nav-item ${isActive ? "rail-item-active" : ""}`}
-                    onClick={() => handleNavClick(item.key)}
-                    title={item.label}
-                  >
-                    <span style={styles.navIcon}>{item.icon}</span>
-                    {!collapsed && <span style={styles.navLabel}>{item.label}</span>}
-                    {!collapsed && item.badge && (
-                      <span
-                        style={{
-                          ...styles.navBadge,
-                          background: isActive ? currentTheme.accentSoft : "rgba(255, 255, 255, 0.25)",
-                          color: isActive ? currentTheme.accent : "#FFFFFF",
-                        }}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                  </button>
+          {/* User Profile Pill / Avatar */}
+          <div style={{ paddingRight: collapsed ? 0 : 14, marginBottom: 20 }}>
+            <button
+              type="button"
+              style={{
+                ...styles.userProfilePill,
+                background: currentTheme.pillBg,
+                borderColor: currentTheme.pillBorder,
+                justifyContent: collapsed ? "center" : "flex-start",
+                padding: collapsed ? "6px" : "7px 12px",
+              }}
+              onClick={onOpenProfile}
+              title={`Profile: @${user?.username}`}
+            >
+              <div style={{ ...styles.userAvatar, background: color.bg, color: color.fg }}>
+                {initial}
+              </div>
+              {!collapsed && (
+                <div style={styles.userInfo}>
+                  <div style={{ ...styles.userName, color: "#FFFFFF" }}>{user?.displayName || "User"}</div>
+                  <div style={{ ...styles.userHandle, color: currentTheme.subText }}>@{user?.username || "me"}</div>
                 </div>
-              );
-            })}
+              )}
+            </button>
+          </div>
+
+          {/* Navigation List with Ultra-Smooth 120FPS Liquid Symbiote Wave */}
+          <div style={styles.navList}>
+            {!collapsed && <div style={styles.navSectionLabel}>NAVIGATION</div>}
+            <div style={styles.navContainerRelative}>
+              {!collapsed && (
+                <>
+                  {/* Layer 1: Fluid Water Aura Ripple */}
+                  <div
+                    className="liquid-aura-ripple"
+                    style={{
+                      transform: `translate3d(0, ${activeIndex * 48}px, 0)`,
+                    }}
+                  />
+
+                  {/* Layer 2: Core Liquid Symbiote Scoop */}
+                  <div
+                    className={`ultra-liquid-scoop ${isFlowing ? "liquid-flowing-stretch" : ""}`}
+                    style={{
+                      transform: `translate3d(0, ${activeIndex * 48}px, 0)`,
+                      background: "var(--surface)",
+                    }}
+                  />
+                </>
+              )}
+
+              {navItems.map((item) => {
+                const isActive = page === item.key;
+                return (
+                  <div key={item.key} style={styles.navItemWrap}>
+                    <button
+                      key={item.key}
+                      type="button"
+                      style={{
+                        ...styles.navBtn,
+                        color: isActive ? currentTheme.accent : currentTheme.text,
+                        fontWeight: isActive ? 900 : 700,
+                        ...(collapsed ? styles.navBtnCollapsed : {}),
+                        ...(isActive && collapsed
+                          ? {
+                              ...styles.navBtnCollapsedActive,
+                              color: currentTheme.accent,
+                              boxShadow: currentTheme.activeShadow,
+                            }
+                          : {}),
+                      }}
+                      className={`rail-nav-item ${isActive ? "rail-item-active" : ""}`}
+                      onClick={() => handleNavClick(item.key)}
+                      title={item.label}
+                    >
+                      <span style={styles.navIcon}>{item.icon}</span>
+                      {!collapsed && <span style={styles.navLabel}>{item.label}</span>}
+                      {!collapsed && item.badge && (
+                        <span
+                          style={{
+                            ...styles.navBadge,
+                            background: isActive ? currentTheme.accentSoft : "rgba(255, 255, 255, 0.25)",
+                            color: isActive ? currentTheme.accent : "#FFFFFF",
+                          }}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Desktop Bottom Actions: Theme Selector & Logout */}
+          <div
+            style={{
+              ...styles.bottomSection,
+              paddingRight: collapsed ? 0 : 14,
+            }}
+            className="desktop-bottom-actions"
+          >
+            <button
+              type="button"
+              style={{
+                ...styles.bottomBtn,
+                color: currentTheme.subText,
+                ...(collapsed ? styles.bottomBtnCollapsed : {}),
+              }}
+              onClick={() => setShowThemePicker(true)}
+              title="Theme badlo"
+            >
+              <span style={{ fontSize: 16 }}>🎨</span>
+              {!collapsed && <span style={styles.bottomBtnLabel}>THEME / SETTINGS</span>}
+            </button>
+
+            <button
+              type="button"
+              style={{
+                ...styles.bottomBtn,
+                ...(collapsed ? styles.bottomBtnCollapsed : {}),
+                color: "#FECACA",
+              }}
+              onClick={() => {
+                if (window.confirm("Kya aap logout karna chahte hain?")) {
+                  logout();
+                }
+              }}
+              title="Logout"
+            >
+              <span style={{ fontSize: 16 }}>🚪</span>
+              {!collapsed && <span style={styles.bottomBtnLabel}>LOGOUT</span>}
+            </button>
           </div>
         </div>
 
-
-
-
-        {/* Bottom Actions: Theme Selector & Logout */}
-        <div
-          style={{
-            ...styles.bottomSection,
-            paddingRight: collapsed ? 0 : 14,
-          }}
-        >
+        {/* Mobile 3-Pill Floating Dock (Matching Image 1 Reference) */}
+        <div className="mobile-dock-row">
           <button
             type="button"
-            style={{
-              ...styles.bottomBtn,
-              color: currentTheme.subText,
-              ...(collapsed ? styles.bottomBtnCollapsed : {}),
-            }}
-            onClick={() => setShowThemePicker(true)}
-            title="Theme badlo"
+            className={`mobile-dock-pill-btn ${page === "chat" ? "active-dock" : ""}`}
+            onClick={() => onPageChange("chat")}
+            title="Messages"
           >
-            <span style={{ fontSize: 16 }}>🎨</span>
-            {!collapsed && <span style={styles.bottomBtnLabel}>THEME / SETTINGS</span>}
+            💬
           </button>
 
           <button
             type="button"
-            style={{
-              ...styles.bottomBtn,
-              ...(collapsed ? styles.bottomBtnCollapsed : {}),
-              color: "#FECACA",
-            }}
-            onClick={() => {
-              if (window.confirm("Kya aap logout karna chahte hain?")) {
-                logout();
-              }
-            }}
-            title="Logout"
+            className="mobile-dock-center-plus-btn"
+            onClick={() => setShowThemePicker(true)}
+            title="Theme / Options"
           >
-            <span style={{ fontSize: 16 }}>🚪</span>
-            {!collapsed && <span style={styles.bottomBtnLabel}>LOGOUT</span>}
+            <span className="plus-symbol">＋</span>
+          </button>
+
+          <button
+            type="button"
+            className={`mobile-dock-pill-btn ${page === "calls" ? "active-dock" : ""}`}
+            onClick={() => onPageChange("calls")}
+            title="Calls"
+          >
+            📞
           </button>
         </div>
       </nav>
+
+
 
       {/* Floating Theme Selector Modal */}
       {showThemePicker && (

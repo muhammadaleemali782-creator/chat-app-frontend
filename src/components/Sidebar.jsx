@@ -72,8 +72,42 @@ export default function Sidebar({
 
   return (
     <div style={styles.wrap} className="sidebar-floating-card">
-      {/* 1. Top Search Bar & Create Group CTA */}
-      <div style={styles.topHeader}>
+      {/* Mobile-Only Wave Header (Matches Reference Image 1) */}
+      <div className="mobile-wave-header-banner">
+        <div className="mobile-wave-top-bar">
+          <span className="mobile-wave-title">Messages</span>
+          <div className="mobile-wave-avatar" title={user?.displayName || "User"}>
+            {user?.displayName ? user.displayName.charAt(0).toUpperCase() : "U"}
+          </div>
+        </div>
+
+        <div className="mobile-wave-search-box">
+          <span className="mobile-wave-search-icon">🔍</span>
+          <input
+            ref={searchInputRef}
+            className="mobile-wave-search-input"
+            placeholder="Search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
+      </div>
+
+      {/* Mobile-Only Recent Bar */}
+      <div className="mobile-recent-bar">
+        <span className="mobile-recent-heading">Recent</span>
+        <button
+          type="button"
+          className="mobile-recent-menu-btn"
+          onClick={() => setShowCreateGroup(true)}
+          title="New Group / Options"
+        >
+          •••
+        </button>
+      </div>
+
+      {/* Desktop Top Search Bar & Create Group CTA */}
+      <div style={styles.topHeader} className="desktop-only-header">
         <div style={styles.searchBox}>
           <input
             ref={searchInputRef}
@@ -101,6 +135,7 @@ export default function Sidebar({
           + Group
         </button>
       </div>
+
 
       {showCreateGroup && (
         <CreateGroupModal

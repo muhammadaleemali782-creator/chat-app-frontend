@@ -536,81 +536,273 @@ button:focus-visible,
   to { opacity: 1; }
 }
 
+/* ==========================================================================
+   DESKTOP DEFAULT (Mobile elements hidden on Desktop)
+   ========================================================================== */
+.mobile-wave-header-banner,
+.mobile-recent-bar {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .mobile-only-back { display: inline-block !important; }
   .hide-on-mobile { display: none !important; }
   .chat-grid { grid-template-columns: 1fr !important; }
   .auth-brand-panel { display: none !important; }
-  /* Login/Register/Forgot-password: branding wala left panel chhup jaata hai mobile pe,
-     isliye grid ko bhi single-column karna zaroori hai warna form aadhe screen me squeeze
-     ho jaata hai aur baaki khaali jagah bach jaati hai */
   .auth-page-wrap { grid-template-columns: 1fr !important; }
   .meeting-modal-body { grid-template-columns: 1fr !important; }
+  .desktop-only-header { display: none !important; }
 
+  /* 1. Mobile Screen 1: Top Organic Wave Header Banner */
+  .mobile-wave-header-banner {
+    display: flex !important;
+    flex-direction: column !important;
+    background: var(--rail-bg) !important;
+    padding: 22px 20px 26px !important;
+    border-radius: 0 0 36px 36px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+    color: #FFFFFF !important;
+    flex-shrink: 0 !important;
+  }
+
+  .mobile-wave-top-bar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 14px !important;
+  }
+
+  .mobile-wave-title {
+    font-size: 26px !important;
+    font-weight: 800 !important;
+    font-family: var(--font-display) !important;
+    color: #FFFFFF !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  .mobile-wave-avatar {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.25) !important;
+    border: 2px solid rgba(255, 255, 255, 0.4) !important;
+    color: #FFFFFF !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 800 !important;
+    font-size: 15px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .mobile-wave-search-box {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    background: #FFFFFF !important;
+    border-radius: 24px !important;
+    padding: 10px 16px !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .mobile-wave-search-icon {
+    font-size: 15px !important;
+    color: #94A3B8 !important;
+  }
+
+  .mobile-wave-search-input {
+    flex: 1 !important;
+    border: none !important;
+    outline: none !important;
+    font-size: 14px !important;
+    color: #0F172A !important;
+    background: transparent !important;
+  }
+
+  /* 2. Mobile Recent Section Bar */
+  .mobile-recent-bar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 18px 20px 8px !important;
+    background: var(--surface) !important;
+  }
+
+  .mobile-recent-heading {
+    font-size: 17px !important;
+    font-weight: 800 !important;
+    color: var(--text) !important;
+    font-family: var(--font-display) !important;
+  }
+
+  .mobile-recent-menu-btn {
+    background: transparent !important;
+    border: none !important;
+    font-size: 20px !important;
+    font-weight: 900 !important;
+    color: var(--text-muted) !important;
+    cursor: pointer !important;
+    padding: 4px 8px !important;
+  }
+
+  /* 3. Mobile Floating Bottom Dock (Screen 1 in image) */
   .chat-layout { flex-direction: column !important; }
   .icon-rail {
-    width: 100% !important;
-    height: 56px !important;
+    position: fixed !important;
+    bottom: 16px !important;
+    left: 16px !important;
+    right: 16px !important;
+    width: auto !important;
+    height: 60px !important;
     flex-direction: row !important;
     align-items: center !important;
-    padding: 0 16px !important;
-    border-right: none !important;
-    border-bottom: none !important;
-    border-top: 1px solid var(--border) !important;
+    padding: 0 12px !important;
+    border-radius: 36px !important;
+    border: 1px solid var(--border) !important;
     justify-content: space-between !important;
     order: 2 !important;
     flex-shrink: 0 !important;
     background: var(--surface) !important;
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06) !important;
-    z-index: 100 !important;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.16) !important;
+    z-index: 9999 !important;
     box-sizing: border-box !important;
   }
-  /* Chat khuli hone par yeh bottom bar chhup jaati hai, taaki chat pura screen use kare */
+
   .icon-rail.icon-rail-hide-mobile { display: none !important; }
   .page-content { order: 1 !important; flex: 1 !important; min-height: 0 !important; }
-  .icon-rail-avatar {
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    min-height: 34px !important;
-    aspect-ratio: 1 / 1 !important;
-    border-radius: 50% !important;
-    margin-bottom: 0 !important;
-    flex-shrink: 0 !important;
+
+  /* Hide Desktop Rail Elements on Mobile */
+  .icon-rail > div:not(.mobile-dock-row),
+  .desktop-bottom-actions {
+    display: none !important;
   }
-  .icon-rail-items {
-    flex-direction: row !important;
-    flex: none !important;
-    gap: 8px !important;
+
+  .mobile-dock-row {
+    display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
   }
-  .icon-rail-item {
-    width: 44px !important;
-    height: 38px !important;
-    flex-direction: row !important;
-    padding: 0 !important;
+
+  .mobile-dock-pill-btn {
+    flex: 1 !important;
+    height: 42px !important;
+    border-radius: 24px !important;
+    border: none !important;
+    background: transparent !important;
+    color: var(--text-muted) !important;
+    font-size: 20px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    border-radius: 12px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
   }
-  .icon-rail-item-label { display: none !important; }
-  .icon-rail-bottom {
-    flex-direction: row !important;
+
+  .mobile-dock-pill-btn.active-dock {
+    background: var(--rail-bg) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .mobile-dock-center-plus-btn {
+    width: 58px !important;
+    height: 42px !important;
+    border-radius: 24px !important;
+    border: 2px solid var(--border) !important;
+    background: transparent !important;
     display: flex !important;
-    gap: 8px !important;
     align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    margin: 0 10px !important;
+    transition: transform 0.2s ease !important;
   }
+
+  .mobile-dock-center-plus-btn:active {
+    transform: scale(0.92) !important;
+  }
+
+  .plus-symbol {
+    font-size: 24px !important;
+    font-weight: 400 !important;
+    color: var(--text) !important;
+    line-height: 1 !important;
+  }
+
+
+  /* 4. Mobile Screen 2: Top Chat Wave Header */
+  .chat-header-wave {
+    background: var(--rail-bg) !important;
+    color: #FFFFFF !important;
+    border-radius: 0 0 32px 32px !important;
+    padding: 14px 18px 20px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+    border-bottom: none !important;
+  }
+
+  .chat-header-wave .mobile-only-back {
+    color: #FFFFFF !important;
+    font-size: 22px !important;
+  }
+
+  .chat-header-wave div[style*="headerName"] {
+    color: #FFFFFF !important;
+    font-weight: 800 !important;
+    font-size: 16px !important;
+  }
+
+  .chat-header-wave div[style*="headerStatus"] {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 12px !important;
+  }
+
+  .chat-header-wave button {
+    color: #FFFFFF !important;
+  }
+
+  /* 5. Mobile Screen 2: Floating Bottom Input Bar with Organic Wave */
+  .mobile-input-bar-wrap {
+    position: relative !important;
+    margin: 12px 14px 16px !important;
+    border-radius: 32px !important;
+    background: #FFFFFF !important;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12) !important;
+    border: 1px solid var(--border) !important;
+    padding: 6px 8px 6px 16px !important;
+  }
+
+  /* Full Screen Container adjustments on Mobile */
+  .chat-main-stream {
+    background: var(--surface) !important;
+    position: relative !important;
+  }
+
+  /* Organic Wave in Bottom Corner of Chat */
+  .chat-main-stream::after {
+    content: "" !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    width: 220px !important;
+    height: 140px !important;
+    background: var(--rail-bg) !important;
+    border-top-left-radius: 120px !important;
+    opacity: 0.14 !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+  }
+
   .theme-popover {
-    bottom: 64px !important;
-    right: 12px !important;
+    bottom: 84px !important;
+    right: 16px !important;
     left: auto !important;
     position: fixed !important;
     box-shadow: var(--shadow) !important;
-    z-index: 9999 !important;
+    z-index: 99999 !important;
   }
 }
+
 
 /* Bahut chhote phones (jaise purane 320-360px wide devices) ke liye extra tight fit -
    taaki kisi bhi chhote se chhote screen pe bhi sab kuch sahi fit ho, cut na ho */
