@@ -12,6 +12,7 @@ import TaskPanel from "./TaskPanel.jsx";
 import { avatarColor } from "../utils/avatarColor";
 import MeetingScheduler from "./MeetingScheduler.jsx";
 import LoadingScreen from "./LoadingScreen.jsx";
+import ChatDetailsPanel from "./ChatDetailsPanel.jsx";
 import { compressImage, blobToBase64 } from "../utils/mediaUtils";
 
 function formatTime(dateString) {
@@ -100,6 +101,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
   const [recordSeconds, setRecordSeconds] = useState(0);
   const [sendingMedia, setSendingMedia] = useState(false);
   const [showAttachMenu, setShowAttachMenu] = useState(false);
+  const [showDetailsPanel, setShowDetailsPanel] = useState(() => typeof window !== "undefined" && window.innerWidth >= 1180);
   const [activeMsgMenu, setActiveMsgMenu] = useState(null);
   const longPressTimerRef = useRef(null);
 
@@ -380,8 +382,9 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
   const recSec = String(recordSeconds % 60).padStart(2, "0");
 
   return (
-    <div style={styles.wrap} className="pane-fade">
-      <div style={{ ...styles.header, position: "relative" }}>
+    <div style={styles.outerLayout} className="pane-fade">
+      <div style={styles.wrap} className="chat-main-stream">
+        <div style={{ ...styles.header, position: "relative" }}>
         <button
           style={styles.backBtn}
           onClick={onBack}
@@ -449,6 +452,18 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
               </button>
             </>
           )}
+          <button
+            type="button"
+            style={{
+              ...styles.headerIconBtn,
+              background: showDetailsPanel ? "var(--accent-soft)" : "var(--surface-2)",
+              color: showDetailsPanel ? "var(--accent)" : "var(--text)",
+            }}
+            title="Toggle Details Panel"
+            onClick={() => setShowDetailsPanel((v) => !v)}
+          >
+            ℹ️
+          </button>
           <div style={{ position: "relative" }}>
             {showHeaderMenu && (
               <div style={styles.headerMenu}>
@@ -785,12 +800,41 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
           </button>
         </form>
       )}
+      </div>{/* closes styles.wrap */}
+
+      {showDetailsPanel && (
+        <ChatDetailsPanel
+          conversation={conversation}
+          messages={messages}
+          onClose={() => setShowDetailsPanel(false)}
+          onOpenFiles={() => setShowSheets(true)}
+        />
+      )}
     </div>
   );
 }
 
 const styles = {
-  wrap: { display: "flex", flexDirection: "column", height: "100%", minHeight: 0, overflow: "hidden" },
+  outerLayout: {
+    display: "flex",
+    flex: 1,
+    height: "100%",
+    minHeight: 0,
+    minWidth: 0,
+    overflow: "hidden",
+    background: "var(--surface, #ffffff)",
+    borderRadius: "0 24px 24px 0",
+  },
+  wrap: {
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+    flex: 1,
+    minHeight: 0,
+    minWidth: 0,
+    overflow: "hidden",
+    background: "var(--surface, #ffffff)",
+  },
   header: {
     display: "flex",
     alignItems: "center",

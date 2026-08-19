@@ -19,6 +19,7 @@ export default function Sidebar({
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [showCreateGroup, setShowCreateGroup] = useState(false);
+  const searchInputRef = useRef(null);
   const debounceRef = useRef(null);
   const { user } = useAuth();
   const { isOnline } = usePresence();
@@ -52,21 +53,24 @@ export default function Sidebar({
   const otherParticipant = (conv) =>
     conv.participants.find((p) => p._id !== user.id) || conv.participants[0];
 
+  const formatMsgTime = (dateStr) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    return d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+  };
+
   return (
-    <div style={styles.wrap}>
-      {/* 1. Header with App Title & New Group CTA */}
-      <div style={styles.header}>
-        <div className="wordmark" style={{ fontSize: 22, fontWeight: 900 }}>
-          Chatox<span style={{ color: "var(--accent)" }}>.</span>
-        </div>
+    <div style={styles.wrap} className="sidebar-floating-card">
+      {/* 1. Top Section: + Create New Floating Pill Button */}
+      <div style={styles.topActionArea}>
         <button
           type="button"
-          style={styles.newGroupBtn}
-          title="Naya group banao"
+          style={styles.createNewBtn}
           onClick={() => setShowCreateGroup(true)}
+          title="Naya group ya chat shuru karo"
         >
-          <span>👥</span>
-          <span>+ Group</span>
+          <span style={styles.plusIcon}>+</span>
+          <span style={styles.createNewText}>Create New</span>
         </button>
       </div>
 
@@ -80,22 +84,35 @@ export default function Sidebar({
         />
       )}
 
-      {/* 2. Modern Search Input */}
+      {/* 2. Section Header: "Chat" with minimize/options indicator */}
+      <div style={styles.chatSectionHeader}>
+        <span style={styles.chatTitle}>Chat</span>
+        <span style={styles.chatOptionsIcon}>—</span>
+      </div>
+
+      {/* 3. Modern Pill Search Input */}
       <div style={styles.searchBox}>
         <div style={styles.searchInputWrap}>
-          <span style={styles.searchIcon}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-          </span>
           <input
+            ref={searchInputRef}
             style={styles.searchInput}
-            placeholder="Username se search karo..."
+            placeholder="Search Contact..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
+          <button
+            type="button"
+            style={styles.searchIconPill}
+            onClick={() => searchInputRef.current?.focus()}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </button>
         </div>
+
+        {/* Live Search Dropdown */}
         {query && (
           <div style={styles.resultsDropdown}>
             {searching && <div style={styles.resultItemMuted}>Dhoond rahe hain...</div>}
@@ -123,16 +140,21 @@ export default function Sidebar({
         )}
       </div>
 
-      {/* 3. Conversation List */}
+      {/* 4. Conversation List */}
       <div style={styles.list}>
         {loading && <LoadingScreen message="Chats load ho rahi hain..." />}
         {!loading && conversations.length === 0 && (
           <div style={styles.emptyState}>
             <div style={styles.emptyIcon}>💬</div>
-            <strong style={{ display: "block", marginBottom: 4, color: "var(--text)" }}>Koi chat nahi hai abhi</strong>
-            <span>Upar se kisi ka username search karke direct chat shuru karo.</span>
+            <strong style={{ display: "block", marginBottom: 4, color: "var(--text)" }}>
+              Koi chat nahi hai abhi
+            </strong>
+            <span style={{ fontSize: 12.5, color: "var(--text-muted)", lineHeight: 1.5 }}>
+              Upar diye "+ Create New" ya Search se direct chat shuru karo.
+            </span>
           </div>
         )}
+
         {conversations.map((conv) => {
           const isGroup = conv.type === "group";
           const other = isGroup ? null : otherParticipant(conv);
@@ -140,6 +162,7 @@ export default function Sidebar({
           const c = isGroup ? null : avatarColor(other.displayName);
           const isActive = conv._id === activeId;
           const title = isGroup ? conv.name : other.displayName;
+          const online = isGroup ? false : isOnline(other._id);
           const subtitle = isGroup
             ? `${conv.participants.length} members`
             : conv.lastMessage || "Chat shuru karo...";
@@ -150,27 +173,34 @@ export default function Sidebar({
               className={`conv-item ${isActive ? "active-conv" : ""}`}
               style={{
                 ...styles.convItem,
-                background: isActive ? "var(--surface)" : "transparent",
-                border: isActive ? "1px solid var(--border)" : "1px solid transparent",
-                borderLeft: isActive ? "4px solid #EC4899" : "4px solid transparent",
-                boxShadow: isActive ? "var(--shadow-soft)" : "none",
+                background: isActive ? "#FFFFFF" : "transparent",
+                border: isActive ? "1px solid var(--border-soft, #EEF2FF)" : "1px solid transparent",
+                borderLeft: isActive ? "4px solid #FF4B72" : "4px solid transparent",
+                boxShadow: isActive ? "0 8px 24px rgba(37, 99, 235, 0.08)" : "none",
               }}
               onClick={() => onSelect(conv)}
             >
               {isGroup ? (
                 <GroupAvatar name={conv.name} size={42} />
               ) : (
-                <Avatar name={other.displayName} online={isOnline(other._id)} color={c} size={42} />
+                <Avatar name={other.displayName} online={online} color={c} size={42} />
               )}
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={styles.convName}>
-                  {isGroup && "👥 "}
-                  {title}
+                <div style={styles.convHeaderRow}>
+                  <span style={styles.convName}>
+                    {isGroup && "👥 "}
+                    {title}
+                  </span>
+                  <span style={styles.convTime}>
+                    {formatMsgTime(conv.lastMessageAt || conv.updatedAt)}
+                  </span>
                 </div>
                 <div style={styles.convLastMsg}>
-                  {isGroup ? subtitle : conv.lastMessage || subtitle}
+                  {online && !isGroup && <span style={styles.onlineText}>Active now · </span>}
+                  {subtitle}
                 </div>
               </div>
+
               <button
                 type="button"
                 style={styles.deleteBtn}
@@ -188,44 +218,16 @@ export default function Sidebar({
         })}
       </div>
 
-      <div style={styles.brandFooter}>
-        Powered by <strong>Educa Veda Digitals</strong>
+      {/* Footer Branding */}
+      <div style={styles.footerWrap}>
+        <span style={styles.footerBrand}>Chatox Workspace</span>
       </div>
     </div>
   );
 }
 
-function Avatar({ name, online, color, size = 42 }) {
-  const initial = (name || "?").trim().charAt(0).toUpperCase();
-  const palette = color || { bg: "var(--accent-soft)", fg: "var(--accent)" };
-  return (
-    <div style={{ position: "relative", flexShrink: 0, width: size, height: size }}>
-      <div
-        style={{
-          width: size,
-          height: size,
-          minWidth: size,
-          minHeight: size,
-          aspectRatio: "1 / 1",
-          borderRadius: "50%",
-          background: palette.bg,
-          color: palette.fg,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontWeight: 800,
-          fontFamily: "var(--font-display)",
-          fontSize: size * 0.4,
-        }}
-      >
-        {initial}
-      </div>
-      {online && <div className="online-dot" style={styles.onlineDot} />}
-    </div>
-  );
-}
-
-function GroupAvatar({ name, size = 42 }) {
+export function Avatar({ name, online, color, size = 40 }) {
+  const initial = (name || "?").charAt(0).toUpperCase();
   return (
     <div
       style={{
@@ -233,19 +235,62 @@ function GroupAvatar({ name, size = 42 }) {
         height: size,
         minWidth: size,
         minHeight: size,
-        aspectRatio: "1 / 1",
         borderRadius: "50%",
-        background: "var(--accent-soft)",
-        color: "var(--accent)",
+        background: color.bg,
+        color: color.fg,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        fontWeight: 700,
-        fontSize: size * 0.42,
+        fontWeight: 800,
+        fontFamily: "var(--font-display)",
+        fontSize: size * 0.4,
+        position: "relative",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
         flexShrink: 0,
       }}
     >
-      👥
+      {initial}
+      {online && (
+        <span
+          style={{
+            position: "absolute",
+            bottom: 0,
+            right: 0,
+            width: Math.max(10, size * 0.28),
+            height: Math.max(10, size * 0.28),
+            borderRadius: "50%",
+            background: "#10b981",
+            border: "2px solid var(--surface, #ffffff)",
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+export function GroupAvatar({ name, size = 40 }) {
+  const initial = (name || "G").charAt(0).toUpperCase();
+  return (
+    <div
+      style={{
+        width: size,
+        height: size,
+        minWidth: size,
+        minHeight: size,
+        borderRadius: "50%",
+        background: "linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%)",
+        color: "#ffffff",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontWeight: 800,
+        fontFamily: "var(--font-display)",
+        fontSize: size * 0.4,
+        boxShadow: "0 2px 8px rgba(79, 70, 229, 0.25)",
+        flexShrink: 0,
+      }}
+    >
+      {initial}
     </div>
   );
 }
@@ -255,139 +300,200 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     height: "100%",
-    minHeight: 0,
+    background: "var(--surface, #ffffff)",
+    borderRight: "1px solid var(--border, #e2e8f0)",
+    borderRadius: "24px 0 0 24px",
+    boxShadow: "0 10px 40px rgba(0,0,0,0.04)",
     overflow: "hidden",
-    borderRight: "1px solid var(--border)",
-    background: "var(--surface)",
   },
-  header: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "18px 18px 12px",
+  topActionArea: {
+    padding: "20px 18px 12px",
   },
-  newGroupBtn: {
-    background: "var(--surface-2)",
-    border: "1px solid var(--border)",
-    color: "var(--text)",
-    borderRadius: 10,
-    padding: "6px 12px",
-    fontSize: 12.5,
-    fontWeight: 700,
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 6,
+  createNewBtn: {
+    width: "100%",
+    background: "var(--surface, #ffffff)",
+    color: "var(--text, #1E293B)",
+    border: "1px solid var(--border, #E2E8F0)",
+    borderRadius: 28,
+    padding: "12px 20px",
+    fontSize: 14,
+    fontWeight: 800,
     cursor: "pointer",
-    transition: "all 0.15s ease",
-  },
-  searchBox: { position: "relative", padding: "4px 18px 12px" },
-  searchInputWrap: { position: "relative" },
-  searchIcon: {
-    position: "absolute",
-    left: 12,
-    top: "50%",
-    transform: "translateY(-50%)",
-    color: "var(--text-faint)",
     display: "flex",
     alignItems: "center",
-    pointerEvents: "none",
+    justifyContent: "center",
+    gap: 10,
+    boxShadow: "0 4px 18px rgba(37, 99, 235, 0.09)",
+    transition: "all 0.18s ease",
+  },
+  plusIcon: {
+    fontSize: 18,
+    lineHeight: 1,
+    color: "#2563EB",
+    fontWeight: 900,
+  },
+  createNewText: {
+    letterSpacing: "-0.01em",
+  },
+  chatSectionHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "6px 22px 10px",
+  },
+  chatTitle: {
+    fontSize: 18,
+    fontWeight: 900,
+    fontFamily: "var(--font-display)",
+    color: "var(--text, #1E293B)",
+    letterSpacing: "-0.02em",
+  },
+  chatOptionsIcon: {
+    color: "var(--text-muted, #64748B)",
+    fontSize: 14,
+    fontWeight: 700,
+  },
+  searchBox: {
+    padding: "0 18px 14px",
+    position: "relative",
+  },
+  searchInputWrap: {
+    display: "flex",
+    alignItems: "center",
+    background: "var(--surface-2, #F8FAFC)",
+    border: "1px solid var(--border, #E2E8F0)",
+    borderRadius: 24,
+    padding: "4px 6px 4px 16px",
+    boxShadow: "inset 0 1px 3px rgba(0,0,0,0.02)",
   },
   searchInput: {
-    width: "100%",
-    background: "var(--surface-2)",
-    border: "1px solid var(--border)",
-    borderRadius: 12,
-    padding: "9px 12px 9px 36px",
-    color: "var(--text)",
-    fontSize: 13.5,
+    flex: 1,
+    background: "transparent",
+    border: "none",
     outline: "none",
-    boxSizing: "border-box",
+    color: "var(--text)",
+    fontSize: 13,
+    padding: "8px 0",
+  },
+  searchIconPill: {
+    background: "var(--surface, #ffffff)",
+    border: "1px solid var(--border, #E2E8F0)",
+    borderRadius: "50%",
+    width: 32,
+    height: 32,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "var(--text-muted)",
+    cursor: "pointer",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+    flexShrink: 0,
   },
   resultsDropdown: {
     position: "absolute",
+    top: "calc(100% - 6px)",
     left: 18,
     right: 18,
-    top: "calc(100% + 4px)",
-    background: "var(--surface)",
+    background: "var(--surface, #ffffff)",
     border: "1px solid var(--border)",
-    borderRadius: 14,
-    overflow: "hidden",
-    zIndex: 99,
+    borderRadius: 16,
+    boxShadow: "0 15px 40px rgba(0,0,0,0.15)",
+    zIndex: 40,
     maxHeight: 260,
     overflowY: "auto",
-    boxShadow: "var(--shadow)",
+    padding: 6,
   },
   resultItem: {
     display: "flex",
     alignItems: "center",
     gap: 10,
-    padding: "10px 14px",
+    padding: "8px 10px",
+    borderRadius: 10,
     cursor: "pointer",
-    borderBottom: "1px solid var(--border-soft)",
+    transition: "background 0.12s ease",
   },
+  resultName: { fontSize: 13, fontWeight: 700, color: "var(--text)" },
+  resultUsername: { fontSize: 11, color: "var(--text-muted)" },
   resultItemMuted: {
-    padding: "14px 12px",
-    color: "var(--text-muted)",
-    fontSize: 13,
-  },
-  resultName: { fontSize: 13.5, fontWeight: 700, color: "var(--text)" },
-  resultUsername: { fontSize: 12, color: "var(--text-muted)" },
-  list: { flex: 1, minHeight: 0, overflowY: "auto", padding: "4px 10px 8px" },
-  brandFooter: {
+    padding: 14,
     textAlign: "center",
-    fontSize: 11,
-    color: "var(--text-faint)",
-    padding: "10px 12px 14px",
-    borderTop: "1px solid var(--border-soft)",
-    letterSpacing: "0.02em",
+    color: "var(--text-muted)",
+    fontSize: 12.5,
+  },
+  list: {
+    flex: 1,
+    overflowY: "auto",
+    padding: "0 12px 12px",
+    display: "flex",
+    flexDirection: "column",
+    gap: 6,
   },
   emptyState: {
-    color: "var(--text-muted)",
-    fontSize: 13,
-    padding: "40px 20px",
+    margin: "auto",
     textAlign: "center",
-    lineHeight: 1.6,
+    padding: "30px 16px",
   },
-  emptyIcon: { fontSize: 32, marginBottom: 8, opacity: 0.8 },
+  emptyIcon: { fontSize: 32, marginBottom: 8 },
   convItem: {
     display: "flex",
     alignItems: "center",
     gap: 12,
-    padding: "11px 12px",
-    borderRadius: 14,
+    padding: "10px 12px",
+    borderRadius: 16,
     cursor: "pointer",
-    marginBottom: 4,
     transition: "all 0.15s ease",
+    position: "relative",
   },
-  convName: { fontSize: 14.5, fontWeight: 700, color: "var(--text)" },
+  convHeaderRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  convName: {
+    fontSize: 13.5,
+    fontWeight: 700,
+    color: "var(--text)",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  convTime: {
+    fontSize: 10.5,
+    color: "var(--text-faint)",
+    fontWeight: 500,
+    marginLeft: 4,
+    flexShrink: 0,
+  },
+  convLastMsg: {
+    fontSize: 12,
+    color: "var(--text-muted)",
+    marginTop: 2,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  onlineText: {
+    color: "#10B981",
+    fontWeight: 600,
+  },
   deleteBtn: {
     background: "transparent",
     border: "none",
     color: "var(--text-faint)",
-    fontSize: 14,
-    padding: "6px",
-    flexShrink: 0,
+    fontSize: 13,
+    padding: 4,
     cursor: "pointer",
-    opacity: 0.5,
+    opacity: 0,
+    transition: "opacity 0.15s ease",
   },
-  convLastMsg: {
-    fontSize: 12.5,
-    color: "var(--text-muted)",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    marginTop: 2,
+  footerWrap: {
+    padding: "10px 18px",
+    borderTop: "1px solid var(--border-soft)",
+    textAlign: "center",
   },
-  onlineDot: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    width: 11,
-    height: 11,
-    borderRadius: "50%",
-    background: "#10b981",
-    border: "2px solid var(--surface)",
+  footerBrand: {
+    fontSize: 11,
+    color: "var(--text-faint)",
+    fontWeight: 600,
   },
 };
-
-export { Avatar, GroupAvatar };
