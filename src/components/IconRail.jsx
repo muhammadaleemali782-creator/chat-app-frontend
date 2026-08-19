@@ -1,14 +1,14 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
 import { avatarColor } from "../utils/avatarColor";
 import ModalPortal from "./ModalPortal.jsx";
 
 const THEME_META = {
+  blue:       { icon: "🔵", label: "Image 2 Purple/Blue", desc: "Reference 3D Workspace Theme" },
   chatox:     { icon: "🌊", label: "Chatox Teal", desc: "Teal green wave mobile theme" },
-  talkiepro: { icon: "🟣", label: "TalkiePro Purple", desc: "Deep purple & indigo style" },
   pinky:      { icon: "🌸", label: "Pinky Rose", desc: "Vibrant pink bubbles theme" },
-  blue:       { icon: "🔵", label: "Ocean Blue", desc: "Soft blue card aesthetic" },
+  talkiepro: { icon: "🟣", label: "TalkiePro Dark", desc: "Deep navy indigo style" },
   dark:       { icon: "🌙", label: "Midnight Dark", desc: "High contrast dark mode" },
   light:      { icon: "☀️", label: "Pure Light", desc: "Clean modern light theme" },
   white:      { icon: "⚪", label: "Minimal White", desc: "Monochrome minimal layout" },
@@ -21,10 +21,17 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
   const color = avatarColor(user?.displayName || "");
   const initial = (user?.displayName || "?").charAt(0).toUpperCase();
 
-  const items = [
-    { key: "chat", icon: "💬", label: "Chat" },
-    { key: "calendar", icon: "📅", label: "Calendar" },
-    { key: "calls", icon: "📞", label: "Calls" },
+  const navItems = [
+    { key: "chat", label: "MESSAGES", icon: "✉️", badge: "Live" },
+    { key: "calendar", label: "CALENDAR", icon: "📅", badge: null },
+    { key: "calls", label: "CALLS", icon: "📞", badge: null },
+  ];
+
+  const miniChips = [
+    { id: "c1", label: "D", bg: "#F59E0B" },
+    { id: "c2", label: "A", bg: "#8B5CF6" },
+    { id: "c3", label: "C", bg: "#EC4899" },
+    { id: "c4", label: "+", bg: "rgba(255,255,255,0.2)" },
   ];
 
   return (
@@ -34,72 +41,90 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
         className={`icon-rail${hideOnMobileChat ? " icon-rail-hide-mobile" : ""}`}
         aria-label="Main Navigation"
       >
-        {/* Profile Avatar Button */}
-        <button
-          type="button"
-          style={{ ...styles.avatar, background: color.bg, color: color.fg }}
-          title={`Profile (@${user?.username})`}
-          className="icon-rail-avatar"
-          onClick={onOpenProfile}
-        >
-          {initial}
-        </button>
-
-        {/* Center Nav Items */}
-        <div style={styles.items} className="icon-rail-items">
-          {items.map((item) => {
-            const isActive = page === item.key;
-            return (
-              <button
-                key={item.key}
-                type="button"
-                style={{
-                  ...styles.item,
-                  ...(isActive ? styles.itemActive : {}),
-                }}
-                className={`icon-rail-item ${isActive ? "active" : ""}`}
-                onClick={() => onPageChange(item.key)}
-                title={item.label}
-              >
-                <span style={styles.icon}>{item.icon}</span>
-                <span style={styles.label} className="icon-rail-item-label">
-                  {item.label}
-                </span>
-              </button>
-            );
-          })}
+        {/* Left Sub-Strip (Brand & Mini Chips) */}
+        <div style={styles.miniStrip} className="hide-on-mobile">
+          <div style={styles.verticalBrand}>Chatox.</div>
+          <div style={styles.chipStack}>
+            {miniChips.map((c) => (
+              <div key={c.id} style={{ ...styles.miniChip, background: c.bg }}>
+                {c.label}
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Right/Bottom Actions: Theme Switcher & Logout */}
-        <div style={styles.bottomActions} className="icon-rail-bottom">
-          <button
-            type="button"
-            style={styles.iconBtn}
-            onClick={() => setShowThemePicker(true)}
-            title="Theme badlo"
-          >
-            {THEME_META[theme]?.icon || "🎨"}
-          </button>
+        {/* Main Rail Content */}
+        <div style={styles.railMain}>
+          {/* Top Org/Workspace Switcher Header */}
+          <div style={styles.topHeader}>
+            <button
+              type="button"
+              style={styles.orgDropdownBtn}
+              onClick={onOpenProfile}
+              title={`Logged in as @${user?.username}`}
+            >
+              <span style={styles.orgName}>CHATOX HUB</span>
+              <span style={styles.orgArrow}>⌄</span>
+            </button>
+          </div>
 
-          <button
-            type="button"
-            style={styles.iconBtn}
-            onClick={() => {
-              if (window.confirm("Kya aap logout karna chahte hain?")) {
-                logout();
-              }
-            }}
-            title="Logout"
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
-              <line x1="12" y1="2" x2="12" y2="12"></line>
-            </svg>
-          </button>
+          {/* Nav List */}
+          <div style={styles.navList}>
+            {navItems.map((item) => {
+              const isActive = page === item.key;
+              return (
+                <button
+                  key={item.key}
+                  type="button"
+                  style={{
+                    ...styles.navBtn,
+                    ...(isActive ? styles.navBtnActive : {}),
+                  }}
+                  className={`rail-nav-item ${isActive ? "active" : ""}`}
+                  onClick={() => onPageChange(item.key)}
+                >
+                  <span style={styles.navIcon}>{item.icon}</span>
+                  <span style={styles.navLabel}>{item.label}</span>
+                  {item.badge && (
+                    <span style={{ ...styles.navBadge, ...(isActive ? styles.navBadgeActive : {}) }}>
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Bottom Actions */}
+          <div style={styles.bottomSection}>
+            <button
+              type="button"
+              style={styles.bottomBtn}
+              onClick={() => setShowThemePicker(true)}
+              title="Theme change karo"
+            >
+              <span style={{ fontSize: 16 }}>🎨</span>
+              <span style={styles.bottomBtnLabel}>THEME / SETTINGS</span>
+            </button>
+
+            <button
+              type="button"
+              style={styles.bottomBtn}
+              onClick={() => {
+                if (window.confirm("Kya aap logout karna chahte hain?")) {
+                  logout();
+                }
+              }}
+              title="Logout"
+            >
+              <span style={{ fontSize: 16 }}>🚪</span>
+              <span style={styles.bottomBtnLabel}>LOGOUT</span>
+            </button>
+          </div>
         </div>
       </nav>
 
-      {/* Floating Theme Selector Modal (Always fully visible, never clipped) */}
+      {/* Floating Theme Selector Modal */}
       {showThemePicker && (
         <ModalPortal>
           <div style={styles.themeBackdrop} onClick={() => setShowThemePicker(false)}>
@@ -162,85 +187,163 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
 
 const styles = {
   rail: {
-    width: 68,
+    width: 220,
+    minWidth: 200,
     flexShrink: 0,
-    background: "var(--rail-bg)",
+    background: "linear-gradient(180deg, #6366F1 0%, #4F46E5 100%)",
+    display: "flex",
+    height: "100%",
+    position: "relative",
+    zIndex: 10,
+    userSelect: "none",
+    overflow: "hidden",
+  },
+  miniStrip: {
+    width: 44,
+    background: "rgba(0, 0, 0, 0.15)",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    padding: "16px 0",
-    height: "100%",
-    borderRight: "1px solid var(--border)",
+    padding: "20px 0",
+    gap: 20,
+    borderRight: "1px solid rgba(255, 255, 255, 0.1)",
   },
-  avatar: {
-    width: 38,
-    height: 38,
-    minWidth: 38,
-    minHeight: 38,
-    aspectRatio: "1 / 1",
+  verticalBrand: {
+    color: "#ffffff",
+    fontWeight: 900,
+    fontFamily: "var(--font-display)",
+    fontSize: 13,
+    letterSpacing: "0.08em",
+    writingMode: "vertical-rl",
+    transform: "rotate(180deg)",
+  },
+  chipStack: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+    marginTop: "auto",
+  },
+  miniChip: {
+    width: 26,
+    height: 26,
     borderRadius: "50%",
-    border: "2px solid rgba(255, 255, 255, 0.2)",
+    color: "#ffffff",
+    fontSize: 11,
+    fontWeight: 800,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontWeight: 800,
-    fontFamily: "var(--font-display)",
-    fontSize: 14,
-    marginBottom: 20,
+    boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
     cursor: "pointer",
-    flexShrink: 0,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
   },
-  items: {
+  railMain: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    padding: "20px 12px",
+    height: "100%",
+    boxSizing: "border-box",
+  },
+  topHeader: {
+    marginBottom: 28,
+  },
+  orgDropdownBtn: {
+    background: "rgba(255, 255, 255, 0.12)",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
+    borderRadius: 20,
+    padding: "6px 14px",
+    color: "#ffffff",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    cursor: "pointer",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+  },
+  orgName: {
+    fontSize: 11,
+    fontWeight: 800,
+    letterSpacing: "0.05em",
+  },
+  orgArrow: {
+    fontSize: 12,
+    opacity: 0.8,
+  },
+  navList: {
     display: "flex",
     flexDirection: "column",
     gap: 8,
     flex: 1,
-    width: "100%",
-    alignItems: "center",
   },
-  item: {
-    width: 52,
-    background: "transparent",
-    border: "1px solid transparent",
-    borderRadius: 12,
-    padding: "8px 4px",
+  navBtn: {
     display: "flex",
-    flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center",
-    gap: 3,
-    color: "var(--rail-text)",
-    cursor: "pointer",
-    transition: "all 0.15s ease",
-  },
-  itemActive: {
-    background: "var(--rail-active-bg)",
-    color: "var(--rail-bg)",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-  },
-  icon: { fontSize: 18, lineHeight: 1 },
-  label: { fontSize: 10.5, fontWeight: 700 },
-  bottomActions: {
-    display: "flex",
-    flexDirection: "column",
     gap: 10,
-    flexShrink: 0,
-    alignItems: "center",
+    padding: "10px 14px",
+    borderRadius: 14,
+    border: "none",
+    background: "transparent",
+    color: "#E0E7FF",
+    cursor: "pointer",
+    fontSize: 12,
+    fontWeight: 700,
+    letterSpacing: "0.04em",
+    transition: "all 0.18s ease",
+    textAlign: "left",
+    position: "relative",
   },
-  iconBtn: {
-    background: "rgba(255, 255, 255, 0.12)",
-    border: "1px solid rgba(255, 255, 255, 0.18)",
-    color: "var(--rail-text)",
-    borderRadius: 12,
-    width: 38,
-    height: 38,
+  navBtnActive: {
+    background: "#FFFFFF",
+    color: "#4F46E5",
+    boxShadow: "0 4px 18px rgba(0, 0, 0, 0.15)",
+    fontWeight: 900,
+    borderRadius: "14px 0 0 14px",
+    marginRight: -12,
+    paddingRight: 24,
+  },
+  navIcon: {
+    fontSize: 16,
+  },
+  navLabel: {
+    flex: 1,
+  },
+  navBadge: {
+    background: "rgba(255, 255, 255, 0.25)",
+    color: "#ffffff",
+    fontSize: 10,
+    fontWeight: 800,
+    padding: "2px 7px",
+    borderRadius: 10,
+  },
+  navBadgeActive: {
+    background: "rgba(79, 70, 229, 0.12)",
+    color: "#4F46E5",
+  },
+  bottomSection: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 6,
+    borderTop: "1px solid rgba(255, 255, 255, 0.15)",
+    paddingTop: 14,
+  },
+  bottomBtn: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
-    fontSize: 16,
+    gap: 8,
+    background: "transparent",
+    border: "none",
+    color: "#C7D2FE",
+    padding: "8px 10px",
+    borderRadius: 10,
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: "0.04em",
     cursor: "pointer",
     transition: "all 0.15s ease",
+    textAlign: "left",
+  },
+  bottomBtnLabel: {
+    flex: 1,
   },
   themeBackdrop: {
     position: "fixed",
