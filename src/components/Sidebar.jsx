@@ -72,7 +72,7 @@ export default function Sidebar({
 
   return (
     <div style={styles.wrap} className="sidebar-floating-card">
-      {/* Mobile-Only Wave Header (Matches Reference Image 1) */}
+      {/* Mobile-Only Asymmetric Organic S-Wave Header (Exact Match to Image Reference) */}
       <div className="mobile-wave-header-banner">
         <div className="mobile-wave-top-bar">
           <span className="mobile-wave-title">Messages</span>
@@ -91,6 +91,16 @@ export default function Sidebar({
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
+
+        {/* Asymmetric S-Wave Bottom Curve */}
+        <div className="mobile-wave-svg-wrap">
+          <svg viewBox="0 0 500 50" preserveAspectRatio="none" className="mobile-wave-svg">
+            <path
+              d="M 0 0 Q 150 55 280 20 T 500 35 L 500 50 L 0 50 Z"
+              fill="var(--surface)"
+            />
+          </svg>
+        </div>
       </div>
 
       {/* Mobile-Only Recent Bar */}
@@ -105,6 +115,7 @@ export default function Sidebar({
           •••
         </button>
       </div>
+
 
       {/* Desktop Top Search Bar & Create Group CTA */}
       <div style={styles.topHeader} className="desktop-only-header">

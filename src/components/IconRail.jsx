@@ -334,7 +334,7 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
         <div className="mobile-dock-row">
           <button
             type="button"
-            className={`mobile-dock-pill-btn ${page === "chat" ? "active-dock" : ""}`}
+            className={`mobile-dock-pill-btn ${page === "chat" ? "active-dock" : "active-dock"}`}
             onClick={() => onPageChange("chat")}
             title="Messages"
           >
@@ -347,12 +347,12 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
             onClick={() => setShowThemePicker(true)}
             title="Theme / Options"
           >
-            <span className="plus-symbol">＋</span>
+            <span className="plus-symbol">⊕</span>
           </button>
 
           <button
             type="button"
-            className={`mobile-dock-pill-btn ${page === "calls" ? "active-dock" : ""}`}
+            className={`mobile-dock-pill-btn ${page === "calls" ? "active-dock" : "active-dock"}`}
             onClick={() => onPageChange("calls")}
             title="Calls"
           >
@@ -360,6 +360,7 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
           </button>
         </div>
       </nav>
+
 
 
 

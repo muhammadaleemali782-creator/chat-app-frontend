@@ -558,18 +558,19 @@ button:focus-visible,
     display: flex !important;
     flex-direction: column !important;
     background: var(--rail-bg) !important;
-    padding: 22px 20px 26px !important;
-    border-radius: 0 0 36px 36px !important;
+    padding: 24px 20px 36px !important;
+    border-radius: 0 0 42px 42px !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
     color: #FFFFFF !important;
     flex-shrink: 0 !important;
+    position: relative !important;
   }
 
   .mobile-wave-top-bar {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    margin-bottom: 14px !important;
+    margin-bottom: 16px !important;
   }
 
   .mobile-wave-title {
@@ -584,15 +585,15 @@ button:focus-visible,
     width: 38px !important;
     height: 38px !important;
     border-radius: 50% !important;
-    background: rgba(255, 255, 255, 0.25) !important;
-    border: 2px solid rgba(255, 255, 255, 0.4) !important;
+    background: rgba(255, 255, 255, 0.28) !important;
+    border: 2px solid #FFFFFF !important;
     color: #FFFFFF !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     font-weight: 800 !important;
     font-size: 15px !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
   }
 
   .mobile-wave-search-box {
@@ -600,13 +601,13 @@ button:focus-visible,
     align-items: center !important;
     gap: 10px !important;
     background: #FFFFFF !important;
-    border-radius: 24px !important;
-    padding: 10px 16px !important;
+    border-radius: 12px !important;
+    padding: 11px 16px !important;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08) !important;
   }
 
   .mobile-wave-search-icon {
-    font-size: 15px !important;
+    font-size: 14px !important;
     color: #94A3B8 !important;
   }
 
@@ -619,17 +620,21 @@ button:focus-visible,
     background: transparent !important;
   }
 
+  .mobile-wave-svg-wrap {
+    display: none !important;
+  }
+
   /* 2. Mobile Recent Section Bar */
   .mobile-recent-bar {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    padding: 18px 20px 8px !important;
+    padding: 18px 20px 6px !important;
     background: var(--surface) !important;
   }
 
   .mobile-recent-heading {
-    font-size: 17px !important;
+    font-size: 18px !important;
     font-weight: 800 !important;
     color: var(--text) !important;
     font-family: var(--font-display) !important;
@@ -638,32 +643,33 @@ button:focus-visible,
   .mobile-recent-menu-btn {
     background: transparent !important;
     border: none !important;
-    font-size: 20px !important;
+    font-size: 22px !important;
     font-weight: 900 !important;
-    color: var(--text-muted) !important;
+    color: var(--accent) !important;
     cursor: pointer !important;
     padding: 4px 8px !important;
+    letter-spacing: 2px !important;
   }
 
-  /* 3. Mobile Floating Bottom Dock (Screen 1 in image) */
+  /* 3. Mobile Floating Bottom Dock (Exact Match to Image 1) */
   .chat-layout { flex-direction: column !important; }
   .icon-rail {
     position: fixed !important;
-    bottom: 16px !important;
-    left: 16px !important;
-    right: 16px !important;
+    bottom: 14px !important;
+    left: 14px !important;
+    right: 14px !important;
     width: auto !important;
     height: 60px !important;
     flex-direction: row !important;
     align-items: center !important;
-    padding: 0 12px !important;
-    border-radius: 36px !important;
-    border: 1px solid var(--border) !important;
+    padding: 6px 10px !important;
+    border-radius: 34px !important;
+    border: 1.5px solid var(--border) !important;
     justify-content: space-between !important;
     order: 2 !important;
     flex-shrink: 0 !important;
     background: var(--surface) !important;
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.16) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
     z-index: 9999 !important;
     box-sizing: border-box !important;
   }
@@ -682,53 +688,53 @@ button:focus-visible,
     align-items: center !important;
     justify-content: space-between !important;
     width: 100% !important;
+    gap: 8px !important;
   }
 
   .mobile-dock-pill-btn {
     flex: 1 !important;
-    height: 42px !important;
-    border-radius: 24px !important;
+    height: 44px !important;
+    border-radius: 22px !important;
     border: none !important;
-    background: transparent !important;
-    color: var(--text-muted) !important;
+    background: var(--rail-bg) !important;
+    color: #FFFFFF !important;
     font-size: 20px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     cursor: pointer !important;
-    transition: all 0.2s ease !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+    transition: transform 0.2s ease !important;
   }
 
-  .mobile-dock-pill-btn.active-dock {
-    background: var(--rail-bg) !important;
-    color: #FFFFFF !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+  .mobile-dock-pill-btn:active {
+    transform: scale(0.94) !important;
   }
 
   .mobile-dock-center-plus-btn {
-    width: 58px !important;
-    height: 42px !important;
-    border-radius: 24px !important;
-    border: 2px solid var(--border) !important;
+    width: 68px !important;
+    height: 44px !important;
+    border-radius: 22px !important;
+    border: 2px solid var(--accent) !important;
     background: transparent !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     cursor: pointer !important;
-    margin: 0 10px !important;
     transition: transform 0.2s ease !important;
   }
 
   .mobile-dock-center-plus-btn:active {
-    transform: scale(0.92) !important;
+    transform: scale(0.94) !important;
   }
 
   .plus-symbol {
-    font-size: 24px !important;
-    font-weight: 400 !important;
-    color: var(--text) !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: var(--accent) !important;
     line-height: 1 !important;
   }
+
 
 
   /* 4. Mobile Screen 2: Top Chat Wave Header */
