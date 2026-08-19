@@ -8,10 +8,10 @@
   --border-soft: #EEF2FF;
 
   /* ── Brand Accent ─────────────────────────────── */
-  --accent: #2563EB;
-  --accent-hover: #1D4ED8;
-  --accent-soft: rgba(37, 99, 235, 0.12);
-  --accent-glow: rgba(37, 99, 235, 0.28);
+  --accent: #4F46E5;
+  --accent-hover: #4338CA;
+  --accent-soft: rgba(79, 70, 229, 0.12);
+  --accent-glow: rgba(79, 70, 229, 0.28);
   --amber: #10B981;
 
   /* ── Text ─────────────────────────────────────── */
@@ -27,11 +27,11 @@
   --font-body: "Inter", sans-serif;
 
   /* ── Shadows ──────────────────────────────────── */
-  --shadow-soft: 0 8px 30px rgba(37, 99, 235, 0.08);
-  --shadow-bubble: 0 4px 14px rgba(37, 99, 235, 0.08);
+  --shadow-soft: 0 8px 30px rgba(79, 70, 229, 0.08);
+  --shadow-bubble: 0 4px 14px rgba(79, 70, 229, 0.08);
 
   /* ── Icon Rail ────────────────────────────────── */
-  --rail-bg: #1D4ED8;         /* Royal Blue matching reference Image 2 */
+  --rail-bg: linear-gradient(180deg, #6366F1 0%, #4F46E5 100%);
   --rail-text: #DBEAFE;
   --rail-active-bg: #FFFFFF;
 
@@ -50,18 +50,18 @@
   --surface-hover: #EFF6FF;
   --border: #E2E8F0;
   --border-soft: #EEF2FF;
-  --accent: #2563EB;
-  --accent-hover: #1D4ED8;
-  --accent-soft: rgba(37, 99, 235, 0.12);
-  --accent-glow: rgba(37, 99, 235, 0.28);
+  --accent: #4F46E5;
+  --accent-hover: #4338CA;
+  --accent-soft: rgba(79, 70, 229, 0.12);
+  --accent-glow: rgba(79, 70, 229, 0.28);
   --amber: #10B981;
   --text: #0F172A;
   --text-muted: #64748B;
   --text-faint: #94A3B8;
   --danger: #EF4444;
-  --shadow-soft: 0 8px 30px rgba(37, 99, 235, 0.08);
-  --shadow-bubble: 0 4px 14px rgba(37, 99, 235, 0.08);
-  --rail-bg: #1D4ED8;
+  --shadow-soft: 0 8px 30px rgba(79, 70, 229, 0.08);
+  --shadow-bubble: 0 4px 14px rgba(79, 70, 229, 0.08);
+  --rail-bg: linear-gradient(180deg, #6366F1 0%, #4F46E5 100%);
   --rail-text: #DBEAFE;
   --rail-active-bg: #FFFFFF;
   --bubble-me-bg: linear-gradient(135deg, #FF4B72 0%, #FF6B8B 100%);
@@ -78,10 +78,10 @@
   --surface-hover: #475569;
   --border: #334155;
   --border-soft: #1E293B;
-  --accent: #38BDF8;
-  --accent-hover: #0EA5E9;
-  --accent-soft: rgba(56, 189, 248, 0.16);
-  --accent-glow: rgba(56, 189, 248, 0.35);
+  --accent: #8B5CF6;
+  --accent-hover: #7C3AED;
+  --accent-soft: rgba(139, 92, 246, 0.16);
+  --accent-glow: rgba(139, 92, 246, 0.35);
   --amber: #10B981;
   --text: #F8FAFC;
   --text-muted: #94A3B8;
@@ -89,15 +89,16 @@
   --danger: #F87171;
   --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.45);
   --shadow-bubble: 0 2px 8px rgba(0, 0, 0, 0.25);
-  --rail-bg: #0F172A;
-  --rail-text: #94A3B8;
-  --rail-active-bg: #38BDF8;
-  --bubble-me-bg: linear-gradient(135deg, #EC4899, #F472B6);
+  --rail-bg: linear-gradient(180deg, #7C3AED 0%, #5B21B6 100%);
+  --rail-text: #E9D5FF;
+  --rail-active-bg: #FFFFFF;
+  --bubble-me-bg: linear-gradient(135deg, #8B5CF6, #A78BFA);
   --bubble-me-text: #ffffff;
   --bubble-other-bg: #1E293B;
   --bubble-other-text: #F8FAFC;
   --bubble-other-border: #334155;
 }
+
 
 [data-theme="dark"] {
   --bg: #090d16;
@@ -117,9 +118,9 @@
   --danger: #ef4444;
   --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.45);
   --shadow-bubble: 0 2px 8px rgba(0, 0, 0, 0.25);
-  --rail-bg: #090d16;
+  --rail-bg: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
   --rail-text: #94a3b8;
-  --rail-active-bg: #3b82f6;
+  --rail-active-bg: #FFFFFF;
 }
 
 [data-theme="light"] {
@@ -140,16 +141,15 @@
   --danger: #ef4444;
   --shadow-soft: 0 8px 24px rgba(15, 23, 42, 0.08);
   --shadow-bubble: 0 2px 8px rgba(15, 23, 42, 0.06);
-  --rail-bg: #1D4ED8;
+  --rail-bg: linear-gradient(180deg, #3B82F6 0%, #1D4ED8 100%);
   --rail-text: #DBEAFE;
-  --rail-active-bg: #2563eb;
+  --rail-active-bg: #FFFFFF;
   --bubble-me-bg: linear-gradient(135deg, #FF4B72, #FF6B8B);
   --bubble-me-text: #ffffff;
   --bubble-other-bg: #FFFFFF;
   --bubble-other-text: #0f172a;
   --bubble-other-border: #e2e8f0;
 }
-
 
 [data-theme="white"] {
   --bg: #ffffff;
@@ -158,10 +158,10 @@
   --surface-hover: #f1f5f9;
   --border: #e2e8f0;
   --border-soft: #f1f5f9;
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
-  --accent-soft: rgba(37, 99, 235, 0.1);
-  --accent-glow: rgba(37, 99, 235, 0.25);
+  --accent: #3B82F6;
+  --accent-hover: #2563EB;
+  --accent-soft: rgba(59, 130, 246, 0.1);
+  --accent-glow: rgba(59, 130, 246, 0.25);
   --amber: #10b981;
   --text: #0f172a;
   --text-muted: #64748b;
@@ -169,7 +169,7 @@
   --danger: #ef4444;
   --shadow-soft: 0 8px 24px rgba(15, 23, 42, 0.06);
   --shadow-bubble: 0 2px 8px rgba(15, 23, 42, 0.05);
-  --rail-bg: #1E1B4B;
+  --rail-bg: linear-gradient(180deg, #334155 0%, #1E293B 100%);
   --rail-text: #A5B4FC;
   --rail-active-bg: #ffffff;
   --bubble-me-bg: linear-gradient(135deg, #EC4899, #F472B6);
@@ -179,7 +179,7 @@
   --bubble-other-border: #E2E8F0;
 }
 
-/* ── Chatox Teal Theme (inspired by mobile design: teal gradients) ─────── */
+/* ── Chatox Teal Theme ─────── */
 [data-theme="chatox"] {
   --bg: #F0FDFA;
   --surface: #FFFFFF;
@@ -198,9 +198,9 @@
   --danger: #EF4444;
   --shadow-soft: 0 4px 24px rgba(13, 148, 136, 0.12);
   --shadow-bubble: 0 2px 8px rgba(13, 148, 136, 0.10);
-  --rail-bg: #134E4A;
-  --rail-text: #5EEAD4;
-  --rail-active-bg: #14B8A6;
+  --rail-bg: linear-gradient(180deg, #0D9488 0%, #0F766E 100%);
+  --rail-text: #CCFBF1;
+  --rail-active-bg: #FFFFFF;
   --bubble-me-bg: linear-gradient(135deg, #0D9488, #14B8A6);
   --bubble-me-text: #ffffff;
   --bubble-other-bg: #F0FDFA;
@@ -216,21 +216,21 @@
   --surface-hover: #FFD6E8;
   --border: #FBCFE8;
   --border-soft: #FFF0F6;
-  --accent: #DB2777;
-  --accent-hover: #BE185D;
-  --accent-soft: rgba(219, 39, 119, 0.10);
-  --accent-glow: rgba(219, 39, 119, 0.28);
+  --accent: #EC4899;
+  --accent-hover: #DB2777;
+  --accent-soft: rgba(236, 72, 153, 0.12);
+  --accent-glow: rgba(236, 72, 153, 0.30);
   --amber: #F59E0B;
   --text: #500724;
   --text-muted: #9D174D;
   --text-faint: #BE185D;
   --danger: #DC2626;
-  --shadow-soft: 0 4px 24px rgba(219, 39, 119, 0.10);
-  --shadow-bubble: 0 2px 8px rgba(219, 39, 119, 0.10);
-  --rail-bg: #500724;
-  --rail-text: #FBCFE8;
-  --rail-active-bg: #F472B6;
-  --bubble-me-bg: linear-gradient(135deg, #DB2777, #F472B6);
+  --shadow-soft: 0 4px 24px rgba(236, 72, 153, 0.12);
+  --shadow-bubble: 0 2px 8px rgba(236, 72, 153, 0.10);
+  --rail-bg: linear-gradient(180deg, #F43F5E 0%, #E11D48 100%);
+  --rail-text: #FFE4E6;
+  --rail-active-bg: #FFFFFF;
+  --bubble-me-bg: linear-gradient(135deg, #F43F5E, #FB7185);
   --bubble-me-text: #ffffff;
   --bubble-other-bg: #FFFFFF;
   --bubble-other-text: #500724;
@@ -238,6 +238,7 @@
 }
 
 * {
+
   box-sizing: border-box;
 }
 
@@ -428,16 +429,34 @@ button:focus-visible,
 }
 
 /* Organic Cutout Scoop Active Tab (Image 2 Reference) */
+.rail-nav-item {
+  transition: background 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
 .rail-scoop-active {
   position: relative !important;
   background: #FFFFFF !important;
-  color: #4F46E5 !important;
+  color: var(--accent, #4F46E5) !important;
   border-radius: 28px 0 0 28px !important;
   font-weight: 800 !important;
   z-index: 10 !important;
   margin-right: -12px !important;
   padding-right: 20px !important;
   box-shadow: -4px 6px 18px rgba(0, 0, 0, 0.08) !important;
+  animation: scoopGlide 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes scoopGlide {
+  0% {
+    opacity: 0.8;
+    transform: translateX(-4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .rail-scoop-active::before {
@@ -452,6 +471,7 @@ button:focus-visible,
   box-shadow: 8px 8px 0 8px #FFFFFF !important;
   pointer-events: none !important;
   z-index: 11 !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .rail-scoop-active::after {
@@ -466,7 +486,9 @@ button:focus-visible,
   box-shadow: 8px -8px 0 8px #FFFFFF !important;
   pointer-events: none !important;
   z-index: 11 !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
+
 
 .pane-fade { animation: paneFade 0.2s ease both; }
 @keyframes paneFade {

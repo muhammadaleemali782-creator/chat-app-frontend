@@ -231,7 +231,7 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
 const styles = {
   rail: {
     flexShrink: 0,
-    background: "linear-gradient(180deg, #6366F1 0%, #4F46E5 100%)",
+    background: "var(--rail-bg, linear-gradient(180deg, #6366F1 0%, #4F46E5 100%))",
     display: "flex",
     flexDirection: "column",
     height: "100%",
@@ -240,7 +240,7 @@ const styles = {
     userSelect: "none",
     overflow: "hidden",
     boxSizing: "border-box",
-    transition: "width 0.25s cubic-bezier(0.16, 1, 0.3, 1), min-width 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
+    transition: "width 0.25s cubic-bezier(0.16, 1, 0.3, 1), min-width 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
     borderRadius: "24px 0 0 24px",
     boxShadow: "0 10px 40px rgba(0,0,0,0.06)",
   },
@@ -286,7 +286,7 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     cursor: "pointer",
-    transition: "transform 0.15s ease, background 0.15s ease",
+    transition: "transform 0.2s ease, background 0.2s ease",
   },
   userProfilePill: {
     display: "flex",
@@ -334,7 +334,7 @@ const styles = {
   navSectionLabel: {
     fontSize: 9.5,
     fontWeight: 800,
-    color: "rgba(255, 255, 255, 0.45)",
+    color: "rgba(255, 255, 255, 0.55)",
     letterSpacing: "0.08em",
     padding: "0 8px 4px",
   },
@@ -360,7 +360,7 @@ const styles = {
     fontSize: 11.5,
     fontWeight: 700,
     letterSpacing: "0.04em",
-    transition: "all 0.15s ease",
+    transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
     textAlign: "left",
     width: "100%",
   },
@@ -376,12 +376,12 @@ const styles = {
   },
   navBtnActive: {
     background: "#FFFFFF",
-    color: "#4F46E5",
+    color: "var(--accent, #4F46E5)",
     fontWeight: 900,
   },
   navBtnCollapsedActive: {
     background: "#FFFFFF",
-    color: "#4F46E5",
+    color: "var(--accent, #4F46E5)",
     boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)",
     fontWeight: 900,
     transform: "scale(1.05)",
@@ -402,8 +402,8 @@ const styles = {
     borderRadius: 10,
   },
   navBadgeActive: {
-    background: "rgba(79, 70, 229, 0.12)",
-    color: "#4F46E5",
+    background: "var(--accent-soft, rgba(79, 70, 229, 0.12))",
+    color: "var(--accent, #4F46E5)",
   },
   bottomSection: {
     display: "flex",
@@ -425,7 +425,7 @@ const styles = {
     fontWeight: 700,
     letterSpacing: "0.04em",
     cursor: "pointer",
-    transition: "all 0.15s ease",
+    transition: "all 0.2s ease",
     textAlign: "left",
     width: "100%",
   },

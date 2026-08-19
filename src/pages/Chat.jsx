@@ -333,11 +333,13 @@ const styles = {
     height: "100%",
     width: "100%",
     overflow: "hidden",
-    background: "#EEF2FF",
+    background: "var(--bg)",
     padding: "16px",
     boxSizing: "border-box",
     gap: 0,
+    transition: "background 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
   },
+
   wrap: {
     display: "grid",
     gridTemplateColumns: "310px 1fr",
