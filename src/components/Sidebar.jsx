@@ -146,10 +146,10 @@ export default function Sidebar({
         {!loading && conversations.length === 0 && (
           <div style={styles.emptyState}>
             <div style={styles.emptyIcon}>💬</div>
-            <strong style={{ display: "block", marginBottom: 4, color: "var(--text)" }}>
+            <strong style={{ display: "block", marginBottom: 4, color: "#0F172A" }}>
               Koi chat nahi hai abhi
             </strong>
-            <span style={{ fontSize: 12.5, color: "var(--text-muted)", lineHeight: 1.5 }}>
+            <span style={{ fontSize: 12.5, color: "#64748B", lineHeight: 1.5 }}>
               Upar Search se username dhoond ke direct message shuru karo.
             </span>
           </div>
@@ -171,8 +171,8 @@ export default function Sidebar({
                     className={`conv-item ${isActive ? "active-conv" : ""}`}
                     style={{
                       ...styles.convItem,
-                      background: isActive ? "var(--surface-hover, #EFF6FF)" : "transparent",
-                      borderLeft: isActive ? "4px solid #8B5CF6" : "4px solid transparent",
+                      background: isActive ? "#F0F4FF" : "transparent",
+                      borderLeft: isActive ? "4px solid #6366F1" : "4px solid transparent",
                     }}
                     onClick={() => onSelect(conv)}
                   >
@@ -216,7 +216,7 @@ export default function Sidebar({
                     className={`conv-item ${isActive ? "active-conv" : ""}`}
                     style={{
                       ...styles.convItem,
-                      background: isActive ? "var(--surface-hover, #EFF6FF)" : "transparent",
+                      background: isActive ? "#FDF2F8" : "transparent",
                       borderLeft: isActive ? "4px solid #EC4899" : "4px solid transparent",
                     }}
                     onClick={() => onSelect(conv)}
@@ -291,7 +291,7 @@ export function Avatar({ name, online, color, size = 40 }) {
             height: Math.max(10, size * 0.28),
             borderRadius: "50%",
             background: "#10b981",
-            border: "2px solid var(--surface, #ffffff)",
+            border: "2px solid #ffffff",
           }}
         />
       )}
@@ -337,24 +337,26 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     height: "100%",
-    background: "var(--surface, #ffffff)",
-    borderRight: "1px solid var(--border, #e2e8f0)",
+    background: "#FFFFFF",
+    borderRight: "1px solid #F1F5F9",
     overflow: "hidden",
     position: "relative",
+    borderRadius: "28px 0 0 28px",
   },
   topHeader: {
     display: "flex",
     alignItems: "center",
     gap: 8,
     padding: "16px 16px 12px",
-    borderBottom: "1px solid var(--border-soft, #EEF2FF)",
+    borderBottom: "1px solid #F1F5F9",
+    background: "#FFFFFF",
   },
   searchBox: {
     flex: 1,
     display: "flex",
     alignItems: "center",
-    background: "var(--surface-2, #F8FAFC)",
-    border: "1px solid var(--border, #E2E8F0)",
+    background: "#F8FAFC",
+    border: "1px solid #E2E8F0",
     borderRadius: 22,
     padding: "2px 6px 2px 14px",
   },
@@ -363,7 +365,7 @@ const styles = {
     background: "transparent",
     border: "none",
     outline: "none",
-    color: "var(--text)",
+    color: "#0F172A",
     fontSize: 13,
     padding: "8px 0",
   },
@@ -371,16 +373,16 @@ const styles = {
     background: "transparent",
     border: "none",
     fontSize: 12,
-    color: "var(--text-muted)",
+    color: "#64748B",
     cursor: "pointer",
     padding: "4px 6px",
   },
   newGroupPillBtn: {
-    background: "var(--accent-soft, rgba(79, 70, 229, 0.1))",
-    color: "var(--accent, #4F46E5)",
+    background: "rgba(79, 70, 229, 0.1)",
+    color: "#4F46E5",
     border: "none",
     borderRadius: 20,
-    padding: "7px 12px",
+    padding: "7px 14px",
     fontSize: 12,
     fontWeight: 800,
     cursor: "pointer",
@@ -391,10 +393,10 @@ const styles = {
     top: 64,
     left: 16,
     right: 16,
-    background: "var(--surface, #ffffff)",
-    border: "1px solid var(--border)",
+    background: "#ffffff",
+    border: "1px solid #E2E8F0",
     borderRadius: 16,
-    boxShadow: "0 15px 40px rgba(0,0,0,0.15)",
+    boxShadow: "0 15px 40px rgba(0,0,0,0.12)",
     zIndex: 40,
     maxHeight: 260,
     overflowY: "auto",
@@ -408,21 +410,22 @@ const styles = {
     borderRadius: 10,
     cursor: "pointer",
   },
-  resultName: { fontSize: 13, fontWeight: 700, color: "var(--text)" },
-  resultUsername: { fontSize: 11, color: "var(--text-muted)" },
+  resultName: { fontSize: 13, fontWeight: 700, color: "#0F172A" },
+  resultUsername: { fontSize: 11, color: "#64748B" },
   resultItemMuted: {
     padding: 14,
     textAlign: "center",
-    color: "var(--text-muted)",
+    color: "#64748B",
     fontSize: 12.5,
   },
   list: {
     flex: 1,
     overflowY: "auto",
-    padding: "12px 10px",
+    padding: "14px 10px",
     display: "flex",
     flexDirection: "column",
     gap: 16,
+    background: "#FFFFFF",
   },
   emptyState: {
     margin: "auto",
@@ -444,15 +447,15 @@ const styles = {
   sectionTitle: {
     fontSize: 14,
     fontWeight: 800,
-    color: "var(--text, #0F172A)",
+    color: "#0F172A",
     fontFamily: "var(--font-display)",
     letterSpacing: "-0.01em",
   },
   sectionSubCount: {
     fontSize: 11,
-    color: "var(--text-muted)",
-    background: "var(--surface-2)",
-    padding: "1px 6px",
+    color: "#64748B",
+    background: "#F1F5F9",
+    padding: "1px 7px",
     borderRadius: 10,
     fontWeight: 700,
   },
@@ -478,21 +481,21 @@ const styles = {
   convName: {
     fontSize: 13,
     fontWeight: 700,
-    color: "var(--text, #0F172A)",
+    color: "#0F172A",
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
   },
   convTime: {
     fontSize: 10.5,
-    color: "var(--text-faint, #94A3B8)",
+    color: "#94A3B8",
     fontWeight: 500,
     marginLeft: 4,
     flexShrink: 0,
   },
   convLastMsg: {
     fontSize: 11.5,
-    color: "var(--text-muted, #64748B)",
+    color: "#64748B",
     marginTop: 2,
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -501,7 +504,7 @@ const styles = {
   deleteBtn: {
     background: "transparent",
     border: "none",
-    color: "var(--text-faint)",
+    color: "#94A3B8",
     fontSize: 12,
     padding: 2,
     cursor: "pointer",
