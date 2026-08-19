@@ -33,8 +33,8 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
       <nav
         style={{
           ...styles.rail,
-          width: collapsed ? 70 : 185,
-          minWidth: collapsed ? 70 : 185,
+          width: collapsed ? 74 : 190,
+          minWidth: collapsed ? 74 : 190,
         }}
         className={`icon-rail${hideOnMobileChat ? " icon-rail-hide-mobile" : ""}`}
         aria-label="Main Navigation"
@@ -64,7 +64,7 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
           style={{
             ...styles.userProfilePill,
             justifyContent: collapsed ? "center" : "flex-start",
-            padding: collapsed ? "6px" : "7px 10px",
+            padding: collapsed ? "6px" : "8px 10px",
           }}
           onClick={onOpenProfile}
           title={`Profile: @${user?.username}`}
@@ -80,7 +80,7 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
           )}
         </button>
 
-        {/* 3. Primary Navigation List (Fluid Rounded Pills with Smooth Transition) */}
+        {/* 3. Primary Navigation List (Fluid Symmetrical Rounded Pills) */}
         <div style={styles.navList}>
           {!collapsed && <div style={styles.navSectionLabel}>MENU</div>}
           {navItems.map((item) => {
@@ -92,7 +92,7 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
                 style={{
                   ...styles.navBtn,
                   ...(collapsed ? styles.navBtnCollapsed : {}),
-                  ...(isActive ? styles.navBtnActive : {}),
+                  ...(isActive ? (collapsed ? styles.navBtnCollapsedActive : styles.navBtnActive) : {}),
                 }}
                 className={`rail-nav-item ${isActive ? "active" : ""}`}
                 onClick={() => onPageChange(item.key)}
@@ -121,12 +121,12 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
             type="button"
             style={{
               ...styles.bottomBtn,
-              justifyContent: collapsed ? "center" : "flex-start",
+              ...(collapsed ? styles.bottomBtnCollapsed : {}),
             }}
             onClick={() => setShowThemePicker(true)}
             title="Theme badlo"
           >
-            <span style={{ fontSize: 16 }}>🎨</span>
+            <span style={{ fontSize: 17 }}>🎨</span>
             {!collapsed && <span style={styles.bottomBtnLabel}>Themes</span>}
           </button>
 
@@ -134,8 +134,8 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
             type="button"
             style={{
               ...styles.bottomBtn,
+              ...(collapsed ? styles.bottomBtnCollapsed : {}),
               color: "#FECACA",
-              justifyContent: collapsed ? "center" : "flex-start",
             }}
             onClick={() => {
               if (window.confirm("Kya aap logout karna chahte hain?")) {
@@ -144,7 +144,7 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
             }}
             title="Logout"
           >
-            <span style={{ fontSize: 16 }}>🚪</span>
+            <span style={{ fontSize: 17 }}>🚪</span>
             {!collapsed && <span style={styles.bottomBtnLabel}>Logout</span>}
           </button>
         </div>
@@ -188,10 +188,10 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
                       }}
                     >
                       <span style={{ fontSize: 26, marginBottom: 2 }}>{meta.icon}</span>
-                      <div style={{ fontWeight: 800, fontSize: 13, color: isActive ? "var(--accent)" : "var(--text)" }}>
+                      <div style={{ fontWeight: 800, fontSize: 13, color: isActive ? "#4F46E5" : "#0F172A" }}>
                         {meta.label}
                       </div>
-                      <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2, textAlign: "center" }}>
+                      <div style={{ fontSize: 11, color: "#64748B", marginTop: 2, textAlign: "center" }}>
                         {meta.desc}
                       </div>
                       {isActive && (
@@ -217,22 +217,22 @@ const styles = {
     background: "linear-gradient(180deg, #4F46E5 0%, #3730A3 100%)",
     display: "flex",
     flexDirection: "column",
-    padding: "16px 10px",
+    padding: "16px 12px",
     height: "100%",
     position: "relative",
     zIndex: 10,
     userSelect: "none",
     overflow: "hidden",
     boxSizing: "border-box",
-    transition: "width 0.28s cubic-bezier(0.16, 1, 0.3, 1), min-width 0.28s cubic-bezier(0.16, 1, 0.3, 1)",
+    transition: "width 0.25s cubic-bezier(0.16, 1, 0.3, 1), min-width 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
     borderRadius: "24px 0 0 24px",
-    boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
+    boxShadow: "0 10px 40px rgba(0,0,0,0.06)",
   },
   brandHeader: {
     display: "flex",
     alignItems: "center",
     marginBottom: 16,
-    padding: "0 4px",
+    padding: "0 2px",
     height: 34,
   },
   brandTitleWrap: {
@@ -279,7 +279,7 @@ const styles = {
     gap: 8,
     background: "rgba(255, 255, 255, 0.12)",
     border: "1px solid rgba(255, 255, 255, 0.18)",
-    borderRadius: 24,
+    borderRadius: 22,
     cursor: "pointer",
     marginBottom: 18,
     transition: "all 0.2s ease",
@@ -287,14 +287,14 @@ const styles = {
     width: "100%",
   },
   userAvatar: {
-    width: 30,
-    height: 30,
+    width: 32,
+    height: 32,
     borderRadius: "50%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     fontWeight: 800,
-    fontSize: 12.5,
+    fontSize: 13,
     flexShrink: 0,
     boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
   },
@@ -327,15 +327,15 @@ const styles = {
   navList: {
     display: "flex",
     flexDirection: "column",
-    gap: 5,
+    gap: 8,
     flex: 1,
   },
   navBtn: {
     display: "flex",
     alignItems: "center",
     gap: 10,
-    padding: "9px 12px",
-    borderRadius: 24,
+    padding: "10px 14px",
+    borderRadius: 20,
     border: "none",
     background: "transparent",
     color: "#E0E7FF",
@@ -343,28 +343,35 @@ const styles = {
     fontSize: 12,
     fontWeight: 700,
     letterSpacing: "0.02em",
-    transition: "all 0.22s cubic-bezier(0.16, 1, 0.3, 1)",
+    transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
     textAlign: "left",
     width: "100%",
-    position: "relative",
   },
   navBtnCollapsed: {
+    display: "flex",
+    alignItems: "center",
     justifyContent: "center",
-    padding: "10px 0",
-    borderRadius: "50%",
+    padding: 0,
     width: 44,
     height: 44,
     margin: "0 auto",
+    borderRadius: "50%",
   },
   navBtnActive: {
     background: "#FFFFFF",
     color: "#4F46E5",
-    boxShadow: "0 4px 14px rgba(0, 0, 0, 0.16)",
+    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.15)",
     fontWeight: 800,
-    transform: "scale(1.02)",
+  },
+  navBtnCollapsedActive: {
+    background: "#FFFFFF",
+    color: "#4F46E5",
+    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)",
+    fontWeight: 800,
+    transform: "scale(1.06)",
   },
   navIcon: {
-    fontSize: 16,
+    fontSize: 17,
   },
   navLabel: {
     flex: 1,
@@ -385,26 +392,36 @@ const styles = {
   bottomSection: {
     display: "flex",
     flexDirection: "column",
-    gap: 4,
+    gap: 6,
     borderTop: "1px solid rgba(255, 255, 255, 0.15)",
-    paddingTop: 10,
+    paddingTop: 12,
   },
   bottomBtn: {
     display: "flex",
     alignItems: "center",
-    gap: 8,
+    gap: 10,
     background: "transparent",
     border: "none",
     color: "#C7D2FE",
-    padding: "8px 10px",
-    borderRadius: 20,
-    fontSize: 11.5,
+    padding: "9px 12px",
+    borderRadius: 18,
+    fontSize: 12,
     fontWeight: 700,
     letterSpacing: "0.02em",
     cursor: "pointer",
     transition: "all 0.18s ease",
     textAlign: "left",
     width: "100%",
+  },
+  bottomBtnCollapsed: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 0,
+    width: 44,
+    height: 44,
+    margin: "0 auto",
+    borderRadius: "50%",
   },
   bottomBtnLabel: {
     flex: 1,
@@ -473,12 +490,12 @@ const styles = {
   },
   themeCardActive: {
     background: "#EFF6FF",
-    borderColor: "#2563EB",
-    boxShadow: "0 4px 14px rgba(37, 99, 235, 0.2)",
+    borderColor: "#4F46E5",
+    boxShadow: "0 4px 14px rgba(79, 70, 229, 0.2)",
   },
   themeActiveBadge: {
     marginTop: 8,
-    background: "#2563EB",
+    background: "#4F46E5",
     color: "#ffffff",
     fontSize: 10,
     fontWeight: 800,
