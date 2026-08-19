@@ -4,7 +4,7 @@ import { useTheme } from "../context/ThemeContext.jsx";
 import ModalPortal from "./ModalPortal.jsx";
 
 const THEME_META = {
-  blue:       { icon: "🔵", label: "Image 2 Purple/Blue", desc: "Reference 3D Workspace Theme" },
+  blue:       { icon: "🔵", label: "Royal Blue & White", desc: "Reference 3D Workspace Theme" },
   chatox:     { icon: "🌊", label: "Chatox Teal", desc: "Teal green wave mobile theme" },
   pinky:      { icon: "🌸", label: "Pinky Rose", desc: "Vibrant pink bubbles theme" },
   talkiepro: { icon: "🟣", label: "TalkiePro Dark", desc: "Deep navy indigo style" },
@@ -23,14 +23,14 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
     { key: "shipment", label: "SHIPMENT", icon: "📦", route: false },
     { key: "tracking", label: "TRACKING", icon: "🌐", route: false },
     { key: "chat", label: "MESSAGES", icon: "✉️", badge: "358", route: true },
-    { key: "calendar", label: "CALENDAR", icon: "📅", route: true },
-    { key: "calls", label: "CALLS", icon: "📞", route: true },
+    { key: "calendar", label: "CALENDAR", icon: "📅", badge: null, route: true },
+    { key: "calls", label: "CALLS", icon: "📞", badge: null, route: true },
   ];
 
   const miniChips = [
-    { id: "c1", label: "D", bg: "#EAB308", color: "#ffffff" },
-    { id: "c2", label: "A", bg: "#A855F7", color: "#ffffff" },
-    { id: "c3", label: "C", bg: "#F43F5E", color: "#ffffff" },
+    { id: "c1", label: "D", bg: "#F59E0B", color: "#ffffff" },
+    { id: "c2", label: "A", bg: "#8B5CF6", color: "#ffffff" },
+    { id: "c3", label: "C", bg: "#EC4899", color: "#ffffff" },
     { id: "c4", label: "+", bg: "rgba(255,255,255,0.22)", color: "#ffffff" },
   ];
 
@@ -77,32 +77,31 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
             {navItems.map((item) => {
               const isActive = page === item.key;
               return (
-                <div key={item.key} style={styles.navItemWrap}>
-                  <button
-                    type="button"
-                    style={{
-                      ...styles.navBtn,
-                      ...(isActive ? styles.navBtnActive : {}),
-                    }}
-                    className={`rail-nav-item ${isActive ? "active" : ""}`}
-                    onClick={() => {
-                      if (item.route) onPageChange(item.key);
-                    }}
-                  >
-                    <span style={styles.navIcon}>{item.icon}</span>
-                    <span style={styles.navLabel}>{item.label}</span>
-                    {item.badge && (
-                      <span
-                        style={{
-                          ...styles.navBadge,
-                          ...(isActive ? styles.navBadgeActive : {}),
-                        }}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                  </button>
-                </div>
+                <button
+                  key={item.key}
+                  type="button"
+                  style={{
+                    ...styles.navBtn,
+                    ...(isActive ? styles.navBtnActive : {}),
+                  }}
+                  className={`rail-nav-item ${isActive ? "active" : ""}`}
+                  onClick={() => {
+                    if (item.route) onPageChange(item.key);
+                  }}
+                >
+                  <span style={styles.navIcon}>{item.icon}</span>
+                  <span style={styles.navLabel}>{item.label}</span>
+                  {item.badge && (
+                    <span
+                      style={{
+                        ...styles.navBadge,
+                        ...(isActive ? styles.navBadgeActive : {}),
+                      }}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
               );
             })}
           </div>
@@ -113,9 +112,9 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
               type="button"
               style={styles.bottomBtn}
               onClick={() => setShowThemePicker(true)}
-              title="Theme badlo"
+              title="Theme change karo"
             >
-              <span style={{ fontSize: 16 }}>⚙️</span>
+              <span style={{ fontSize: 15 }}>⚙️</span>
               <span style={styles.bottomBtnLabel}>SETTINGS / THEME</span>
             </button>
 
@@ -129,7 +128,7 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
               }}
               title="Logout"
             >
-              <span style={{ fontSize: 16 }}>🚪</span>
+              <span style={{ fontSize: 15 }}>🚪</span>
               <span style={styles.bottomBtnLabel}>LOGOUT</span>
             </button>
           </div>
@@ -199,8 +198,8 @@ export default function IconRail({ page, onPageChange, hideOnMobileChat, onOpenP
 
 const styles = {
   rail: {
-    width: 220,
-    minWidth: 200,
+    width: 215,
+    minWidth: 195,
     flexShrink: 0,
     background: "linear-gradient(180deg, #6366F1 0%, #4F46E5 100%)",
     display: "flex",
@@ -212,7 +211,7 @@ const styles = {
   },
   miniStrip: {
     width: 44,
-    background: "rgba(0, 0, 0, 0.16)",
+    background: "rgba(0, 0, 0, 0.15)",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -252,19 +251,18 @@ const styles = {
     flex: 1,
     display: "flex",
     flexDirection: "column",
-    padding: "20px 0 16px 14px",
+    padding: "20px 14px 16px",
     height: "100%",
     boxSizing: "border-box",
   },
   topHeader: {
     marginBottom: 24,
-    paddingRight: 14,
   },
   orgDropdownBtn: {
     background: "rgba(255, 255, 255, 0.15)",
     border: "1px solid rgba(255, 255, 255, 0.25)",
     borderRadius: 20,
-    padding: "7px 16px",
+    padding: "7px 14px",
     color: "#ffffff",
     display: "flex",
     alignItems: "center",
@@ -288,15 +286,12 @@ const styles = {
     gap: 6,
     flex: 1,
   },
-  navItemWrap: {
-    position: "relative",
-  },
   navBtn: {
     display: "flex",
     alignItems: "center",
     gap: 10,
     padding: "10px 14px",
-    borderRadius: "20px 0 0 20px",
+    borderRadius: 14,
     border: "none",
     background: "transparent",
     color: "#E0E7FF",
@@ -311,10 +306,8 @@ const styles = {
   navBtnActive: {
     background: "#FFFFFF",
     color: "#4F46E5",
-    boxShadow: "-4px 4px 18px rgba(0, 0, 0, 0.12)",
+    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.12)",
     fontWeight: 900,
-    position: "relative",
-    zIndex: 2,
   },
   navIcon: {
     fontSize: 15,
@@ -340,7 +333,6 @@ const styles = {
     gap: 6,
     borderTop: "1px solid rgba(255, 255, 255, 0.15)",
     paddingTop: 14,
-    paddingRight: 14,
   },
   bottomBtn: {
     display: "flex",
