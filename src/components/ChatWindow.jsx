@@ -43,8 +43,8 @@ function formatDateLabel(dateString) {
     a.getMonth() === b.getMonth() &&
     a.getDate() === b.getDate();
 
-  if (sameDay(d, today)) return "Aaj";
-  if (sameDay(d, yesterday)) return "Kal";
+  if (sameDay(d, today)) return "Today";
+  if (sameDay(d, yesterday)) return "Yesterday";
 
   const daysDiff = Math.floor((today - d) / (1000 * 60 * 60 * 24));
   if (daysDiff < 7) {
@@ -388,10 +388,10 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
           <svg width="0" height="0" style={{ position: "absolute", pointerEvents: "none" }}>
             <defs>
               <clipPath id="mobileChatWaveClip" clipPathUnits="objectBoundingBox">
-                <path d="M 0,0 L 1,0 L 1,0.56 C 0.65,0.72 0.35,1.02 0,0.85 Z" />
+                <path d="M 0,0 L 1,0 L 1,0.60 C 0.65,0.78 0.35,0.98 0,0.85 Z" />
               </clipPath>
               <clipPath id="mobileChatBottomWaveClip" clipPathUnits="objectBoundingBox">
-                <path d="M 0,0.72 C 0.28,0.22 0.62,0.68 1,0.18 L 1,1 L 0,1 Z" />
+                <path d="M 0,0.58 C 0.30,0.18 0.60,0.62 1,0.15 L 1,1 L 0,1 Z" />
               </clipPath>
             </defs>
           </svg>
