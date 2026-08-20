@@ -388,7 +388,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
         <button
           style={styles.backBtn}
           onClick={onBack}
-          className="mobile-only-back"
+          className="mobile-header-back-btn"
           aria-label="Wapas jao"
         >
           ←
@@ -423,20 +423,21 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
                     </span>
                   </span>
                 ) : other && isOnline(other._id) ? (
-                  "Online"
+                  "online"
                 ) : (
-                  "Offline"
+                  "offline"
                 )}
               </div>
             </div>
           </>
         )}
 
-        <div style={styles.headerActions} ref={headerMenuRef}>
+        <div style={styles.headerActions} ref={headerMenuRef} className="chat-header-actions-wrap">
           {!isGroup && (
             <>
               <button
                 style={styles.headerIconBtn}
+                className="desktop-only-btn"
                 title="Audio call"
                 disabled={callState !== "idle"}
                 onClick={() => other && startCall(other, conversation._id, "audio")}
@@ -445,6 +446,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
               </button>
               <button
                 style={styles.headerIconBtn}
+                className="desktop-only-btn"
                 title="Video call"
                 disabled={callState !== "idle"}
                 onClick={() => other && startCall(other, conversation._id, "video")}
@@ -460,12 +462,24 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
               background: showDetailsPanel ? "var(--accent-soft)" : "var(--surface-2)",
               color: showDetailsPanel ? "var(--accent)" : "var(--text)",
             }}
+            className="desktop-only-btn"
             title="Toggle Details Panel"
             onClick={() => setShowDetailsPanel((v) => !v)}
           >
             ℹ️
           </button>
+
+          {/* Mobile and Desktop Action Menu */}
           <div style={{ position: "relative" }}>
+            <button
+              type="button"
+              className="mobile-header-dots-btn"
+              onClick={() => setShowHeaderMenu((v) => !v)}
+              title="Menu"
+            >
+              •••
+            </button>
+
             {showHeaderMenu && (
               <div style={styles.headerMenu}>
                 {!isGroup && (
@@ -510,15 +524,9 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
                 </button>
               </div>
             )}
-            <button
-              style={styles.headerIconBtn}
-              title="Aur options"
-              onClick={() => setShowHeaderMenu((v) => !v)}
-            >
-              ⋮
-            </button>
           </div>
         </div>
+
 
         {showMeetings && !isGroup && (
           <MeetingScheduler
@@ -739,7 +747,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
           </button>
         </div>
       ) : (
-        <form style={styles.inputBar} onSubmit={handleSubmit}>
+        <form style={styles.inputBar} className="chat-mobile-input-bar" onSubmit={handleSubmit}>
           <input
             type="file"
             accept="image/*"
@@ -747,6 +755,23 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
             style={{ display: "none" }}
             onChange={handlePhotoSelected}
           />
+
+          <input
+            style={styles.input}
+            className="chat-mobile-text-input"
+            value={text}
+            onChange={handleChange}
+            placeholder="Type your message here..."
+          />
+
+          <button
+            type="button"
+            className="chat-mobile-action-icon"
+            onClick={handlePhotoPick}
+            title="Photo bhejo"
+          >
+            📷
+          </button>
 
           <div style={{ position: "relative" }} ref={attachMenuRef}>
             {showAttachMenu && (
@@ -775,26 +800,19 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
             )}
             <button
               type="button"
-              style={styles.mediaBtn}
-              title="Photo ya voice message"
+              className="chat-mobile-action-icon"
+              title="Attachment / Voice"
               onClick={() => setShowAttachMenu((v) => !v)}
             >
-              ⋮
+              📎
             </button>
           </div>
 
-          <input
-            style={styles.input}
-            value={text}
-            onChange={handleChange}
-            placeholder="Message likho..."
-          />
           <button
-            className="send-btn"
+            className="send-btn chat-mobile-send-btn"
             style={styles.sendBtn}
             type="submit"
             disabled={!text.trim()}
-            aria-label="Bhejo"
             title="Bhejo"
           >
             ➤

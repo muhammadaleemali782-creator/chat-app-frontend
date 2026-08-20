@@ -523,29 +523,13 @@ button:focus-visible,
   transition: box-shadow 0.35s ease, transform 0.72s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-
-
-
-
-
-
-
-.pane-fade { animation: paneFade 0.2s ease both; }
-@keyframes paneFade {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* ==========================================================================
-   DESKTOP DEFAULT (Mobile elements hidden on Desktop)
-   ========================================================================== */
 .mobile-wave-header-banner,
 .mobile-recent-bar {
   display: none;
 }
 
 @media (max-width: 768px) {
-  .mobile-only-back { display: inline-block !important; }
+
   .hide-on-mobile { display: none !important; }
   .chat-grid { grid-template-columns: 1fr !important; }
   .auth-brand-panel { display: none !important; }
@@ -558,8 +542,8 @@ button:focus-visible,
     display: flex !important;
     flex-direction: column !important;
     background: var(--rail-bg) !important;
-    padding: 24px 20px 36px !important;
-    border-radius: 0 0 42px 42px !important;
+    padding: 22px 18px 36px !important;
+    border-radius: 0 0 44px 44px !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
     color: #FFFFFF !important;
     flex-shrink: 0 !important;
@@ -570,11 +554,11 @@ button:focus-visible,
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    margin-bottom: 16px !important;
+    margin-bottom: 14px !important;
   }
 
   .mobile-wave-title {
-    font-size: 26px !important;
+    font-size: 24px !important;
     font-weight: 800 !important;
     font-family: var(--font-display) !important;
     color: #FFFFFF !important;
@@ -582,8 +566,8 @@ button:focus-visible,
   }
 
   .mobile-wave-avatar {
-    width: 38px !important;
-    height: 38px !important;
+    width: 36px !important;
+    height: 36px !important;
     border-radius: 50% !important;
     background: rgba(255, 255, 255, 0.28) !important;
     border: 2px solid #FFFFFF !important;
@@ -592,7 +576,7 @@ button:focus-visible,
     align-items: center !important;
     justify-content: center !important;
     font-weight: 800 !important;
-    font-size: 15px !important;
+    font-size: 14px !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
   }
 
@@ -602,7 +586,7 @@ button:focus-visible,
     gap: 10px !important;
     background: #FFFFFF !important;
     border-radius: 12px !important;
-    padding: 11px 16px !important;
+    padding: 10px 14px !important;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08) !important;
   }
 
@@ -624,12 +608,12 @@ button:focus-visible,
     display: none !important;
   }
 
-  /* 2. Mobile Recent Section Bar */
+  /* 2. Mobile Recent Section Bar & Flat List */
   .mobile-recent-bar {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    padding: 18px 20px 6px !important;
+    padding: 16px 18px 4px !important;
     background: var(--surface) !important;
   }
 
@@ -649,6 +633,98 @@ button:focus-visible,
     cursor: pointer !important;
     padding: 4px 8px !important;
     letter-spacing: 2px !important;
+  }
+
+  /* Flat, Clean Mobile Contact Item (Removes ugly box borders) */
+  .conv-section-header {
+    display: none !important;
+  }
+
+  .conv-section-block {
+    margin-bottom: 0 !important;
+  }
+
+  .mobile-conv-item {
+    border-left: none !important;
+    border-bottom: 1px solid var(--border) !important;
+    border-radius: 0 !important;
+    padding: 14px 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    background: transparent !important;
+    transition: background 0.15s ease !important;
+  }
+
+  .mobile-conv-item:active {
+    background: var(--surface-2, rgba(0, 0, 0, 0.04)) !important;
+  }
+
+  .conv-avatar-wrap {
+    position: relative !important;
+    flex-shrink: 0 !important;
+  }
+
+  .conv-body-wrap {
+    flex: 1 !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+
+  .conv-title-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  .conv-person-name {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: var(--text) !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .conv-time-text {
+    font-size: 12px !important;
+    color: #94A3B8 !important;
+    font-weight: 500 !important;
+    flex-shrink: 0 !important;
+    margin-left: 8px !important;
+  }
+
+  .conv-preview-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+  }
+
+  .conv-preview-text {
+    font-size: 13px !important;
+    color: #64748B !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    flex: 1 !important;
+  }
+
+  .mobile-unread-badge {
+    min-width: 18px !important;
+    height: 18px !important;
+    padding: 0 5px !important;
+    border-radius: 9px !important;
+    background: #EF4444 !important;
+    color: #FFFFFF !important;
+    font-size: 10.5px !important;
+    font-weight: 800 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
   }
 
   /* 3. Mobile Floating Bottom Dock (Exact Match to Image 1) */
@@ -735,21 +811,47 @@ button:focus-visible,
     line-height: 1 !important;
   }
 
-
-
   /* 4. Mobile Screen 2: Top Chat Wave Header */
   .chat-header-wave {
     background: var(--rail-bg) !important;
     color: #FFFFFF !important;
-    border-radius: 0 0 32px 32px !important;
-    padding: 14px 18px 20px !important;
+    border-radius: 0 0 34px 34px !important;
+    padding: 14px 16px 18px !important;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
     border-bottom: none !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
   }
 
-  .chat-header-wave .mobile-only-back {
+  .mobile-header-back-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     color: #FFFFFF !important;
     font-size: 22px !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 4px 6px !important;
+    cursor: pointer !important;
+  }
+
+  .mobile-header-dots-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #FFFFFF !important;
+    font-size: 22px !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 4px 6px !important;
+    cursor: pointer !important;
+    letter-spacing: 2px !important;
+    margin-left: auto !important;
+  }
+
+  .desktop-only-btn {
+    display: none !important;
   }
 
   .chat-header-wave div[style*="headerName"] {
@@ -763,25 +865,11 @@ button:focus-visible,
     font-size: 12px !important;
   }
 
-  .chat-header-wave button {
-    color: #FFFFFF !important;
-  }
-
-  /* 5. Mobile Screen 2: Floating Bottom Input Bar with Organic Wave */
-  .mobile-input-bar-wrap {
-    position: relative !important;
-    margin: 12px 14px 16px !important;
-    border-radius: 32px !important;
-    background: #FFFFFF !important;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12) !important;
-    border: 1px solid var(--border) !important;
-    padding: 6px 8px 6px 16px !important;
-  }
-
-  /* Full Screen Container adjustments on Mobile */
+  /* Message Stream & Bubbles on Mobile */
   .chat-main-stream {
     background: var(--surface) !important;
     position: relative !important;
+    padding-bottom: 86px !important;
   }
 
   /* Organic Wave in Bottom Corner of Chat */
@@ -790,13 +878,67 @@ button:focus-visible,
     position: absolute !important;
     bottom: 0 !important;
     right: 0 !important;
-    width: 220px !important;
-    height: 140px !important;
+    width: 200px !important;
+    height: 120px !important;
     background: var(--rail-bg) !important;
-    border-top-left-radius: 120px !important;
+    border-top-left-radius: 100px !important;
     opacity: 0.14 !important;
     pointer-events: none !important;
     z-index: 1 !important;
+  }
+
+  /* Floating Bottom Input Bar on Mobile */
+  .chat-mobile-input-bar {
+    position: fixed !important;
+    bottom: 14px !important;
+    left: 14px !important;
+    right: 14px !important;
+    background: #FFFFFF !important;
+    border-radius: 34px !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+    border: 1px solid var(--border) !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 6px 8px 6px 14px !important;
+    gap: 6px !important;
+    z-index: 99999 !important;
+  }
+
+  .chat-mobile-text-input {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    font-size: 14px !important;
+    color: #0F172A !important;
+    flex: 1 !important;
+    padding: 8px 4px !important;
+  }
+
+  .chat-mobile-action-icon {
+    background: transparent !important;
+    border: none !important;
+    font-size: 18px !important;
+    color: #94A3B8 !important;
+    cursor: pointer !important;
+    padding: 6px 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .chat-mobile-send-btn {
+    background: var(--rail-bg) !important;
+    color: #FFFFFF !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    border: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 16px !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15) !important;
+    flex-shrink: 0 !important;
   }
 
   .theme-popover {

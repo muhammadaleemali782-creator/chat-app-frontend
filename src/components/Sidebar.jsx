@@ -203,8 +203,8 @@ export default function Sidebar({
 
         {/* SECTION 1: GROUPS */}
         {groupConvs.length > 0 && (
-          <div style={styles.sectionBlock}>
-            <div style={styles.sectionHeaderRow}>
+          <div style={styles.sectionBlock} className="conv-section-block">
+            <div style={styles.sectionHeaderRow} className="conv-section-header">
               <span style={styles.sectionTitle}>Group</span>
               <span style={styles.sectionSubCount}>{groupConvs.length}</span>
             </div>
@@ -214,24 +214,30 @@ export default function Sidebar({
                 return (
                   <div
                     key={conv._id}
-                    className={`conv-item ${isActive ? "active-conv" : ""}`}
+                    className={`conv-item mobile-conv-item ${isActive ? "active-conv" : ""}`}
                     style={{
                       ...styles.convItem,
-                      background: isActive ? "#F0F4FF" : "transparent",
-                      borderLeft: isActive ? "4px solid #6366F1" : "4px solid transparent",
+                      background: isActive ? "var(--surface-2, #F0F4FF)" : "transparent",
                     }}
                     onClick={() => onSelect(conv)}
                   >
-                    <GroupAvatar name={conv.name} size={38} />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={styles.convHeaderRow}>
-                        <span style={styles.convName}>{conv.name}</span>
-                        <span style={styles.convTime}>
+                    <div className="conv-avatar-wrap">
+                      <GroupAvatar name={conv.name} size={42} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }} className="conv-body-wrap">
+                      <div style={styles.convHeaderRow} className="conv-title-row">
+                        <span style={styles.convName} className="conv-person-name">{conv.name}</span>
+                        <span style={styles.convTime} className="conv-time-text">
                           {formatMsgTime(conv.lastMessageAt || conv.updatedAt)}
                         </span>
                       </div>
-                      <div style={styles.convLastMsg}>
-                        {conv.lastMessage || `${conv.participants?.length || 0} members`}
+                      <div className="conv-preview-row">
+                        <span style={styles.convLastMsg} className="conv-preview-text">
+                          {conv.lastMessage || `${conv.participants?.length || 0} members`}
+                        </span>
+                        {conv.unreadCount ? (
+                          <span className="mobile-unread-badge">{conv.unreadCount}</span>
+                        ) : null}
                       </div>
                     </div>
                   </div>
@@ -243,8 +249,8 @@ export default function Sidebar({
 
         {/* SECTION 2: PERSON / DIRECT CHATS */}
         {directConvs.length > 0 && (
-          <div style={styles.sectionBlock}>
-            <div style={styles.sectionHeaderRow}>
+          <div style={styles.sectionBlock} className="conv-section-block">
+            <div style={styles.sectionHeaderRow} className="conv-section-header">
               <span style={styles.sectionTitle}>Person</span>
               <span style={styles.sectionSubCount}>{directConvs.length}</span>
             </div>
@@ -259,24 +265,30 @@ export default function Sidebar({
                 return (
                   <div
                     key={conv._id}
-                    className={`conv-item ${isActive ? "active-conv" : ""}`}
+                    className={`conv-item mobile-conv-item ${isActive ? "active-conv" : ""}`}
                     style={{
                       ...styles.convItem,
-                      background: isActive ? "#FDF2F8" : "transparent",
-                      borderLeft: isActive ? "4px solid #EC4899" : "4px solid transparent",
+                      background: isActive ? "var(--surface-2, #FDF2F8)" : "transparent",
                     }}
                     onClick={() => onSelect(conv)}
                   >
-                    <Avatar name={other.displayName} online={online} color={c} size={38} />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={styles.convHeaderRow}>
-                        <span style={styles.convName}>{other.displayName}</span>
-                        <span style={styles.convTime}>
+                    <div className="conv-avatar-wrap">
+                      <Avatar name={other.displayName} online={online} color={c} size={42} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }} className="conv-body-wrap">
+                      <div style={styles.convHeaderRow} className="conv-title-row">
+                        <span style={styles.convName} className="conv-person-name">{other.displayName}</span>
+                        <span style={styles.convTime} className="conv-time-text">
                           {formatMsgTime(conv.lastMessageAt || conv.updatedAt)}
                         </span>
                       </div>
-                      <div style={styles.convLastMsg}>
-                        {conv.lastMessage || "Chat shuru karo..."}
+                      <div className="conv-preview-row">
+                        <span style={styles.convLastMsg} className="conv-preview-text">
+                          {conv.lastMessage || "Chat shuru karo..."}
+                        </span>
+                        {conv.unreadCount ? (
+                          <span className="mobile-unread-badge">{conv.unreadCount}</span>
+                        ) : null}
                       </div>
                     </div>
 
@@ -298,6 +310,7 @@ export default function Sidebar({
             </div>
           </div>
         )}
+
       </div>
     </div>
   );
