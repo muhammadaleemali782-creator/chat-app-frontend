@@ -776,86 +776,113 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
           </button>
         </div>
       ) : (
-        <form style={styles.inputBar} className="chat-mobile-input-bar" onSubmit={handleSubmit}>
-          <input
-            type="file"
-            accept="image/*"
-            ref={fileInputRef}
-            style={{ display: "none" }}
-            onChange={handlePhotoSelected}
-          />
+        <div className="chat-mobile-bottom-wave-container">
+          <svg
+            viewBox="0 0 500 130"
+            preserveAspectRatio="none"
+            className="chat-mobile-bottom-svg-wave"
+          >
+            <defs>
+              <linearGradient id="bottomWaveGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#106662" />
+                <stop offset="40%" stopColor="#157E77" />
+                <stop offset="75%" stopColor="#1EA297" />
+                <stop offset="100%" stopColor="#136F69" />
+              </linearGradient>
+              <filter id="bottomWaveShadow" x="-5%" y="-15%" width="110%" height="130%">
+                <feDropShadow dx="0" dy="-3" stdDeviation="3" floodColor="rgba(0,0,0,0.15)" />
+              </filter>
+            </defs>
+            <path
+              d="M 0,65 C 60,60 110,24 165,24 C 230,24 260,68 335,68 C 400,68 440,16 500,16 L 500,130 L 0,130 Z"
+              fill="url(#bottomWaveGradient)"
+              filter="url(#bottomWaveShadow)"
+            />
+          </svg>
 
-          <div className="chat-mobile-input-inner-pill">
+          <form style={styles.inputBar} className="chat-mobile-input-bar" onSubmit={handleSubmit}>
             <input
-              style={styles.input}
-              className="chat-mobile-text-input"
-              value={text}
-              onChange={handleChange}
-              placeholder="Type your message here..."
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handlePhotoSelected}
             />
 
-            <button
-              type="button"
-              className="chat-mobile-action-icon"
-              onClick={handlePhotoPick}
-              title="Photo bhejo"
-            >
-              📷
-            </button>
+            <div className="chat-mobile-input-inner-box">
+              <input
+                style={styles.input}
+                className="chat-mobile-text-input"
+                value={text}
+                onChange={handleChange}
+                placeholder="Type your message here..."
+              />
 
-            <div style={{ position: "relative" }} ref={attachMenuRef}>
-              {showAttachMenu && (
-                <div style={styles.attachMenu} className="attach-menu">
-                  <button
-                    type="button"
-                    style={styles.attachMenuItem}
-                    onClick={() => {
-                      setShowAttachMenu(false);
-                      handlePhotoPick();
-                    }}
-                  >
-                    📷 Photo
-                  </button>
-                  <button
-                    type="button"
-                    style={styles.attachMenuItem}
-                    onClick={() => {
-                      setShowAttachMenu(false);
-                      startRecording();
-                    }}
-                  >
-                    🎤 Voice message
-                  </button>
-                </div>
-              )}
               <button
                 type="button"
                 className="chat-mobile-action-icon"
-                title="Attachment / Voice"
-                onClick={() => setShowAttachMenu((v) => !v)}
+                onClick={handlePhotoPick}
+                title="Photo bhejo"
               >
-                📎
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
+                </svg>
               </button>
+
+              <div style={{ position: "relative" }} ref={attachMenuRef}>
+                {showAttachMenu && (
+                  <div style={styles.attachMenu} className="attach-menu">
+                    <button
+                      type="button"
+                      style={styles.attachMenuItem}
+                      onClick={() => {
+                        setShowAttachMenu(false);
+                        handlePhotoPick();
+                      }}
+                    >
+                      📷 Photo
+                    </button>
+                    <button
+                      type="button"
+                      style={styles.attachMenuItem}
+                      onClick={() => {
+                        setShowAttachMenu(false);
+                        startRecording();
+                      }}
+                    >
+                      🎤 Voice message
+                    </button>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  className="chat-mobile-action-icon"
+                  title="Attachment / Voice"
+                  onClick={() => setShowAttachMenu((v) => !v)}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                  </svg>
+                </button>
+              </div>
             </div>
-          </div>
 
-          <button
-            className="send-btn chat-mobile-send-btn"
-            style={styles.sendBtn}
-            type="submit"
-            disabled={!text.trim()}
-            title="Bhejo"
-          >
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 2L11 13" />
-              <path d="M22 2l-7 20-4-9-9-4 20-7z" />
-            </svg>
-          </button>
-        </form>
+            <button
+              className="send-btn chat-mobile-send-btn"
+              style={styles.sendBtn}
+              type="submit"
+              disabled={!text.trim()}
+              title="Bhejo"
+            >
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#FFFFFF" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21.5 2.5L10.5 13.5M21.5 2.5L14.5 21.5C14.3 22 13.7 22.3 13.2 22C12.8 21.8 12.5 21.4 12.4 21L9.5 14.5L3 11.6C2.5 11.4 2.2 10.8 2.5 10.3C2.7 9.9 3.1 9.6 3.5 9.5L21.5 2.5Z"/>
+              </svg>
+            </button>
+          </form>
+        </div>
       )}
-
-      {/* Mobile Chat Bottom Decorative Wave */}
-      <div className="chat-mobile-bottom-backdrop" />
 
       </div>{/* closes styles.wrap */}
 

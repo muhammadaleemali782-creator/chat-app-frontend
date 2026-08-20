@@ -706,19 +706,26 @@ button:focus-visible,
     font-family: var(--font-display) !important;
   }
 
-  /* Organic Wave Backdrop at Bottom of Chat View */
-  .chat-mobile-bottom-backdrop {
+  /* Organic Wave Backdrop Container at Bottom of Chat View */
+  .chat-mobile-bottom-wave-container {
     display: block !important;
     position: fixed !important;
     bottom: 0 !important;
     left: 0 !important;
     right: 0 !important;
     height: 125px !important;
-    background: linear-gradient(135deg, #106662 0%, #157E77 35%, #1EA297 70%, #136F69 100%) !important;
-    clip-path: url(#mobileChatBottomWaveClip) !important;
-    -webkit-clip-path: url(#mobileChatBottomWaveClip) !important;
+    z-index: 9999 !important;
+    pointer-events: auto !important;
+  }
+
+  .chat-mobile-bottom-svg-wave {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
     pointer-events: none !important;
-    z-index: 9998 !important;
   }
 
   /* Typing Avatar + 3 Dots Bubble on Mobile (Exact match to reference) */
@@ -754,8 +761,8 @@ button:focus-visible,
 
   /* Floating Bottom Input Bar on Mobile */
   .chat-mobile-input-bar {
-    position: fixed !important;
-    bottom: 16px !important;
+    position: absolute !important;
+    bottom: 14px !important;
     left: 14px !important;
     right: 14px !important;
     background: transparent !important;
@@ -763,23 +770,22 @@ button:focus-visible,
     box-shadow: none !important;
     display: flex !important;
     align-items: center !important;
-    gap: 10px !important;
-    z-index: 99999 !important;
+    gap: 8px !important;
+    z-index: 10 !important;
     padding: 0 !important;
   }
 
-  .chat-mobile-input-inner-pill {
+  .chat-mobile-input-inner-box {
     flex: 1 !important;
     display: flex !important;
     align-items: center !important;
     background: #FFFFFF !important;
-    border-radius: 28px !important;
-    padding: 6px 14px 6px 18px !important;
+    border-radius: 12px !important;
+    padding: 8px 12px 8px 14px !important;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12) !important;
     gap: 8px !important;
     border: none !important;
   }
-
 
   .chat-mobile-text-input {
     background: transparent !important;
@@ -788,21 +794,26 @@ button:focus-visible,
     font-size: 14px !important;
     color: #0F172A !important;
     flex: 1 !important;
-    padding: 8px 4px !important;
+    padding: 2px 0 !important;
+  }
+
+  .chat-mobile-text-input::placeholder {
+    color: #94A3B8 !important;
   }
 
   .chat-mobile-action-icon {
     background: transparent !important;
     border: none !important;
-    font-size: 17px !important;
-    padding: 4px !important;
+    padding: 2px !important;
     cursor: pointer !important;
-    color: #475569 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .chat-mobile-send-btn {
-    width: 44px !important;
-    height: 44px !important;
+    width: 42px !important;
+    height: 42px !important;
     border-radius: 50% !important;
     background: transparent !important;
     color: #FFFFFF !important;
@@ -813,11 +824,14 @@ button:focus-visible,
     cursor: pointer !important;
     box-shadow: none !important;
     flex-shrink: 0 !important;
+    padding: 0 !important;
+    transition: transform 0.15s ease !important;
   }
 
-  .chat-mobile-send-btn:disabled {
-    opacity: 0.65 !important;
+  .chat-mobile-send-btn:active {
+    transform: scale(0.90) !important;
   }
+
 
 
 
