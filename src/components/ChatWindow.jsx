@@ -622,10 +622,10 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
                     style={{
                       ...styles.bubble,
                       background: isMine
-                        ? "linear-gradient(135deg, #EC4899, #F472B6)"
-                        : "var(--bubble-other-bg, var(--surface))",
-                      color: isMine ? "#fff" : "var(--text)",
-                      border: isMine ? "none" : "1px solid var(--bubble-other-border, var(--border))",
+                        ? "linear-gradient(135deg, #0C7872 0%, #13ADA3 100%)"
+                        : "#DCF5F3",
+                      color: isMine ? "#fff" : "#0D4A47",
+                      border: isMine ? "none" : "none",
                       borderBottomRightRadius: isMine ? 4 : 18,
                       borderBottomLeftRadius: isMine ? 18 : 4,
                     }}
@@ -1210,7 +1210,7 @@ const styles = {
     outline: "none",
   },
   sendBtn: {
-    background: "linear-gradient(135deg, #FF4B72, #FF6B8B)",
+    background: "linear-gradient(135deg, #0C7872 0%, #13ADA3 100%)",
     color: "#fff",
     border: "none",
     borderRadius: "50%",
@@ -1222,7 +1222,7 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     cursor: "pointer",
-    boxShadow: "0 2px 8px rgba(255, 75, 114, 0.35)",
+    boxShadow: "0 2px 8px rgba(13, 173, 163, 0.35)",
   },
 };
 

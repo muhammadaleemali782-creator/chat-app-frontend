@@ -105,103 +105,104 @@ export default function Sidebar({
 
 
       {/* Mobile-Only Recent Bar */}
-      <div className="mobile-recent-bar">
-        <span className="mobile-recent-heading">Recent</span>
-        <button
-          type="button"
-          className="mobile-recent-menu-btn"
-          onClick={() => setShowCreateGroup(true)}
-          title="New Group / Options"
-        >
-          •••
-        </button>
-      </div>
-
-
-
-      {/* Desktop Top Search Bar & Create Group CTA */}
-      <div style={styles.topHeader} className="desktop-only-header">
-        <div style={styles.searchBox}>
-          <input
-            ref={searchInputRef}
-            style={styles.searchInput}
-            placeholder="Search here..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
+      <div className="mobile-white-card">
+        <div className="mobile-recent-bar">
+          <span className="mobile-recent-heading">Recent</span>
           <button
             type="button"
-            style={styles.searchIconBtn}
-            onClick={() => searchInputRef.current?.focus()}
-            title="Search"
+            className="mobile-recent-menu-btn"
+            onClick={() => setShowCreateGroup(true)}
+            title="New Group / Options"
           >
-            🔍
+            •••
           </button>
         </div>
 
-        <button
-          type="button"
-          style={styles.newGroupPillBtn}
-          onClick={() => setShowCreateGroup(true)}
-          title="Naya group banao"
-        >
-          + Group
-        </button>
-      </div>
 
 
-      {showCreateGroup && (
-        <CreateGroupModal
-          onClose={() => setShowCreateGroup(false)}
-          onCreated={(group) => {
-            setShowCreateGroup(false);
-            onGroupCreated?.(group);
-          }}
-        />
-      )}
+        {/* Desktop Top Search Bar & Create Group CTA */}
+        <div style={styles.topHeader} className="desktop-only-header">
+          <div style={styles.searchBox}>
+            <input
+              ref={searchInputRef}
+              style={styles.searchInput}
+              placeholder="Search here..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <button
+              type="button"
+              style={styles.searchIconBtn}
+              onClick={() => searchInputRef.current?.focus()}
+              title="Search"
+            >
+              🔍
+            </button>
+          </div>
 
-      {/* Live Search Results Dropdown */}
-      {query && (
-        <div style={styles.resultsDropdown}>
-          {searching && <div style={styles.resultItemMuted}>Dhoond rahe hain...</div>}
-          {!searching && results.length === 0 && (
-            <div style={styles.resultItemMuted}>Koi user nahi mila</div>
-          )}
-          {results.map((r) => {
-            const c = avatarColor(r.displayName);
-            return (
-              <div
-                key={r._id}
-                className="result-item"
-                style={styles.resultItem}
-                onClick={() => handlePickUser(r)}
-              >
-                <Avatar name={r.displayName} online={isOnline(r._id)} color={c} size={34} />
-                <div style={{ minWidth: 0, flex: 1 }}>
-                  <div style={styles.resultName}>{r.displayName}</div>
-                  <div style={styles.resultUsername}>@{r.username}</div>
-                </div>
-              </div>
-            );
-          })}
+          <button
+            type="button"
+            style={styles.newGroupPillBtn}
+            onClick={() => setShowCreateGroup(true)}
+            title="Naya group banao"
+          >
+            + Group
+          </button>
         </div>
-      )}
 
-      {/* 2. Scrollable Sections (Group & Person) */}
-      <div style={styles.list}>
-        {loading && <LoadingScreen message="Chats load ho rahi hain..." />}
 
-        {!loading && conversations.length === 0 && (
-          <div style={styles.emptyState}>
-            <div style={styles.emptyIcon}>💬</div>
-            <strong style={{ display: "block", marginBottom: 4, color: "#0F172A" }}>
-              Koi chat nahi hai abhi
-            </strong>
-            <span style={{ fontSize: 12.5, color: "#64748B", lineHeight: 1.5 }}>
-              Upar Search se username dhoond ke direct message shuru karo.
-            </span>
+        {showCreateGroup && (
+          <CreateGroupModal
+            onClose={() => setShowCreateGroup(false)}
+            onCreated={(group) => {
+              setShowCreateGroup(false);
+              onGroupCreated?.(group);
+            }}
+          />
+        )}
+
+        {/* Live Search Results Dropdown */}
+        {query && (
+          <div style={styles.resultsDropdown}>
+            {searching && <div style={styles.resultItemMuted}>Dhoond rahe hain...</div>}
+            {!searching && results.length === 0 && (
+              <div style={styles.resultItemMuted}>Koi user nahi mila</div>
+            )}
+            {results.map((r) => {
+              const c = avatarColor(r.displayName);
+              return (
+                <div
+                  key={r._id}
+                  className="result-item"
+                  style={styles.resultItem}
+                  onClick={() => handlePickUser(r)}
+                >
+                  <Avatar name={r.displayName} online={isOnline(r._id)} color={c} size={34} />
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={styles.resultName}>{r.displayName}</div>
+                    <div style={styles.resultUsername}>@{r.username}</div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
+
+        {/* 2. Scrollable Sections (Group & Person) */}
+        <div style={styles.list}>
+          {loading && <LoadingScreen message="Chats load ho rahi hain..." />}
+
+          {!loading && conversations.length === 0 && (
+            <div style={styles.emptyState}>
+              <div style={styles.emptyIcon}>💬</div>
+              <strong style={{ display: "block", marginBottom: 4, color: "#0F172A" }}>
+                Koi chat nahi hai abhi
+              </strong>
+              <span style={{ fontSize: 12.5, color: "#64748B", lineHeight: 1.5 }}>
+                Upar Search se username dhoond ke direct message shuru karo.
+              </span>
+            </div>
+          )}
 
         {/* SECTION 1: GROUPS */}
         {groupConvs.length > 0 && (
@@ -311,9 +312,10 @@ export default function Sidebar({
               })}
             </div>
           </div>
-        )}
+        )}{/* closes directConvs section */}
 
-      </div>
+        </div>{/* closes styles.list */}
+      </div>{/* closes mobile-white-card */}
     </div>
   );
 }

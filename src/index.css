@@ -537,33 +537,42 @@ button:focus-visible,
   .meeting-modal-body { grid-template-columns: 1fr !important; }
   .desktop-only-header { display: none !important; }
 
-  /* Mobile full viewport normalization (No ugly card gaps on real phones) */
+  /* ── MOBILE: EXACT REFERENCE IMAGE DESIGN ─────────────────────────── */
+
+  /* Screen 1: Whole phone body is teal */
   .chat-layout,
   .app-container,
-  .sidebar-floating-card,
-  .chat-main-stream,
-  .pane-fade,
-  div[style*="outerLayout"] {
-    width: 100% !important;
-    max-width: 100vw !important;
-    min-width: 0 !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
+  body,
+  html,
+  #root {
+    background: linear-gradient(160deg, #13ADA3 0%, #0D8F87 60%, #0B7B74 100%) !important;
   }
 
-  /* 1. Mobile Screen 1: Top Organic Wave Header Banner (100% Single Seamless Shape) */
+  /* The sidebar becomes TRANSPARENT - teal bleeds through */
+  .sidebar-floating-card {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100dvh !important;
+  }
+
+  /* "Messages" header + avatar lives on the teal background directly */
   .mobile-wave-header-banner {
     display: flex !important;
     flex-direction: column !important;
-    background: linear-gradient(135deg, #106662 0%, #157E77 35%, #1EA297 70%, #136F69 100%) !important;
-    padding: calc(env(safe-area-inset-top, 0px) + 24px) 18px 46px !important;
+    background: transparent !important;
+    padding: calc(env(safe-area-inset-top, 0px) + 28px) 22px 20px !important;
     color: #FFFFFF !important;
     flex-shrink: 0 !important;
     position: relative !important;
-    clip-path: url(#mobileWaveClip) !important;
-    -webkit-clip-path: url(#mobileWaveClip) !important;
+    clip-path: none !important;
+    -webkit-clip-path: none !important;
     border-radius: 0 !important;
   }
 
@@ -571,11 +580,11 @@ button:focus-visible,
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    margin-bottom: 14px !important;
+    margin-bottom: 18px !important;
   }
 
   .mobile-wave-title {
-    font-size: 24px !important;
+    font-size: 26px !important;
     font-weight: 800 !important;
     font-family: var(--font-display) !important;
     color: #FFFFFF !important;
@@ -583,33 +592,34 @@ button:focus-visible,
   }
 
   .mobile-wave-avatar {
-    width: 36px !important;
-    height: 36px !important;
+    width: 40px !important;
+    height: 40px !important;
     border-radius: 50% !important;
-    background: rgba(255, 255, 255, 0.28) !important;
-    border: 2px solid #FFFFFF !important;
+    background: rgba(255, 255, 255, 0.22) !important;
+    border: 2px solid rgba(255, 255, 255, 0.6) !important;
     color: #FFFFFF !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     font-weight: 800 !important;
-    font-size: 14px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    font-size: 15px !important;
   }
 
+  /* Search bar - inside teal area */
   .mobile-wave-search-box {
     display: flex !important;
     align-items: center !important;
     gap: 10px !important;
-    background: #FFFFFF !important;
-    border-radius: 12px !important;
-    padding: 10px 14px !important;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08) !important;
+    background: rgba(255, 255, 255, 0.20) !important;
+    border-radius: 14px !important;
+    padding: 11px 16px !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   .mobile-wave-search-icon {
     font-size: 14px !important;
-    color: #94A3B8 !important;
+    color: rgba(255, 255, 255, 0.8) !important;
   }
 
   .mobile-wave-search-input {
@@ -617,23 +627,39 @@ button:focus-visible,
     border: none !important;
     outline: none !important;
     font-size: 14px !important;
-    color: #0F172A !important;
+    color: #FFFFFF !important;
     background: transparent !important;
   }
 
-  /* 2. Mobile Recent Section Bar & Flat List */
+  .mobile-wave-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.65) !important;
+  }
+
+  /* THE WHITE CARD: floats on the teal, has a wavy top using border-radius trick */
+  .mobile-white-card {
+    flex: 1 !important;
+    background: #FFFFFF !important;
+    border-radius: 28px 28px 0 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: 0 -4px 30px rgba(0,0,0,0.08) !important;
+    min-height: 0 !important;
+  }
+
+  /* Recent bar inside the white card */
   .mobile-recent-bar {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    padding: 14px 18px 4px !important;
-    background: var(--surface) !important;
+    padding: 20px 20px 8px !important;
+    background: #FFFFFF !important;
   }
 
   .mobile-recent-heading {
     font-size: 18px !important;
     font-weight: 800 !important;
-    color: var(--text) !important;
+    color: #0F172A !important;
     font-family: var(--font-display) !important;
   }
 
@@ -642,30 +668,68 @@ button:focus-visible,
     border: none !important;
     font-size: 22px !important;
     font-weight: 900 !important;
-    color: var(--accent) !important;
+    color: #13ADA3 !important;
     cursor: pointer !important;
     padding: 4px 8px !important;
     letter-spacing: 2px !important;
   }
 
-  /* 4. Mobile Screen 2: Top Chat Wave Header */
-  .chat-header-wave {
-    background: linear-gradient(135deg, #106662 0%, #157E77 35%, #1EA297 70%, #136F69 100%) !important;
-    color: #FFFFFF !important;
-    padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px 36px !important;
+  /* Conv list inside white card */
+  .sidebar-floating-card .conv-section-block,
+  .sidebar-floating-card .conv-item,
+  .sidebar-floating-card [style*="list"] {
+    background: #FFFFFF !important;
+  }
+
+  /* ── Mobile Screen 2: Chat View ─────────────────────── */
+
+  /* Full width, transparent outer wrapper so teal body shows at top/bottom */
+  .pane-fade,
+  .chat-main-stream {
+    background: #FFFFFF !important;
     border-radius: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
     border: none !important;
     box-shadow: none !important;
+  }
+
+  /* sidebarPane div has inline background: var(--surface) — override to transparent so teal body bleeds through */
+  .chat-grid > div:first-child {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    box-shadow: none !important;
+  }
+
+  /* chatPane also needs transparent */
+  .chat-grid > div:last-child {
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+
+  /* Chat header: teal background, white text, rounded bottom edges */
+  .chat-header-wave {
+    background: linear-gradient(160deg, #13ADA3 0%, #0D8F87 60%, #0B7B74 100%) !important;
+    color: #FFFFFF !important;
+    padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px 28px !important;
+    border-radius: 0 0 28px 28px !important;
+    border: none !important;
+    box-shadow: 0 4px 20px rgba(13, 143, 135, 0.25) !important;
     display: flex !important;
     align-items: center !important;
     gap: 10px !important;
-    clip-path: url(#mobileChatWaveClip) !important;
-    -webkit-clip-path: url(#mobileChatWaveClip) !important;
+    clip-path: none !important;
+    -webkit-clip-path: none !important;
     position: relative !important;
+    z-index: 2 !important;
   }
-
-
-
 
 
   /* Flat, Clean Mobile Contact Item (Removes ugly box borders) */
@@ -805,14 +869,14 @@ button:focus-visible,
     height: 44px !important;
     border-radius: 22px !important;
     border: none !important;
-    background: linear-gradient(135deg, #106662 0%, #157E77 35%, #1EA297 70%, #136F69 100%) !important;
+    background: linear-gradient(160deg, #13ADA3 0%, #0C7872 100%) !important;
     color: #FFFFFF !important;
     font-size: 20px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     cursor: pointer !important;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 4px 14px rgba(13, 143, 135, 0.35) !important;
     transition: transform 0.2s ease !important;
   }
 
@@ -824,7 +888,7 @@ button:focus-visible,
     width: 68px !important;
     height: 44px !important;
     border-radius: 22px !important;
-    border: 2px solid #157E77 !important;
+    border: 2px solid #13ADA3 !important;
     background: transparent !important;
     display: flex !important;
     align-items: center !important;
