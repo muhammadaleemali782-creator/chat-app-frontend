@@ -539,20 +539,49 @@ button:focus-visible,
 
   /* ── MOBILE: EXACT REFERENCE IMAGE DESIGN ─────────────────────────── */
 
-  /* Mobile Full Viewport Normalization */
+  /* Complete edge-to-edge container reset on mobile (NO side gaps / white borders) */
   .chat-layout,
+  div[style*="outerWrap"],
   .app-container,
+  body,
+  html,
+  #root {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+    background: #FFFFFF !important;
+  }
+
+  .chat-grid,
+  .page-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100% !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .chat-grid > div,
+  div[style*="sidebarPane"],
+  div[style*="chatPane"],
   .sidebar-floating-card,
   .chat-main-stream,
   .pane-fade,
-  div[style*="outerLayout"],
-  .chat-grid > div {
-    width: 100% !important;
+  div[style*="outerLayout"] {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100vw !important;
     max-width: 100vw !important;
     min-width: 0 !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
     border: none !important;
+    border-radius: 0 !important;
     box-shadow: none !important;
     background: #FFFFFF !important;
   }
@@ -562,7 +591,11 @@ button:focus-visible,
     display: flex !important;
     flex-direction: column !important;
     background: linear-gradient(135deg, #106662 0%, #157E77 35%, #1EA297 70%, #136F69 100%) !important;
-    padding: calc(env(safe-area-inset-top, 0px) + 24px) 18px 58px !important;
+    padding: calc(env(safe-area-inset-top, 0px) + 20px) 18px 58px !important;
+    margin: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
     color: #FFFFFF !important;
     flex-shrink: 0 !important;
     position: relative !important;
@@ -665,6 +698,10 @@ button:focus-visible,
     background: linear-gradient(135deg, #106662 0%, #157E77 35%, #1EA297 70%, #136F69 100%) !important;
     color: #FFFFFF !important;
     padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px 46px !important;
+    margin: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
     border-radius: 0 !important;
     border: none !important;
     box-shadow: none !important;
@@ -677,14 +714,20 @@ button:focus-visible,
     z-index: 2 !important;
   }
 
-  .chat-header-wave div[style*="headerName"] {
+  .chat-header-title,
+  .chat-header-wave .chat-header-title,
+  .chat-header-wave div[style*="headerName"],
+  .chat-header-wave [style*="headerName"] {
     color: #FFFFFF !important;
     font-weight: 800 !important;
     font-size: 16px !important;
   }
 
-  .chat-header-wave div[style*="headerStatus"] {
-    color: rgba(255, 255, 255, 0.8) !important;
+  .chat-header-subtitle,
+  .chat-header-wave .chat-header-subtitle,
+  .chat-header-wave div[style*="headerStatus"],
+  .chat-header-wave [style*="headerStatus"] {
+    color: rgba(255, 255, 255, 0.85) !important;
     font-size: 12px !important;
   }
 

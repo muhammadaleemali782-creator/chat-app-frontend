@@ -412,9 +412,9 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
             >
               <GroupAvatar name={conversation.name} />
               <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={styles.headerName}>👥 {conversation.name}</div>
-                <div style={styles.headerStatus}>
-                  {otherTyping ? "koi type kar raha hai" : `${conversation.participants.length} members`}
+                <div style={styles.headerName} className="chat-header-title">👥 {conversation.name}</div>
+                <div style={styles.headerStatus} className="chat-header-subtitle">
+                  {otherTyping ? "typing..." : `${conversation.participants.length} members`}
                 </div>
               </div>
             </div>
@@ -422,11 +422,11 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
             <>
               <Avatar name={other?.displayName} online={other && isOnline(other._id)} color={otherColor} />
               <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={styles.headerName}>{other?.displayName || "User"}</div>
-                <div style={styles.headerStatus}>
+                <div style={styles.headerName} className="chat-header-title">{other?.displayName || "User"}</div>
+                <div style={styles.headerStatus} className="chat-header-subtitle">
                   {otherTyping ? (
                     <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                      type kar raha hai
+                      typing...
                       <span className="typing-dots">
                         <span></span>
                         <span></span>
