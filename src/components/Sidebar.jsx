@@ -72,12 +72,12 @@ export default function Sidebar({
 
   return (
     <div style={styles.wrap} className="sidebar-floating-card">
-      {/* Mobile-Only Asymmetric Organic S-Wave Header (100% Single Seamless Shape) */}
+      {/* Mobile-Only Asymmetric Organic S-Wave Header (Deep Dramatic Curve) */}
       <div className="mobile-wave-header-banner">
         <svg width="0" height="0" style={{ position: "absolute", pointerEvents: "none" }}>
           <defs>
             <clipPath id="mobileWaveClip" clipPathUnits="objectBoundingBox">
-              <path d="M 0,0 L 1,0 L 1,0.76 C 0.72,0.98 0.35,0.70 0,0.92 Z" />
+              <path d="M 0,0 L 1,0 L 1,0.58 C 0.68,1.05 0.30,0.52 0,0.92 Z" />
             </clipPath>
           </defs>
         </svg>

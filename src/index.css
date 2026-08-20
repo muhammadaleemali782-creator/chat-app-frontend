@@ -557,12 +557,12 @@ button:focus-visible,
     background: #FFFFFF !important;
   }
 
-  /* 1. Mobile Screen 1: Top Organic Wave Header Banner */
+  /* 1. Mobile Screen 1: Top Organic Wave Header Banner (Deep Curve) */
   .mobile-wave-header-banner {
     display: flex !important;
     flex-direction: column !important;
     background: linear-gradient(135deg, #106662 0%, #157E77 35%, #1EA297 70%, #136F69 100%) !important;
-    padding: calc(env(safe-area-inset-top, 0px) + 20px) 18px 46px !important;
+    padding: calc(env(safe-area-inset-top, 0px) + 24px) 18px 58px !important;
     color: #FFFFFF !important;
     flex-shrink: 0 !important;
     position: relative !important;
@@ -664,7 +664,7 @@ button:focus-visible,
   .chat-header-wave {
     background: linear-gradient(135deg, #106662 0%, #157E77 35%, #1EA297 70%, #136F69 100%) !important;
     color: #FFFFFF !important;
-    padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px 36px !important;
+    padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px 46px !important;
     border-radius: 0 !important;
     border: none !important;
     box-shadow: none !important;
@@ -676,6 +676,117 @@ button:focus-visible,
     position: relative !important;
     z-index: 2 !important;
   }
+
+  .chat-header-wave div[style*="headerName"] {
+    color: #FFFFFF !important;
+    font-weight: 800 !important;
+    font-size: 16px !important;
+  }
+
+  .chat-header-wave div[style*="headerStatus"] {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 12px !important;
+  }
+
+  /* Message Stream & Bubbles on Mobile */
+  .chat-main-stream {
+    background: #FFFFFF !important;
+    position: relative !important;
+    padding-bottom: 96px !important;
+  }
+
+  /* Date Divider on Mobile */
+  div[style*="dateDividerPill"],
+  .date-divider-pill {
+    background: transparent !important;
+    border: none !important;
+    color: #0F172A !important;
+    font-weight: 800 !important;
+    font-size: 14px !important;
+    font-family: var(--font-display) !important;
+  }
+
+  /* Organic Wave Backdrop at Bottom of Chat View */
+  .chat-mobile-bottom-backdrop {
+    display: block !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 110px !important;
+    background: linear-gradient(135deg, #106662 0%, #157E77 35%, #1EA297 70%, #136F69 100%) !important;
+    clip-path: url(#mobileChatBottomWaveClip) !important;
+    -webkit-clip-path: url(#mobileChatBottomWaveClip) !important;
+    pointer-events: none !important;
+    z-index: 9998 !important;
+  }
+
+  /* Floating Bottom Input Bar on Mobile */
+  .chat-mobile-input-bar {
+    position: fixed !important;
+    bottom: 14px !important;
+    left: 14px !important;
+    right: 14px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    z-index: 99999 !important;
+    padding: 0 !important;
+  }
+
+  .chat-mobile-input-inner-pill {
+    flex: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    background: #FFFFFF !important;
+    border-radius: 28px !important;
+    padding: 5px 12px 5px 16px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+    gap: 6px !important;
+    border: none !important;
+  }
+
+  .chat-mobile-text-input {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    font-size: 14px !important;
+    color: #0F172A !important;
+    flex: 1 !important;
+    padding: 8px 4px !important;
+  }
+
+  .chat-mobile-action-icon {
+    background: transparent !important;
+    border: none !important;
+    font-size: 17px !important;
+    padding: 4px !important;
+    cursor: pointer !important;
+    color: #475569 !important;
+  }
+
+  .chat-mobile-send-btn {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    color: #FFFFFF !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: none !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+    flex-shrink: 0 !important;
+  }
+
+  .chat-mobile-send-btn:disabled {
+    opacity: 0.65 !important;
+  }
+
 
 
 
@@ -899,82 +1010,6 @@ button:focus-visible,
     font-size: 12px !important;
   }
 
-  /* Message Stream & Bubbles on Mobile */
-  .chat-main-stream {
-    background: var(--surface) !important;
-    position: relative !important;
-    padding-bottom: 86px !important;
-  }
-
-  /* Organic Wave in Bottom Corner of Chat */
-  .chat-main-stream::after {
-    content: "" !important;
-    position: absolute !important;
-    bottom: 0 !important;
-    right: 0 !important;
-    width: 200px !important;
-    height: 120px !important;
-    background: var(--rail-bg) !important;
-    border-top-left-radius: 100px !important;
-    opacity: 0.14 !important;
-    pointer-events: none !important;
-    z-index: 1 !important;
-  }
-
-  /* Floating Bottom Input Bar on Mobile */
-  .chat-mobile-input-bar {
-    position: fixed !important;
-    bottom: 14px !important;
-    left: 14px !important;
-    right: 14px !important;
-    background: #FFFFFF !important;
-    border-radius: 34px !important;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
-    border: 1px solid var(--border) !important;
-    display: flex !important;
-    align-items: center !important;
-    padding: 6px 8px 6px 14px !important;
-    gap: 6px !important;
-    z-index: 99999 !important;
-  }
-
-  .chat-mobile-text-input {
-    background: transparent !important;
-    border: none !important;
-    outline: none !important;
-    font-size: 14px !important;
-    color: #0F172A !important;
-    flex: 1 !important;
-    padding: 8px 4px !important;
-  }
-
-  .chat-mobile-action-icon {
-    background: transparent !important;
-    border: none !important;
-    font-size: 18px !important;
-    color: #94A3B8 !important;
-    cursor: pointer !important;
-    padding: 6px 4px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  .chat-mobile-send-btn {
-    background: var(--rail-bg) !important;
-    color: #FFFFFF !important;
-    width: 38px !important;
-    height: 38px !important;
-    border-radius: 50% !important;
-    border: none !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 16px !important;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15) !important;
-    flex-shrink: 0 !important;
-  }
-
   .theme-popover {
     bottom: 84px !important;
     right: 16px !important;
@@ -984,6 +1019,7 @@ button:focus-visible,
     z-index: 99999 !important;
   }
 }
+
 
 
 /* Bahut chhote phones (jaise purane 320-360px wide devices) ke liye extra tight fit -

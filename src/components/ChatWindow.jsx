@@ -388,7 +388,10 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
           <svg width="0" height="0" style={{ position: "absolute", pointerEvents: "none" }}>
             <defs>
               <clipPath id="mobileChatWaveClip" clipPathUnits="objectBoundingBox">
-                <path d="M 0,0 L 1,0 L 1,0.76 C 0.72,0.98 0.35,0.70 0,0.92 Z" />
+                <path d="M 0,0 L 1,0 L 1,0.56 C 0.65,0.72 0.35,1.02 0,0.85 Z" />
+              </clipPath>
+              <clipPath id="mobileChatBottomWaveClip" clipPathUnits="objectBoundingBox">
+                <path d="M 0,0.60 C 0.35,0.08 0.72,0.68 1,0.22 L 1,1 L 0,1 Z" />
               </clipPath>
             </defs>
           </svg>
@@ -769,56 +772,58 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
             onChange={handlePhotoSelected}
           />
 
-          <input
-            style={styles.input}
-            className="chat-mobile-text-input"
-            value={text}
-            onChange={handleChange}
-            placeholder="Type your message here..."
-          />
+          <div className="chat-mobile-input-inner-pill">
+            <input
+              style={styles.input}
+              className="chat-mobile-text-input"
+              value={text}
+              onChange={handleChange}
+              placeholder="Type your message here..."
+            />
 
-          <button
-            type="button"
-            className="chat-mobile-action-icon"
-            onClick={handlePhotoPick}
-            title="Photo bhejo"
-          >
-            📷
-          </button>
-
-          <div style={{ position: "relative" }} ref={attachMenuRef}>
-            {showAttachMenu && (
-              <div style={styles.attachMenu} className="attach-menu">
-                <button
-                  type="button"
-                  style={styles.attachMenuItem}
-                  onClick={() => {
-                    setShowAttachMenu(false);
-                    handlePhotoPick();
-                  }}
-                >
-                  📷 Photo
-                </button>
-                <button
-                  type="button"
-                  style={styles.attachMenuItem}
-                  onClick={() => {
-                    setShowAttachMenu(false);
-                    startRecording();
-                  }}
-                >
-                  🎤 Voice message
-                </button>
-              </div>
-            )}
             <button
               type="button"
               className="chat-mobile-action-icon"
-              title="Attachment / Voice"
-              onClick={() => setShowAttachMenu((v) => !v)}
+              onClick={handlePhotoPick}
+              title="Photo bhejo"
             >
-              📎
+              📷
             </button>
+
+            <div style={{ position: "relative" }} ref={attachMenuRef}>
+              {showAttachMenu && (
+                <div style={styles.attachMenu} className="attach-menu">
+                  <button
+                    type="button"
+                    style={styles.attachMenuItem}
+                    onClick={() => {
+                      setShowAttachMenu(false);
+                      handlePhotoPick();
+                    }}
+                  >
+                    📷 Photo
+                  </button>
+                  <button
+                    type="button"
+                    style={styles.attachMenuItem}
+                    onClick={() => {
+                      setShowAttachMenu(false);
+                      startRecording();
+                    }}
+                  >
+                    🎤 Voice message
+                  </button>
+                </div>
+              )}
+              <button
+                type="button"
+                className="chat-mobile-action-icon"
+                title="Attachment / Voice"
+                onClick={() => setShowAttachMenu((v) => !v)}
+              >
+                📎
+              </button>
+            </div>
           </div>
 
           <button
@@ -828,10 +833,17 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
             disabled={!text.trim()}
             title="Bhejo"
           >
-            ➤
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 2L11 13" />
+              <path d="M22 2l-7 20-4-9-9-4 20-7z" />
+            </svg>
           </button>
         </form>
       )}
+
+      {/* Mobile Chat Bottom Decorative Wave */}
+      <div className="chat-mobile-bottom-backdrop" />
+
       </div>{/* closes styles.wrap */}
 
       {showDetailsPanel && (
