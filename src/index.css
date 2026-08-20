@@ -553,24 +553,18 @@ button:focus-visible,
     box-shadow: none !important;
   }
 
-  /* 1. Mobile Screen 1: Top Organic Wave Header Banner */
+  /* 1. Mobile Screen 1: Top Organic Wave Header Banner (100% Single Seamless Shape) */
   .mobile-wave-header-banner {
     display: flex !important;
     flex-direction: column !important;
-    background: var(--rail-bg) !important;
-    padding: 0 !important;
+    background: linear-gradient(135deg, #106662 0%, #157E77 35%, #1EA297 70%, #136F69 100%) !important;
+    padding: calc(env(safe-area-inset-top, 0px) + 24px) 18px 46px !important;
     color: #FFFFFF !important;
     flex-shrink: 0 !important;
     position: relative !important;
-    overflow: visible !important;
+    clip-path: url(#mobileWaveClip) !important;
+    -webkit-clip-path: url(#mobileWaveClip) !important;
     border-radius: 0 !important;
-  }
-
-  .mobile-wave-content {
-    padding: calc(env(safe-area-inset-top, 0px) + 20px) 18px 10px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    background: var(--rail-bg) !important;
   }
 
   .mobile-wave-top-bar {
@@ -627,22 +621,6 @@ button:focus-visible,
     background: transparent !important;
   }
 
-  .mobile-wave-svg-container {
-    display: block !important;
-    width: 100% !important;
-    height: 38px !important;
-    overflow: hidden !important;
-    line-height: 0 !important;
-    background: var(--rail-bg) !important;
-    margin-top: -1px !important;
-  }
-
-  .mobile-organic-s-curve {
-    width: 100% !important;
-    height: 100% !important;
-    display: block !important;
-  }
-
   /* 2. Mobile Recent Section Bar & Flat List */
   .mobile-recent-bar {
     display: flex !important;
@@ -672,36 +650,20 @@ button:focus-visible,
 
   /* 4. Mobile Screen 2: Top Chat Wave Header */
   .chat-header-wave {
-    background: var(--rail-bg) !important;
+    background: linear-gradient(135deg, #106662 0%, #157E77 35%, #1EA297 70%, #136F69 100%) !important;
     color: #FFFFFF !important;
-    padding: 0 !important;
+    padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px 36px !important;
     border-radius: 0 !important;
     border: none !important;
     box-shadow: none !important;
     display: flex !important;
-    flex-direction: column !important;
+    align-items: center !important;
+    gap: 10px !important;
+    clip-path: url(#mobileChatWaveClip) !important;
+    -webkit-clip-path: url(#mobileChatWaveClip) !important;
     position: relative !important;
   }
 
-  .mobile-chat-header-inner {
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-    padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px 8px !important;
-    background: var(--rail-bg) !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .mobile-chat-wave-svg-container {
-    display: block !important;
-    width: 100% !important;
-    height: 32px !important;
-    overflow: hidden !important;
-    line-height: 0 !important;
-    background: var(--rail-bg) !important;
-    margin-top: -1px !important;
-  }
 
 
 
@@ -843,7 +805,7 @@ button:focus-visible,
     height: 44px !important;
     border-radius: 22px !important;
     border: none !important;
-    background: var(--rail-bg) !important;
+    background: linear-gradient(135deg, #106662 0%, #157E77 35%, #1EA297 70%, #136F69 100%) !important;
     color: #FFFFFF !important;
     font-size: 20px !important;
     display: flex !important;
@@ -862,7 +824,7 @@ button:focus-visible,
     width: 68px !important;
     height: 44px !important;
     border-radius: 22px !important;
-    border: 2px solid var(--accent) !important;
+    border: 2px solid #157E77 !important;
     background: transparent !important;
     display: flex !important;
     align-items: center !important;
@@ -878,9 +840,10 @@ button:focus-visible,
   .plus-symbol {
     font-size: 20px !important;
     font-weight: 700 !important;
-    color: var(--accent) !important;
+    color: #157E77 !important;
     line-height: 1 !important;
   }
+
 
 
 

@@ -385,160 +385,157 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
     <div style={styles.outerLayout} className="pane-fade">
       <div style={styles.wrap} className="chat-main-stream">
         <div style={{ ...styles.header, position: "relative" }} className="chat-header-wave">
-          <div className="mobile-chat-header-inner">
-            <button
-              style={styles.backBtn}
-              onClick={onBack}
-              className="mobile-header-back-btn"
-              aria-label="Wapas jao"
+          <svg width="0" height="0" style={{ position: "absolute", pointerEvents: "none" }}>
+            <defs>
+              <clipPath id="mobileChatWaveClip" clipPathUnits="objectBoundingBox">
+                <path d="M 0,0 L 1,0 L 1,0.76 C 0.72,0.98 0.35,0.70 0,0.92 Z" />
+              </clipPath>
+            </defs>
+          </svg>
+
+          <button
+            style={styles.backBtn}
+            onClick={onBack}
+            className="mobile-header-back-btn"
+            aria-label="Wapas jao"
+          >
+            ←
+          </button>
+
+          {isGroup ? (
+            <div
+              style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, cursor: "pointer" }}
+              onClick={() => setShowGroupInfo(true)}
             >
-              ←
-            </button>
-
-            {isGroup ? (
-              <div
-                style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, cursor: "pointer" }}
-                onClick={() => setShowGroupInfo(true)}
-              >
-                <GroupAvatar name={conversation.name} />
-                <div style={{ minWidth: 0, flex: 1 }}>
-                  <div style={styles.headerName}>👥 {conversation.name}</div>
-                  <div style={styles.headerStatus}>
-                    {otherTyping ? "koi type kar raha hai" : `${conversation.participants.length} members`}
-                  </div>
+              <GroupAvatar name={conversation.name} />
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={styles.headerName}>👥 {conversation.name}</div>
+                <div style={styles.headerStatus}>
+                  {otherTyping ? "koi type kar raha hai" : `${conversation.participants.length} members`}
                 </div>
-              </div>
-            ) : (
-              <>
-                <Avatar name={other?.displayName} online={other && isOnline(other._id)} color={otherColor} />
-                <div style={{ minWidth: 0, flex: 1 }}>
-                  <div style={styles.headerName}>{other?.displayName || "User"}</div>
-                  <div style={styles.headerStatus}>
-                    {otherTyping ? (
-                      <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                        type kar raha hai
-                        <span className="typing-dots">
-                          <span></span>
-                          <span></span>
-                          <span></span>
-                        </span>
-                      </span>
-                    ) : other && isOnline(other._id) ? (
-                      "online"
-                    ) : (
-                      "online"
-                    )}
-                  </div>
-                </div>
-              </>
-            )}
-
-            <div style={styles.headerActions} ref={headerMenuRef} className="chat-header-actions-wrap">
-              {!isGroup && (
-                <>
-                  <button
-                    style={styles.headerIconBtn}
-                    className="desktop-only-btn"
-                    title="Audio call"
-                    disabled={callState !== "idle"}
-                    onClick={() => other && startCall(other, conversation._id, "audio")}
-                  >
-                    📞
-                  </button>
-                  <button
-                    style={styles.headerIconBtn}
-                    className="desktop-only-btn"
-                    title="Video call"
-                    disabled={callState !== "idle"}
-                    onClick={() => other && startCall(other, conversation._id, "video")}
-                  >
-                    🎥
-                  </button>
-                </>
-              )}
-              <button
-                type="button"
-                style={{
-                  ...styles.headerIconBtn,
-                  background: showDetailsPanel ? "var(--accent-soft)" : "var(--surface-2)",
-                  color: showDetailsPanel ? "var(--accent)" : "var(--text)",
-                }}
-                className="desktop-only-btn"
-                title="Toggle Details Panel"
-                onClick={() => setShowDetailsPanel((v) => !v)}
-              >
-                ℹ️
-              </button>
-
-              {/* Mobile and Desktop Action Menu */}
-              <div style={{ position: "relative" }}>
-                <button
-                  type="button"
-                  className="mobile-header-dots-btn"
-                  onClick={() => setShowHeaderMenu((v) => !v)}
-                  title="Menu"
-                >
-                  •••
-                </button>
-
-                {showHeaderMenu && (
-                  <div style={styles.headerMenu}>
-                    {!isGroup && (
-                      <button
-                        style={styles.headerMenuItem}
-                        onClick={() => {
-                          setShowHeaderMenu(false);
-                          setShowMeetings(true);
-                        }}
-                      >
-                        📅 Meetings
-                      </button>
-                    )}
-                    {isGroup && (
-                      <button
-                        style={styles.headerMenuItem}
-                        onClick={() => {
-                          setShowHeaderMenu(false);
-                          setShowGroupInfo(true);
-                        }}
-                      >
-                        ℹ️ Group Info
-                      </button>
-                    )}
-                    <button
-                      style={styles.headerMenuItem}
-                      onClick={() => {
-                        setShowHeaderMenu(false);
-                        setShowSheets(true);
-                      }}
-                    >
-                      📊 Files
-                    </button>
-                    <button
-                      style={styles.headerMenuItem}
-                      onClick={() => {
-                        setShowHeaderMenu(false);
-                        setShowTasks(true);
-                      }}
-                    >
-                      📋 Tasks
-                    </button>
-                  </div>
-                )}
               </div>
             </div>
-          </div>
+          ) : (
+            <>
+              <Avatar name={other?.displayName} online={other && isOnline(other._id)} color={otherColor} />
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={styles.headerName}>{other?.displayName || "User"}</div>
+                <div style={styles.headerStatus}>
+                  {otherTyping ? (
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                      type kar raha hai
+                      <span className="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </span>
+                    </span>
+                  ) : other && isOnline(other._id) ? (
+                    "online"
+                  ) : (
+                    "online"
+                  )}
+                </div>
+              </div>
+            </>
+          )}
 
-          {/* Top Header Seamless Organic S-Curve */}
-          <div className="mobile-chat-wave-svg-container">
-            <svg viewBox="0 0 500 40" preserveAspectRatio="none" className="mobile-organic-s-curve">
-              <path
-                d="M 0,40 C 160,8 340,42 500,16 L 500,40 L 0,40 Z"
-                fill="var(--surface, #FFFFFF)"
-              />
-            </svg>
+          <div style={styles.headerActions} ref={headerMenuRef} className="chat-header-actions-wrap">
+            {!isGroup && (
+              <>
+                <button
+                  style={styles.headerIconBtn}
+                  className="desktop-only-btn"
+                  title="Audio call"
+                  disabled={callState !== "idle"}
+                  onClick={() => other && startCall(other, conversation._id, "audio")}
+                >
+                  📞
+                </button>
+                <button
+                  style={styles.headerIconBtn}
+                  className="desktop-only-btn"
+                  title="Video call"
+                  disabled={callState !== "idle"}
+                  onClick={() => other && startCall(other, conversation._id, "video")}
+                >
+                  🎥
+                </button>
+              </>
+            )}
+            <button
+              type="button"
+              style={{
+                ...styles.headerIconBtn,
+                background: showDetailsPanel ? "var(--accent-soft)" : "var(--surface-2)",
+                color: showDetailsPanel ? "var(--accent)" : "var(--text)",
+              }}
+              className="desktop-only-btn"
+              title="Toggle Details Panel"
+              onClick={() => setShowDetailsPanel((v) => !v)}
+            >
+              ℹ️
+            </button>
+
+            {/* Mobile and Desktop Action Menu */}
+            <div style={{ position: "relative" }}>
+              <button
+                type="button"
+                className="mobile-header-dots-btn"
+                onClick={() => setShowHeaderMenu((v) => !v)}
+                title="Menu"
+              >
+                •••
+              </button>
+
+              {showHeaderMenu && (
+                <div style={styles.headerMenu}>
+                  {!isGroup && (
+                    <button
+                      style={styles.headerMenuItem}
+                      onClick={() => {
+                        setShowHeaderMenu(false);
+                        setShowMeetings(true);
+                      }}
+                    >
+                      📅 Meetings
+                    </button>
+                  )}
+                  {isGroup && (
+                    <button
+                      style={styles.headerMenuItem}
+                      onClick={() => {
+                        setShowHeaderMenu(false);
+                        setShowGroupInfo(true);
+                      }}
+                    >
+                      ℹ️ Group Info
+                    </button>
+                  )}
+                  <button
+                    style={styles.headerMenuItem}
+                    onClick={() => {
+                      setShowHeaderMenu(false);
+                      setShowSheets(true);
+                    }}
+                  >
+                    📊 Files
+                  </button>
+                  <button
+                    style={styles.headerMenuItem}
+                    onClick={() => {
+                      setShowHeaderMenu(false);
+                      setShowTasks(true);
+                    }}
+                  >
+                    📋 Tasks
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
+
 
 
 

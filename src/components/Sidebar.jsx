@@ -72,38 +72,35 @@ export default function Sidebar({
 
   return (
     <div style={styles.wrap} className="sidebar-floating-card">
-      {/* Mobile-Only Asymmetric Organic S-Wave Header (Exact Match to Image Reference) */}
+      {/* Mobile-Only Asymmetric Organic S-Wave Header (100% Single Seamless Shape) */}
       <div className="mobile-wave-header-banner">
-        <div className="mobile-wave-content">
-          <div className="mobile-wave-top-bar">
-            <span className="mobile-wave-title">Messages</span>
-            <div className="mobile-wave-avatar" title={user?.displayName || "User"}>
-              {user?.displayName ? user.displayName.charAt(0).toUpperCase() : "U"}
-            </div>
-          </div>
+        <svg width="0" height="0" style={{ position: "absolute", pointerEvents: "none" }}>
+          <defs>
+            <clipPath id="mobileWaveClip" clipPathUnits="objectBoundingBox">
+              <path d="M 0,0 L 1,0 L 1,0.76 C 0.72,0.98 0.35,0.70 0,0.92 Z" />
+            </clipPath>
+          </defs>
+        </svg>
 
-          <div className="mobile-wave-search-box">
-            <span className="mobile-wave-search-icon">🔍</span>
-            <input
-              ref={searchInputRef}
-              className="mobile-wave-search-input"
-              placeholder="Search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
+        <div className="mobile-wave-top-bar">
+          <span className="mobile-wave-title">Messages</span>
+          <div className="mobile-wave-avatar" title={user?.displayName || "User"}>
+            {user?.displayName ? user.displayName.charAt(0).toUpperCase() : "U"}
           </div>
         </div>
 
-        {/* Seamless Fluid S-Wave cutting smoothly into white list */}
-        <div className="mobile-wave-svg-container">
-          <svg viewBox="0 0 500 40" preserveAspectRatio="none" className="mobile-organic-s-curve">
-            <path
-              d="M 0,40 C 160,8 340,42 500,16 L 500,40 L 0,40 Z"
-              fill="var(--surface, #FFFFFF)"
-            />
-          </svg>
+        <div className="mobile-wave-search-box">
+          <span className="mobile-wave-search-icon">🔍</span>
+          <input
+            ref={searchInputRef}
+            className="mobile-wave-search-input"
+            placeholder="Search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
         </div>
       </div>
+
 
 
 
