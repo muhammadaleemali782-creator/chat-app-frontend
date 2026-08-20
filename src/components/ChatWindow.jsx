@@ -391,7 +391,7 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
                 <path d="M 0,0 L 1,0 L 1,0.56 C 0.65,0.72 0.35,1.02 0,0.85 Z" />
               </clipPath>
               <clipPath id="mobileChatBottomWaveClip" clipPathUnits="objectBoundingBox">
-                <path d="M 0,0.60 C 0.35,0.08 0.72,0.68 1,0.22 L 1,1 L 0,1 Z" />
+                <path d="M 0,0.72 C 0.28,0.22 0.62,0.68 1,0.18 L 1,1 L 0,1 Z" />
               </clipPath>
             </defs>
           </svg>
@@ -718,6 +718,19 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
               </div>
             );
           })}
+
+        {/* Other typing avatar with three dots bubble (like reference image) */}
+        {otherTyping && (
+          <div className="mobile-typing-indicator-row">
+            <Avatar name={other?.displayName} color={otherColor} size={26} />
+            <div className="mobile-typing-bubble">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        )}
+
         <div ref={bottomRef} />
       </div>
 
