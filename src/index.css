@@ -542,12 +542,18 @@ button:focus-visible,
     display: flex !important;
     flex-direction: column !important;
     background: var(--rail-bg) !important;
-    padding: 22px 18px 36px !important;
-    border-radius: 0 0 44px 44px !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+    padding: 0 !important;
     color: #FFFFFF !important;
     flex-shrink: 0 !important;
     position: relative !important;
+    overflow: visible !important;
+  }
+
+  .mobile-wave-content {
+    padding: 24px 18px 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: var(--rail-bg) !important;
   }
 
   .mobile-wave-top-bar {
@@ -604,8 +610,19 @@ button:focus-visible,
     background: transparent !important;
   }
 
-  .mobile-wave-svg-wrap {
-    display: none !important;
+  .mobile-wave-svg-container {
+    display: block !important;
+    width: 100% !important;
+    height: 42px !important;
+    overflow: hidden !important;
+    line-height: 0 !important;
+    background: var(--rail-bg) !important;
+  }
+
+  .mobile-organic-s-curve {
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
   }
 
   /* 2. Mobile Recent Section Bar & Flat List */
@@ -613,7 +630,7 @@ button:focus-visible,
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    padding: 16px 18px 4px !important;
+    padding: 14px 18px 4px !important;
     background: var(--surface) !important;
   }
 
@@ -634,6 +651,37 @@ button:focus-visible,
     padding: 4px 8px !important;
     letter-spacing: 2px !important;
   }
+
+  /* 4. Mobile Screen 2: Top Chat Wave Header */
+  .chat-header-wave {
+    background: var(--rail-bg) !important;
+    color: #FFFFFF !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+    border-bottom: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .mobile-chat-header-inner {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 16px 16px 6px !important;
+    background: var(--rail-bg) !important;
+    width: 100% !important;
+  }
+
+  .mobile-chat-wave-svg-container {
+    display: block !important;
+    width: 100% !important;
+    height: 34px !important;
+    overflow: hidden !important;
+    line-height: 0 !important;
+    background: var(--rail-bg) !important;
+  }
+
 
   /* Flat, Clean Mobile Contact Item (Removes ugly box borders) */
   .conv-section-header {
@@ -811,18 +859,7 @@ button:focus-visible,
     line-height: 1 !important;
   }
 
-  /* 4. Mobile Screen 2: Top Chat Wave Header */
-  .chat-header-wave {
-    background: var(--rail-bg) !important;
-    color: #FFFFFF !important;
-    border-radius: 0 0 34px 34px !important;
-    padding: 14px 16px 18px !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
-    border-bottom: none !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-  }
+
 
   .mobile-header-back-btn {
     display: inline-flex !important;

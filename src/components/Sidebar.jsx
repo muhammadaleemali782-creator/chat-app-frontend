@@ -74,29 +74,31 @@ export default function Sidebar({
     <div style={styles.wrap} className="sidebar-floating-card">
       {/* Mobile-Only Asymmetric Organic S-Wave Header (Exact Match to Image Reference) */}
       <div className="mobile-wave-header-banner">
-        <div className="mobile-wave-top-bar">
-          <span className="mobile-wave-title">Messages</span>
-          <div className="mobile-wave-avatar" title={user?.displayName || "User"}>
-            {user?.displayName ? user.displayName.charAt(0).toUpperCase() : "U"}
+        <div className="mobile-wave-content">
+          <div className="mobile-wave-top-bar">
+            <span className="mobile-wave-title">Messages</span>
+            <div className="mobile-wave-avatar" title={user?.displayName || "User"}>
+              {user?.displayName ? user.displayName.charAt(0).toUpperCase() : "U"}
+            </div>
+          </div>
+
+          <div className="mobile-wave-search-box">
+            <span className="mobile-wave-search-icon">🔍</span>
+            <input
+              ref={searchInputRef}
+              className="mobile-wave-search-input"
+              placeholder="Search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
           </div>
         </div>
 
-        <div className="mobile-wave-search-box">
-          <span className="mobile-wave-search-icon">🔍</span>
-          <input
-            ref={searchInputRef}
-            className="mobile-wave-search-input"
-            placeholder="Search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </div>
-
-        {/* Asymmetric S-Wave Bottom Curve */}
-        <div className="mobile-wave-svg-wrap">
-          <svg viewBox="0 0 500 50" preserveAspectRatio="none" className="mobile-wave-svg">
+        {/* Asymmetric Organic S-Wave Bottom Curve */}
+        <div className="mobile-wave-svg-container">
+          <svg viewBox="0 0 400 55" preserveAspectRatio="none" className="mobile-organic-s-curve">
             <path
-              d="M 0 0 Q 150 55 280 20 T 500 35 L 500 50 L 0 50 Z"
+              d="M 0,0 C 130,65 240,10 400,45 L 400,55 L 0,55 Z"
               fill="var(--surface)"
             />
           </svg>
@@ -115,6 +117,7 @@ export default function Sidebar({
           •••
         </button>
       </div>
+
 
 
       {/* Desktop Top Search Bar & Create Group CTA */}
