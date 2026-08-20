@@ -105,18 +105,17 @@ export default function Sidebar({
 
 
       {/* Mobile-Only Recent Bar */}
-      <div className="mobile-white-card">
-        <div className="mobile-recent-bar">
-          <span className="mobile-recent-heading">Recent</span>
-          <button
-            type="button"
-            className="mobile-recent-menu-btn"
-            onClick={() => setShowCreateGroup(true)}
-            title="New Group / Options"
-          >
-            •••
-          </button>
-        </div>
+      <div className="mobile-recent-bar">
+        <span className="mobile-recent-heading">Recent</span>
+        <button
+          type="button"
+          className="mobile-recent-menu-btn"
+          onClick={() => setShowCreateGroup(true)}
+          title="New Group / Options"
+        >
+          •••
+        </button>
+      </div>
 
 
 
@@ -315,7 +314,6 @@ export default function Sidebar({
         )}{/* closes directConvs section */}
 
         </div>{/* closes styles.list */}
-      </div>{/* closes mobile-white-card */}
     </div>
   );
 }
