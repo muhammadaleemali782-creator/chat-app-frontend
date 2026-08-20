@@ -537,6 +537,22 @@ button:focus-visible,
   .meeting-modal-body { grid-template-columns: 1fr !important; }
   .desktop-only-header { display: none !important; }
 
+  /* Mobile full viewport normalization (No ugly card gaps on real phones) */
+  .chat-layout,
+  .app-container,
+  .sidebar-floating-card,
+  .chat-main-stream,
+  .pane-fade,
+  div[style*="outerLayout"] {
+    width: 100% !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
   /* 1. Mobile Screen 1: Top Organic Wave Header Banner */
   .mobile-wave-header-banner {
     display: flex !important;
@@ -547,10 +563,11 @@ button:focus-visible,
     flex-shrink: 0 !important;
     position: relative !important;
     overflow: visible !important;
+    border-radius: 0 !important;
   }
 
   .mobile-wave-content {
-    padding: 24px 18px 10px !important;
+    padding: calc(env(safe-area-inset-top, 0px) + 20px) 18px 10px !important;
     display: flex !important;
     flex-direction: column !important;
     background: var(--rail-bg) !important;
@@ -613,10 +630,11 @@ button:focus-visible,
   .mobile-wave-svg-container {
     display: block !important;
     width: 100% !important;
-    height: 42px !important;
+    height: 38px !important;
     overflow: hidden !important;
     line-height: 0 !important;
     background: var(--rail-bg) !important;
+    margin-top: -1px !important;
   }
 
   .mobile-organic-s-curve {
@@ -658,29 +676,34 @@ button:focus-visible,
     color: #FFFFFF !important;
     padding: 0 !important;
     border-radius: 0 !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
-    border-bottom: none !important;
+    border: none !important;
+    box-shadow: none !important;
     display: flex !important;
     flex-direction: column !important;
+    position: relative !important;
   }
 
   .mobile-chat-header-inner {
     display: flex !important;
     align-items: center !important;
     gap: 10px !important;
-    padding: 16px 16px 6px !important;
+    padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px 8px !important;
     background: var(--rail-bg) !important;
     width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .mobile-chat-wave-svg-container {
     display: block !important;
     width: 100% !important;
-    height: 34px !important;
+    height: 32px !important;
     overflow: hidden !important;
     line-height: 0 !important;
     background: var(--rail-bg) !important;
+    margin-top: -1px !important;
   }
+
+
 
 
   /* Flat, Clean Mobile Contact Item (Removes ugly box borders) */

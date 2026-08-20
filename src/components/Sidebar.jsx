@@ -94,16 +94,18 @@ export default function Sidebar({
           </div>
         </div>
 
-        {/* Asymmetric Organic S-Wave Bottom Curve */}
+        {/* Seamless Fluid S-Wave cutting smoothly into white list */}
         <div className="mobile-wave-svg-container">
-          <svg viewBox="0 0 400 55" preserveAspectRatio="none" className="mobile-organic-s-curve">
+          <svg viewBox="0 0 500 40" preserveAspectRatio="none" className="mobile-organic-s-curve">
             <path
-              d="M 0,0 C 130,65 240,10 400,45 L 400,55 L 0,55 Z"
-              fill="var(--surface)"
+              d="M 0,40 C 160,8 340,42 500,16 L 500,40 L 0,40 Z"
+              fill="var(--surface, #FFFFFF)"
             />
           </svg>
         </div>
       </div>
+
+
 
       {/* Mobile-Only Recent Bar */}
       <div className="mobile-recent-bar">

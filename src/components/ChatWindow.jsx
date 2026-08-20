@@ -529,16 +529,18 @@ export default function ChatWindow({ conversation, messages, onSend, onBack, loa
             </div>
           </div>
 
-          {/* Top Header Organic S-Curve */}
+          {/* Top Header Seamless Organic S-Curve */}
           <div className="mobile-chat-wave-svg-container">
-            <svg viewBox="0 0 400 50" preserveAspectRatio="none" className="mobile-organic-s-curve">
+            <svg viewBox="0 0 500 40" preserveAspectRatio="none" className="mobile-organic-s-curve">
               <path
-                d="M 0,0 C 130,60 250,10 400,40 L 400,50 L 0,50 Z"
-                fill="var(--surface)"
+                d="M 0,40 C 160,8 340,42 500,16 L 500,40 L 0,40 Z"
+                fill="var(--surface, #FFFFFF)"
               />
             </svg>
           </div>
         </div>
+
+
 
 
 
